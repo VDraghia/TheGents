@@ -1,48 +1,112 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@model ProjectManagementCollection.Models.SearchModel
+
+@{ 
+
+}
+
+<!DOCTYPE html>
+<html class="common" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ProjectManagementCollection</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <title>@ViewData["Title"] - Project Management  Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ProjectManagementCollection</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - ProjectManagementCollection - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="banner">
+                Project Management Collection - Algonquin College
+            <form class="logout-button-container">
+                <input class="logout-button" type="submit" asp-controller="Home" asp-action="Login" value="Logout" />
+            </form>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", required: false)
+        <div class="container navbar">
+            <form asp-action="Search">
+                    <table class="nav-table">
+                        <tr>
+                            <td>
+                                <label asp-for="Name" class="search-label"> Name </label>
+                            </td>
+                            <td colspan="2">
+                                <input type="text" asp-for="Name" size=39 />
+                            </td>
+                            <td>
+                                <label asp-for="Uploader" class="search-label">Uploader</label>
+                            </td>
+                            <td>
+                                <input type="text" asp-for="Uploader" size=39 />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label asp-for="Client" class="search-label">Client</label>
+                            </td>
+                            <td colspan="2">
+                                <input type="text" asp-for="Client" size=39 />
+                            </td>
+                            <td>
+                                <label asp-for="Location" class="search-label">Location</label>
+                            </td>
+                            <td colspan="2">
+                                <input type="text" asp-for="Location" size=39 />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="search-label">Date Range</label>
+                            </td>
+                            <td>
+                             <input type="date" asp-for="DateRangeMin" />
+                            </td>
+                            <td>
+                                <input type="date" asp-for="DateRangeMax" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label asp-for="Success" class="search-label">Was it a success?</label>
+                            </td>
+                            <td>
+                                <select asp-for="Success">
+                                    <option>Both</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="submit" value="Search" class="search-button shadow" asp-controller="Home" asp-action="Search" />
+                            </td>
+                            <td>
+                                <input type="submit" value="Export" class="basic-button shadow-sm" asp-controller="Home" asp-action="Search" disabled/>
+                            </td>
+                            <td>
+                                <input type="submit" value="Stats" class="basic-button shadow-sm" asp-controller="Home" asp-action="Search" disabled/>
+                            </td>
+                        </tr>
+                    </table>
+                <div class="search-factors">
+                    <table align="left">
+                        <tr>
+                            <td valign="top">
+                                <input type="button" class="basic-button factor-button" value="Factors"/>
+                            </td>
+                            <td class="factor-list" rowspan="4" colspan="4">
+                                <u>Factor List, added through factor button</u>
+                                Must have   Main Category - Sub Category
+                                Must have   Main Category - Sub Category
+                                Must have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div class="navbar-content">
+            @RenderBody()
+        </div>
 </body>
 </html>

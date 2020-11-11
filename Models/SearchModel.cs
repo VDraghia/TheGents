@@ -10,13 +10,15 @@ namespace ProjectManagementCollection.Models
 
         public string Uploader { get; set; }
 
-        public string DateUploaded { get; set; }
+        public string DateRangeMin { get; set; }
+
+        public string DateRangeMax { get; set; }
 
         public string Client { get; set; }
 
         public string Location { get; set; }
 
-        public bool Success { get; set; }
+        public string Success { get; set; }
 
     }
 }

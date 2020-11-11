@@ -1,71 +1,172 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
 html {
-  font-size: 14px;
+    position: center;
+    min-height: 100%;
+    min-width: 1400px;
 }
-@media (min-width: 768px) {
-  html {
+
+td {
+    padding: 4px;
+}
+
+.search-label {
     font-size: 16px;
-  }
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+.banner {
+    position: relative;
+    height: 50px;
+    width: 100%;
+    color: white;
+    background-color: darkgreen;
+    border-bottom-style: solid;
+    border-bottom-width: medium;
+    border-bottom-color: black;
+    font-size: 30px;
+    font-weight: bold;
+    text-shadow: 3px 3px #1f4f12;
+    padding: 5px;
+    padding-left: 20px;
 }
 
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+.logout-button {
+    background-color: #ff8080;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    float: right;
+    height: 35px;
+    width: 70px;
 }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+.logout-button-container {
+    float: right;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
+.logout-button:hover {
+    color: white;
+    background-color: red;
+}
+
+.logout-button:focus {
+    border: 0px;
+}
+
+.basic-button {
+    background-color: #ffeb85;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    height: 30px;
+    width: 70px;
+}
+
+.search-button {
+    background-color: #ffbd59;
+    height: 35px;
+    width: 70px;
+    border: 0.5px solid;
+    border-radius: 25px;
+    font-weight: 600;
+    box-shadow: 2px 2px;
+    scrollbar-shadow-color: grey;
+}
+
+.search-button:hover {
+    border: 0.5px solid black;
+    color: white;
+}
+
+.search-button:focus {
+    outline: 0px;
+    color: white;
+    border: 0.5px solid;
+}
+
+
+img {
+    vertical-align: middle;
+    border-style: none;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    font-family: "Arial", Verdana, sans-serif;
+    background-color: whitesmoke;
 }
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+
+.navbar {
+    position: center;
+    align-content: center;
+    max-width: 1400px;
 }
+
+.navbar-content {
+    position: relative;
+    border-top-style: solid;
+    border-top-width: thin;
+    max-width: 100%;
+    align-content: center;
+    text-align: center;
+}
+
+table {
+  
+}
+
+.nav-page {
+   
+}
+
+.nav-table {
+    width: 100px;
+    float: left;
+}
+
+.search-factors {
+    width: 400px;
+    float: left;
+}
+
+.factor-list {
+    height: 100%;
+    border: 1px solid;
+
+}
+
+.search-results {
+    align-content: center;
+}
+
+.login {
+   
+}
+
+.upload {
+   
+}
+
+.edit {
+    
+}
+
+.statistics {
+
+}
+
+.document-meatadata {
+
+}
+
+.export {
+
+}
+
+
+
+
+
+
+
+

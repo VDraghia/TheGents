@@ -39,7 +39,7 @@ namespace ProjectManagementCollection
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+                app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -49,8 +49,17 @@ namespace ProjectManagementCollection
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    name: "login",
+                    pattern: "{controller=Home}/{action=Login}");
+                endpoints.MapControllerRoute(
+                    name: "search",
+                pattern: "{controller=Home}/{action=Search}/");
+                endpoints.MapControllerRoute(
+                    name: "upload",
+                pattern: "{controller=Home}/{action=Upload}/");
+                endpoints.MapControllerRoute(
+                    name: "view-document",
+                pattern: "{controller=Home}/{action=ViewDocument}/");
             });
         }
     }

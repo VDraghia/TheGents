@@ -18,12 +18,21 @@ namespace ProjectManagementCollection.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [Route("~/")]
+        [Route("~/Home")]
+        [Route("~/Home/Login")]
+        public IActionResult Login(Boolean logout)
         {
+            if (logout)
+            {
+                _logger.LogWarning("User Logged out");
+            }
+
             return View();
         }
 
-        public IActionResult Privacy()
+        [Route("~/Home/Search")]
+        public IActionResult Search()
         {
             return View();
         }
@@ -31,6 +40,7 @@ namespace ProjectManagementCollection.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            _logger.LogError("Error page");
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
