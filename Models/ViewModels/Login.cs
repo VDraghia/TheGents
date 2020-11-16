@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementCollection.Models
 {
-    public class LoginModel
+    public class Login
     {
         [Required]
         public string Email { get; set; }
@@ -14,6 +14,7 @@ namespace ProjectManagementCollection.Models
         [PasswordPropertyText]
         public string Password { get; set; }
 
+        
         public bool RememberMe { get; set; }
 
     }

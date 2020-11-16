@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementCollection.Models
 {
-    public class SearchModel
+    public class Search
     {
         public string Name { get; set; }
 

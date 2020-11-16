@@ -4,7 +4,7 @@ using System;
 
 namespace ProjectManagementCollection.Models
 {
-    public class UploadModel
+    public class Upload
     {
         [Required]
         public string DocumentName { get; set; }
