@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProjectManagementCollection.Data;
 
 namespace ProjectManagementCollection
 {
@@ -20,13 +22,20 @@ namespace ProjectManagementCollection
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
+
+            var connection = Configuration.GetConnectionString("DevDbConnection");
+            services.AddDbContext<PmcAppDbContext>(options => options.UseSqlServer(connection));
+
+            //var blobConnection = Configuration.GetConnectionString("AzureBlobStorage");
+            //services.AddSingleton(new BlobServiceClient(blobConnection));
+
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -36,10 +45,12 @@ namespace ProjectManagementCollection
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                
                 app.UseHsts();
             }
-                app.UseHttpsRedirection();
+
+            app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -51,15 +62,6 @@ namespace ProjectManagementCollection
                 endpoints.MapControllerRoute(
                     name: "login",
                     pattern: "{controller=Home}/{action=Login}");
-                endpoints.MapControllerRoute(
-                    name: "search",
-                pattern: "{controller=Home}/{action=Search}/");
-                endpoints.MapControllerRoute(
-                    name: "upload",
-                pattern: "{controller=Home}/{action=Upload}/");
-                endpoints.MapControllerRoute(
-                    name: "view-document",
-                pattern: "{controller=Home}/{action=ViewDocument}/");
             });
         }
     }

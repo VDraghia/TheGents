@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementCollection.Models
 {
     public class FactorSubCategory
     {
-        public int SubCategoryId { get; set; }
+
+        public int FactorSubCategoryId { get; set; }
 
         [Required]
-        public string SubCategory { get; set; }
+        [MaxLength(50)]
+        public string FactorSubCategoryDesc { get; set; }
+
     }
 }

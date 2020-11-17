@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,10 +12,15 @@ namespace ProjectManagementCollection.Models
         public int FactorId { get; set; }
 
         [Required]
-        public int MainCategoryFk { get; set; }
+        [ForeignKey("FactorMainCategoryId")]
+        public int FactorMainCategoryFk { get; set; }
 
         [Required]
-        public int SubCategoryFk { get; set; }
+        [ForeignKey("FactorSubCategoryId")]
+        public int FactorSubCategoryFk { get; set; }
+
+        [MaxLength(100)]
+        public string FactorDesc { get; set; }
 
     }
 }

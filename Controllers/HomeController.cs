@@ -37,6 +37,20 @@ namespace ProjectManagementCollection.Controllers
             return View();
         }
 
+        [Route("~/Home/Search")]
+        public IActionResult Search(Search searchModel)
+        {
+
+            string queryString = "Where c = ";
+
+            if(searchModel.Name != null)
+            {
+                
+            }
+
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

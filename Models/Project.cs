@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace ProjectManagementCollection.Models
 {
     public class Project
-    {
-        
+    {  
         public int ProjectId { get; set; }
 
         [Required]
+        [MaxLength(50)]
         public string Name { get; set; }
 
         [Required]
@@ -22,9 +22,11 @@ namespace ProjectManagementCollection.Models
         public DateTime DateCompleted { get; set; }
 
         [Required]
+        [MaxLength(50)]
         public string Client { get; set; }
 
         [Required]
+        [MaxLength(50)]
         public string Location { get; set; }
 
         [Required]
@@ -35,7 +37,5 @@ namespace ProjectManagementCollection.Models
 
         [ForeignKey("Factor")]
         public ICollection<Factor> Factors { get; set; }
-
-
     }
 }
