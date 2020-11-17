@@ -1,4 +1,4 @@
-﻿@model ProjectManagementCollection.Models.Login
+﻿@model ProjectManagementCollection.Models.LoginModel
 @*
    
 *@
@@ -6,7 +6,9 @@
 @{ 
     Layout = "_Layout";
 }
+
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -42,11 +44,15 @@
                     <td>
                         <input type="checkbox" asp-for="RememberMe" />
                     </td>
-
                 </tr>
                 <tr>
                     <td>
                         <input type="submit" asp-controller="Home" asp-action="Search" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="Forgot Password" asp-controller="Home" asp-action="ForgotPassword" />
                     </td>
                 </tr>
             </table>
