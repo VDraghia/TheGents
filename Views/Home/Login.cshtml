@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 ﻿@model ProjectManagementCollection.Models.Login
+=======
+﻿@model ProjectManagementCollection.Models.LoginModel
+@*
+   
+*@
+>>>>>>> 541e29cdeb5245395aca22db2ad3f61deb67df4d
 
 @{
     Layout = "_Layout";
 }
+
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -39,11 +48,15 @@
                     <td>
                         <input type="checkbox" asp-for="RememberMe" />
                     </td>
-
                 </tr>
                 <tr>
                     <td>
                         <input type="submit" asp-controller="Home" asp-action="Login" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="Forgot Password" asp-controller="Home" asp-action="ForgotPassword" />
                     </td>
                 </tr>
             </table>
