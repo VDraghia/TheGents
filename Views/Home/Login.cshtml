@@ -1,9 +1,6 @@
 ﻿@model ProjectManagementCollection.Models.Login
-@*
-   
-*@
 
-@{ 
+@{
     Layout = "_Layout";
 }
 <!DOCTYPE html>
@@ -17,7 +14,7 @@
 <body>
     <main role="main" class="pb-3">
         <div class="container"></div>
-        <form asp-controller="Home" asp-action="Search">
+        <form asp-controller="Home" asp-action="Search" method="post">
             <table>
                 <tr>
                     <td>
@@ -46,7 +43,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" asp-controller="Home" asp-action="Search" />
+                        <input type="submit" asp-controller="Home" asp-action="Login" />
                     </td>
                 </tr>
             </table>

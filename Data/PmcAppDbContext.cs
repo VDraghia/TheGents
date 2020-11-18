@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectManagementCollection.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectManagementCollection.Data
 {
@@ -12,7 +8,6 @@ namespace ProjectManagementCollection.Data
 
         public PmcAppDbContext(DbContextOptions<PmcAppDbContext> options) : base(options)
         {
-
         }
 
         public DbSet<User> Users { get; set; }
@@ -28,8 +23,9 @@ namespace ProjectManagementCollection.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-
+            modelBuilder.Entity<FactorSubCategory>()
+               .Property(c => c.FactorSubCategoryId).ValueGeneratedOnAdd();
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

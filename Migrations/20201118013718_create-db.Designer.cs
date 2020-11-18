@@ -10,8 +10,8 @@ using ProjectManagementCollection.Data;
 namespace ProjectManagementCollection.Migrations
 {
     [DbContext(typeof(PmcAppDbContext))]
-    [Migration("20201117172708_Create")]
-    partial class Create
+    [Migration("20201118013718_create-db")]
+    partial class createdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

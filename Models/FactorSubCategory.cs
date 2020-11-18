@@ -8,7 +8,7 @@ namespace ProjectManagementCollection.Models
         public int FactorSubCategoryId { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string FactorSubCategoryDesc { get; set; }
 
     }
