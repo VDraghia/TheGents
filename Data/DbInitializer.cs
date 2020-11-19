@@ -12,7 +12,6 @@ namespace ProjectManagementCollection.Data
         public static void Initialize(PmcAppDbContext context)
         {
             context.Database.EnsureCreated();
-            //context.Database.ExecuteSqlCommand(@"SET IDENTITY_INSERT PmcAppDb.FactorSubCategory ON");
 
             /*
              * Create User Data
@@ -41,9 +40,9 @@ namespace ProjectManagementCollection.Data
             {
                 var projects = new Project[]
                 {
-                            new Project {Name="Project1", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success=true},
-                            new Project {Name="Project2", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success=false},
-                            new Project {Name="Project3", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success=false},
+                    new Project {Name="Project1", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success="Yes"},
+                    new Project {Name="Project2", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success="No"},
+                    new Project {Name="Project3", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success="Yes"},
                 };
 
                 foreach (Project project in projects)
@@ -53,17 +52,15 @@ namespace ProjectManagementCollection.Data
 
                 context.SaveChanges();
             }
-            //          {
-            //                new Document {FirstName="Prof1FirstName", LastName="Prof1LastName", Email="prof1@school.com" },
-            //                new Document { FirstName="Prof2FirstName", LastName="Prof2LastName", Email="prof2@school.com" },
-            //                new Document { FirstName="Student1FirstName", LastName="Student1LastName", Email="student3@school.com" }
-            //};
+
+
+
 
             List<FactorMainCategory> mainCategories = new List<FactorMainCategory>();
 
             if (!context.FactorMainCategories.Any())
             {
-                mainCategories.Add(new FactorMainCategory { FactorMainCategoryDesc = "Generic" });
+                mainCategories.Add(new FactorMainCategory { FactorMainCategoryDesc = "none" });
                 mainCategories.Add(new FactorMainCategory { FactorMainCategoryDesc = "Scope Management Plan" });
                 mainCategories.Add(new FactorMainCategory { FactorMainCategoryDesc = "Requirements Management Plan" });
                 mainCategories.Add(new FactorMainCategory { FactorMainCategoryDesc = "Schedule Management Plan" });
@@ -122,7 +119,7 @@ namespace ProjectManagementCollection.Data
                 subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Risk register" });
                 subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Risk report" });
                 subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Schedule data" });
-                subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Schedule dataDup" });
+                subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Schedule forecasts" });
                 subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Stakeholder register" });
                 subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Team charter" });
                 subCategories.Add(new FactorSubCategory { FactorSubCategoryDesc = "Test and evaluation documents" });
@@ -189,357 +186,356 @@ namespace ProjectManagementCollection.Data
                 context.SaveChanges();
             }
 
-            List<Factor> factors = new List<Factor>();
 
+            List<Factor> factors = new List<Factor>();
 
             if (!context.Factors.Any())
             {
-                factors.Add( new Factor {
-
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Activity attributes").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Activity list").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Assumption log").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Basis of Estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Change log").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Cost estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Cost forecasts").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Duration estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Issue log").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Lessons learned register").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Milestone list").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Physical resource assignments").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project calendars").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project communication").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project schedule").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project schedule network diagram").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project scope statement").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project team assignments").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Quality control measurements").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Quality metrics").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Quality report").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Requirements documentation").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Requirements traceability matrix").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource breakdown structure").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource calendars").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource requirements").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Risk register").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Risk report").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Schedule data").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
-                    FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Schedule dataDup").FactorSubCategoryId
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
+                    FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Schedule forecasts").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Stakeholder register").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Team charter").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
-                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Generic").FactorMainCategoryId,
+                factors.Add(new Factor {
+                    FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "none").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Test and evaluation documents").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Scope Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Scope Statement").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Scope Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Work Breakdown Structure").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Scope Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Definition of Scope").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Requirements Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Logging Requirement Activities").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Requirements Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Requirements Change Requests").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Requirements Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Developing a Requirements Traceability Matrix").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Schedule Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Milestones List").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Schedule Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Activity Sequencing").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Schedule Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Schedule Baseline").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Cost Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Basis of Estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Cost Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Budget Breakdown").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Cost Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Cost Baseline").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Quality Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Establish Quality Metrics").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Quality Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Plan Quality Control").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Quality Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Plan Quality Assurance").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Resource Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Breakdown Structure").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Resource Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Tracking").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Resource Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Acquisition Plan").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Resource Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Calendars").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Communications Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Communication Schedule").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Communications Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Establish Communication Methods").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Communications Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Stakeholder Communications Requirements").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Procurement Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Developing a Statement of Work").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Procurement Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Contracting Terms and Conditions").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Procurement Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Deliverables List").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Stakeholder Engagement Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Stakeholder Register").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Stakeholder Engagement Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Stakeholder Communication Plan").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Stakeholder Engagement Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Stakeholder Power Models Salience Power Influence").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Stakeholder Engagement Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Stakeholder Categorization").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Change Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Standardized Change Process").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Change Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Impact Assessments").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Change Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Change Log").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Configuration Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Requirements Change Requests").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Configuration Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Standardized Configuration Controls").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Configuration Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Item Logging").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Configuration Management Plan").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Allocations").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Scope Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project Scope Statement").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Scope Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Work Breakdown Structure").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Scope Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Scope Change Log").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Cost Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Activity Cost Estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Cost Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Cost Estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Cost Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Work Package Estimates").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Schedule Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Gantt Chart").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Schedule Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Milestone Chart").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Schedule Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Allocations").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Performance Measurement Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Scope, Cost, Schedule Baselines").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Performance Measurement Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Resource Performance Reports").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Performance Measurement Baseline").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Percent Complete Analysis").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Project Lifecycle Analysis").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Life Cycle Description").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Project Lifecycle Analysis").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Framework for Project Lifecycle").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Project Lifecycle Analysis").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Project Influences").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Project Development Approach").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Agile").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Project Development Approach").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Waterfall").FactorSubCategoryId
                 });
-                factors.Add( new Factor {
+                factors.Add(new Factor {
                     FactorMainCategoryFk = context.FactorMainCategories.First(c => c.FactorMainCategoryDesc == "Project Development Approach").FactorMainCategoryId,
                     FactorSubCategoryFk = context.FactorSubCategories.First(c => c.FactorSubCategoryDesc == "Hybrid").FactorSubCategoryId
                 });
@@ -556,9 +552,9 @@ namespace ProjectManagementCollection.Data
             if (!context.Documents.Any())
             {
 
-                documents.Add(new Document { Name="Doc1", Url = "doc1.aws.amazon.com", ProjectFk = 1 });
-                documents.Add(new Document { Name="Doc2", Url = "doc2.aws.amazon.com", ProjectFk = 1});
-                documents.Add(new Document { Name="Doc3", Url = "doc3.aws.amazon.com", ProjectFk = 2 });
+                documents.Add(new Document { Name = "Doc1", Url = "doc1.aws.amazon.com", ProjectDocFk = 1 });
+                documents.Add(new Document { Name = "Doc2", Url = "doc2.aws.amazon.com", ProjectDocFk = 1 });
+                documents.Add(new Document { Name = "Doc3", Url = "doc3.aws.amazon.com", ProjectDocFk = 2 });
 
                 foreach (Document document in documents)
                 {
@@ -568,6 +564,54 @@ namespace ProjectManagementCollection.Data
                 context.SaveChanges();
             }
 
+            var doc1 = context.Documents.Where(c => c.DocumentId == 1).Single();
+            var doc2 = context.Documents.Where(c => c.DocumentId == 2).Single();
+            var doc3 = context.Documents.Where(c => c.DocumentId == 3).Single();
+
+            var fac1 = context.Factors.Where(c => c.FactorId == 1).Single();
+            var fac2 = context.Factors.Where(c => c.FactorId == 2).Single();
+            var fac3 = context.Factors.Where(c => c.FactorId == 3).Single();
+            var fac4 = context.Factors.Where(c => c.FactorId == 4).Single();
+            var fac5 = context.Factors.Where(c => c.FactorId == 5).Single();
+            var fac6 = context.Factors.Where(c => c.FactorId == 6).Single();
+
+            var proj1 = context.Projects.Where(c => c.ProjectId == 1).Single();
+            var proj2 = context.Projects.Where(c => c.ProjectId == 2).Single();
+            var proj3 = context.Projects.Where(c => c.ProjectId == 3).Single();
+
+
+            // Create Project Factor Relations
+            if (!context.ProjectFactorRels.Any())
+            {
+                List<ProjectFactorRel> projFactors = new List<ProjectFactorRel>() {
+                new ProjectFactorRel(){ ProjectFk = 1, FactorFk = 1 },
+                new ProjectFactorRel(){ ProjectFk = 1, FactorFk = 2 },
+                new ProjectFactorRel(){ ProjectFk = 1, FactorFk = 3 },
+                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 40 },
+                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 54 },
+                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 62 },
+                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 10 }
+            };
+
+                foreach (ProjectFactorRel rel in projFactors)
+                {
+                    context.ProjectFactorRels.Add(rel);
+                }
+
+                context.SaveChanges();
+            }
+
+
+            proj1.Documents = new List<Document>{ doc1 };
+            proj2.Documents = new List<Document>{ doc2 };
+            proj3.Documents = new List<Document>{ doc3 };
+
+            context.Projects.Update(proj1);
+            context.Projects.Update(proj2);
+            context.Projects.Update(proj3);
+
+            context.SaveChanges();
+        
         }
     }
 }

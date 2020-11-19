@@ -11,19 +11,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Project Management  Collection </title>
+    <title>Project Management  Collection </title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
 </head>
-<header>
-    <div class="banner ">
-        Project Management Collection - Algonquin College
-    </div>
-</header>
-    <body>
-        <div class="container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
-    </body>
+<div class="banner">
+    Project Management Collection - Algonquin College
+    <form class="logout-button-container">
+        <input class="logout-button" type="submit" asp-controller="Home" asp-action="Login" value="Logout" />
+    </form>
+</div>
+<body>
+            @RenderBody()
+</body>
 </html>

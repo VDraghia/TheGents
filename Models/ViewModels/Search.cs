@@ -12,7 +12,6 @@ namespace ProjectManagementCollection.Models
 
         [MaxLength(50)]
         public string Uploader { get; set; }
-
  
         public DateTime? DateRangeMin { get; set; }
 

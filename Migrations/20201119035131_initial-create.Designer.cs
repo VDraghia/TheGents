@@ -10,8 +10,8 @@ using ProjectManagementCollection.Data;
 namespace ProjectManagementCollection.Migrations
 {
     [DbContext(typeof(PmcAppDbContext))]
-    [Migration("20201118013718_create-db")]
-    partial class createdb
+    [Migration("20201119035131_initial-create")]
+    partial class initialcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,15 +28,12 @@ namespace ProjectManagementCollection.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Document")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<int>("ProjectFk")
+                    b.Property<int>("ProjectDocFk")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -46,7 +43,7 @@ namespace ProjectManagementCollection.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.HasIndex("Document");
+                    b.HasIndex("ProjectDocFk");
 
                     b.ToTable("Documents");
                 });
@@ -57,9 +54,6 @@ namespace ProjectManagementCollection.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Factor")
-                        .HasColumnType("int");
 
                     b.Property<string>("FactorDesc")
                         .HasColumnType("nvarchar(100)")
@@ -72,8 +66,6 @@ namespace ProjectManagementCollection.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("FactorId");
-
-                    b.HasIndex("Factor");
 
                     b.ToTable("Factors");
                 });
@@ -104,8 +96,8 @@ namespace ProjectManagementCollection.Migrations
 
                     b.Property<string>("FactorSubCategoryDesc")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("FactorSubCategoryId");
 
@@ -137,20 +129,39 @@ namespace ProjectManagementCollection.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<bool>("Success")
-                        .HasColumnType("bit");
+                    b.Property<int?>("Project")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Success")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Uploaded")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("ProjectId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Project");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("ProjectManagementCollection.Models.ProjectFactorRel", b =>
+                {
+                    b.Property<int>("ProjectFactorRelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("FactorFk")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectFk")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectFactorRelId");
+
+                    b.ToTable("ProjectFactorRels");
                 });
 
             modelBuilder.Entity("ProjectManagementCollection.Models.User", b =>
@@ -184,21 +195,16 @@ namespace ProjectManagementCollection.Migrations
                 {
                     b.HasOne("ProjectManagementCollection.Models.Project", "Project")
                         .WithMany("Documents")
-                        .HasForeignKey("Document");
-                });
-
-            modelBuilder.Entity("ProjectManagementCollection.Models.Factor", b =>
-                {
-                    b.HasOne("ProjectManagementCollection.Models.Project", null)
-                        .WithMany("Factors")
-                        .HasForeignKey("Factor");
+                        .HasForeignKey("ProjectDocFk")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProjectManagementCollection.Models.Project", b =>
                 {
                     b.HasOne("ProjectManagementCollection.Models.User", null)
                         .WithMany("Projects")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("Project");
                 });
 #pragma warning restore 612, 618
         }

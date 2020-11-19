@@ -1,65 +1,166 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ProjectManagementCollection.Models.Search
 @{
-    Layout = "_NavBar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style> 
- .table_header {
-    color: white;
-    background-color: black;
-    font-size: 14px;
-    font-weight: bold;
-}
-.oddRow {
-    color: black;
-    background-color: whitesmoke;
-    font-size: 14px;
-}
-.evenRow {
-    color: black;
-    background-color: gray;
-    font-size: 14px;
-}
-    </style> 
- <table class="table">
-        <thead class="table_header">
-            <tr>
-                <th></th>
-                <th> Name </th>
-                <th>Uploader </th>
-                <th>Date</th>
-                <th>Client</th>
-                <th>Location</th>
-                <th>Success</th>
-                @for (var i = 1; i < 91; i++)
-                {
-                <th>Factor @i</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (var i = 1; i < 21; i++)
-            {
-                var id = "checkbox" + i;
-                var rowType = "oddRow";
-                if(i%2 == 0)
-                    rowType = "evenRow";
-                <tr class=@rowType>
-                    <td>
-                       <input type="checkbox"  name="checkbox" id=@id />
-                    </td>
-                    <td><a asp-action="FileSelected">Dog Park construnction</a></td>
-                    <td> whompy whopersons  </td>
-                    <td>2020/01/01</td>
-                    <td>Dog Alliance</td>
-                    <td>Ottawa</td>
-                    <td>Yes</td>
-                     @for (var j = 1; j < 91; j++)
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+    <div class="search-container">
+        <div class="container navbar">
+            <form asp-controller="Home" asp-action="Search">
+                <table class="nav-table">
+                    <tr>
+                        <td>
+                            <label asp-for="Name" class="search-label"> Name </label>
+                        </td>
+                        <td colspan="2">
+                            <input type="text" asp-for="Name" size=39 />
+                        </td>
+                        <td>
+                            <label asp-for="Uploader" class="search-label">Uploader</label>
+                        </td>
+                        <td>
+                            <input type="text" asp-for="Uploader" size=39 />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="Client" class="search-label">Client</label>
+                        </td>
+                        <td colspan="2">
+                            <input type="text" asp-for="Client" size=39 />
+                        </td>
+                        <td>
+                            <label asp-for="Location" class="search-label">Location</label>
+                        </td>
+                        <td colspan="2">
+                            <input type="text" asp-for="Location" size=39 />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="search-label">Date Range</label>
+                        </td>
+                        <td>
+                            <input type="date" asp-for="DateRangeMin" />
+                        </td>
+                        <td>
+                            <input type="date" asp-for="DateRangeMax" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="Success" class="search-label">Was it a success?</label>
+                        </td>
+                        <td>
+                            <select asp-for="Success">
+                                <option>Both</option>
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="submit" value="Search" class="search-button shadow" asp-controller="Home" asp-action="Search" />
+                        </td>
+                        <td>
+                            <input type="submit" value="Export" class="basic-button shadow-sm" asp-controller="Home" asp-action="Search" disabled />
+                        </td>
+                        <td>
+                            <input type="submit" value="Stats" class="basic-button shadow-sm" asp-controller="Home" asp-action="Search" disabled />
+                        </td>
+                    </tr>
+                </table>
+                <div class="search-factors">
+                    <table align="left">
+                        <tr>
+                            <td valign="top">
+                                <input type="button" class="basic-button factor-button" value="Factors" disabled/>
+                            </td>
+                            <td class="factor-list" rowspan="4" colspan="4">
+                                <u>Factor List, added through factor button</u>
+                                Must have   Main Category - Sub Category
+                                Must have   Main Category - Sub Category
+                                Must have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div class="search-results">
+            <div class="row border-bot d-flex justify-content-center">
+                <div class="col-sm-1 border-bot ">
+                    select
+                </div>
+                |
+                <div class="col-sm-2 border-bot justify-content-center">
+                    Name
+                </div>
+                |
+                <div class="col-sm-2 border-bot justify-content-center">
+                    Location
+                </div>
+                |
+                <div class="col-sm-2 border-bot justify-content-center">
+                    Client
+                </div>
+                |
+                <div class="col-sm-2 border-bot justify-content-center">
+                    Date Completed
+                </div>
+                |
+                <div class="col-sm-2 border-bot justify-content-center">
+                    Uploaded
+                </div>
+             </div>
+                @{
+
+                    if (Model != null && Model.Projects.Count() > 0)
                     {
-                    <th>Yes</th>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+                        foreach (Project proj in Model.Projects)
+                        {
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-sm-1 border-top test">
+                                    <input type="checkbox" id="" />
+                                </div>
+                                |
+                                <div class="col-sm-2 border-top test">
+                                    <a asp-action="ViewDocument" asp-route-id="@proj.ProjectId">@proj.Name</a>
+                                </div>
+                                |
+                                <div class="col-sm-2 border-top">
+                                    @proj.Location
+                                </div>
+                                |
+                                <div class="col-sm-2 border-top">
+                                    @proj.Client
+                                </div>
+                                |
+                                <div class="col-sm-2 border-top">
+                                    @proj.DateCompleted
+                                </div>
+                                |
+                                <div class="col-sm-2 border-top">
+                                    @proj.Uploaded
+                                </div>
+                             </div>
+
+                        }
+                      }
+        }
+
+        </div>
+    </div>
+</body>
+</html>
