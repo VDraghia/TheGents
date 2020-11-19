@@ -3,7 +3,7 @@ using ProjectManagementCollection.Models;
 
 namespace ProjectManagementCollection.Data
 {
-    public class PmcAppDbContext : DbContext 
+    public class PmcAppDbContext : DbContext
     {
 
         public PmcAppDbContext(DbContextOptions<PmcAppDbContext> options) : base(options)
@@ -18,7 +18,9 @@ namespace ProjectManagementCollection.Data
         public DbSet<FactorMainCategory> FactorMainCategories { get; set; }
 
         public DbSet<Factor> Factors { get; set; }
-        
+
+        public DbSet<ProjectFactorRel> ProjectFactorRels{ get; set; }
+
         public DbSet<Document> Documents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

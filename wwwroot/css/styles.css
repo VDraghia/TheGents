@@ -1,6 +1,8 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+
+
 html {
     position: center;
     min-height: 100%;
@@ -85,6 +87,14 @@ td {
     border: 0.5px solid;
 }
 
+.search-results {
+    align-content: center;
+}
+
+.search-container {
+    overflow: scroll;
+    display: block;
+}
 
 img {
     vertical-align: middle;
@@ -102,21 +112,19 @@ body {
     max-width: 1400px;
 }
 
-.navbar-content {
-    position: relative;
+.search-results {
+    display: block;
     border-top-style: solid;
     border-top-width: thin;
     max-width: 100%;
     align-content: center;
     text-align: center;
+    overflow-x: scroll;
 }
 
-table {
-  
-}
+.view-container {
 
-.nav-page {
-   
+
 }
 
 .nav-table {
@@ -132,39 +140,7 @@ table {
 .factor-list {
     height: 100%;
     border: 1px solid;
-
 }
-
-.search-results {
-    align-content: center;
-}
-
-.login {
-   
-}
-
-.upload {
-   
-}
-
-.edit {
-    
-}
-
-.statistics {
-
-}
-
-.document-meatadata {
-
-}
-
-.export {
-
-}
-
-
-
 
 
 

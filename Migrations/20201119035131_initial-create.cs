@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectManagementCollection.Migrations
 {
-    public partial class createdb : Migration
+    public partial class initialcreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,16 +21,45 @@ namespace ProjectManagementCollection.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Factors",
+                columns: table => new
+                {
+                    FactorId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FactorMainCategoryFk = table.Column<int>(nullable: false),
+                    FactorSubCategoryFk = table.Column<int>(nullable: false),
+                    FactorDesc = table.Column<string>(maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Factors", x => x.FactorId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FactorSubCategories",
                 columns: table => new
                 {
                     FactorSubCategoryId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FactorSubCategoryDesc = table.Column<string>(maxLength: 50, nullable: false)
+                    FactorSubCategoryDesc = table.Column<string>(maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FactorSubCategories", x => x.FactorSubCategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectFactorRels",
+                columns: table => new
+                {
+                    ProjectFactorRelId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectFk = table.Column<int>(nullable: false),
+                    FactorFk = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectFactorRels", x => x.ProjectFactorRelId);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,15 +88,15 @@ namespace ProjectManagementCollection.Migrations
                     DateCompleted = table.Column<DateTime>(nullable: false),
                     Client = table.Column<string>(maxLength: 50, nullable: false),
                     Location = table.Column<string>(maxLength: 50, nullable: false),
-                    Success = table.Column<bool>(nullable: false),
-                    UserId = table.Column<int>(nullable: true)
+                    Success = table.Column<string>(nullable: false),
+                    Project = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Projects", x => x.ProjectId);
                     table.ForeignKey(
-                        name: "FK_Projects_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Projects_Users_Project",
+                        column: x => x.Project,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
@@ -81,56 +110,28 @@ namespace ProjectManagementCollection.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
                     Url = table.Column<string>(maxLength: 150, nullable: false),
-                    ProjectFk = table.Column<int>(nullable: false),
-                    Document = table.Column<int>(nullable: true)
+                    ProjectDocFk = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Documents", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_Documents_Projects_Document",
-                        column: x => x.Document,
+                        name: "FK_Documents_Projects_ProjectDocFk",
+                        column: x => x.ProjectDocFk,
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Factors",
-                columns: table => new
-                {
-                    FactorId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FactorMainCategoryFk = table.Column<int>(nullable: false),
-                    FactorSubCategoryFk = table.Column<int>(nullable: false),
-                    FactorDesc = table.Column<string>(maxLength: 100, nullable: true),
-                    Factor = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Factors", x => x.FactorId);
-                    table.ForeignKey(
-                        name: "FK_Factors_Projects_Factor",
-                        column: x => x.Factor,
-                        principalTable: "Projects",
-                        principalColumn: "ProjectId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Documents_Document",
+                name: "IX_Documents_ProjectDocFk",
                 table: "Documents",
-                column: "Document");
+                column: "ProjectDocFk");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Factors_Factor",
-                table: "Factors",
-                column: "Factor");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_UserId",
+                name: "IX_Projects_Project",
                 table: "Projects",
-                column: "UserId");
+                column: "Project");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -146,6 +147,9 @@ namespace ProjectManagementCollection.Migrations
 
             migrationBuilder.DropTable(
                 name: "FactorSubCategories");
+
+            migrationBuilder.DropTable(
+                name: "ProjectFactorRels");
 
             migrationBuilder.DropTable(
                 name: "Projects");

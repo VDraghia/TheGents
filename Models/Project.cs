@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProjectManagementCollection.Models
 {
     public class Project
-    {  
+    {
         public int ProjectId { get; set; }
 
         [Required]
@@ -16,7 +16,7 @@ namespace ProjectManagementCollection.Models
         public string Name { get; set; }
 
         [Required]
-        public DateTime Uploaded{ get; set;}
+        public DateTime Uploaded { get; set; }
 
         [Required]
         public DateTime DateCompleted { get; set; }
@@ -30,12 +30,13 @@ namespace ProjectManagementCollection.Models
         public string Location { get; set; }
 
         [Required]
-        public Boolean Success { get; set; }
+        public string Success { get; set; }
 
-        [ForeignKey("Document")]
+        [ForeignKey("ProjectDocFk")]
         public ICollection<Document> Documents { get; set; }
 
-        [ForeignKey("Factor")]
-        public ICollection<Factor> Factors { get; set; }
+        [NotMapped]
+        public Dictionary<string, string> Factors { get; set; }
+       
     }
 }

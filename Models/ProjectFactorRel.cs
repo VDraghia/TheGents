@@ -4,24 +4,20 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ProjectManagementCollection.Models
 {
-    public class Document
+    public class ProjectFactorRel
     {
-        public int DocumentId { get; set;}
+        public int ProjectFactorRelId { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
+        [ForeignKey("ProjectId")]
+        public int ProjectFk { get; set; }
 
         [Required]
-        [MaxLength(150)]
-        public string Url { get; set; }
-
-        public int ProjectDocFk { get; set; }
-
-        public Project Project { get; set; }
-
+        [ForeignKey("FactorId")]
+        public int FactorFk { get; set; }
     }
 }
