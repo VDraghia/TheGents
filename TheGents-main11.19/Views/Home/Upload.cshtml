@@ -1,0 +1,30 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    // Layout = "_NavBar";
+*@
+@model ProjectManagementCollection.Models.Login
+@{ ViewData["Title"] = "Upload"; }
+<h1>Upload</h1>
+
+<h4>@Model.Email ,Please upload your file</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Home" asp-action="Upload" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="btn btn-sm float-left">
+                    <input name="uploadFile" type="file" />
+                </div>
+            </div>
+            <div class="form-group">
+                <button name="Upload" class="btn btn-primary">Upload Now</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Search">Back to Search</a>
+</div>
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

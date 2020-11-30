@@ -1,0 +1,98 @@
+﻿@model ProjectManagementCollection.Models.Project
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+
+    <div class="view-container">
+        <div></div>
+        <form asp-controller="Home" asp-action="Search" method="get">
+            <input type="submit" value="Back"/>
+        </form>
+        <div class="container">
+            <table>
+                <tr>
+                    <td>
+                        Project Name :
+                    </td>
+                    <td>
+                        @Model.Name
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Client :
+                    </td>
+                    <td>
+                        @Model.Client
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Location :
+                    </td>
+                    <td>
+                        @Model.Location
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Date Completed :
+                    </td>
+                    <td>
+                        @Model.DateCompleted
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Success :
+                    </td>
+                    <td>
+                        @Model.Success
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        Factors
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Main Category
+                    </td>
+                    <td>
+                        Sub Category
+                    </td>
+                </tr>
+
+                @foreach (KeyValuePair<string, string> fac in Model.Factors)
+                {
+                    <tr>
+                        <td>
+                            @fac.Value
+                        </td>
+                        <td>
+                            @fac.Key
+                        </td>
+                    </tr>
+                }
+            </table>
+
+        </div>
+    </div>
+</body>
+</html>

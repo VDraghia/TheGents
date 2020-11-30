@@ -1,0 +1,90 @@
+USE project;
+
+DROP TABLE IF EXISTS document_file;
+CREATE TABLE document_file (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  file blob NOT NULL,
+  PRIMARY KEY (id)
+) ;
+
+DROP TABLE IF EXISTS permissions;
+CREATE TABLE permissions(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  permission_name varchar(30) NOT NULL,
+  PRIMARY KEY (id)
+) ;
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  email varchar(30) NOT NULL,
+  permission_id int(11) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (permission_id ) REFERENCES permissions (id) ON DELETE NO ACTION ON UPDATE CASCADE
+) ;
+
+DROP TABLE IF EXISTS factor_category;
+CREATE TABLE factor_category(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  factor_category varchar(30) NOT NULL,
+  PRIMARY KEY (id)
+) ;
+
+DROP TABLE IF EXISTS factor_subcategory;
+CREATE TABLE factor_subcategory(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  factor_subcategory varchar(30) NOT NULL,
+  PRIMARY KEY (id)
+) ;
+
+DROP TABLE IF EXISTS factors;
+CREATE TABLE factors (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  factor_category_id int(11) NOT NULL,
+  factor_subcategory_id int(11) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (factor_category_id) REFERENCES factor_category (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+  FOREIGN KEY (factor_category_id) REFERENCES factor_subcategory (id) ON DELETE NO ACTION ON UPDATE CASCADE
+) ;
+
+
+DROP TABLE IF EXISTS document_info;
+CREATE TABLE document_info(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  document_name varchar(30) NOT NULL,
+  uploader_id int(11) NOT NULL,
+  date_uploaded DATETIME,
+  client varchar(30),
+  location varchar(30),
+  success boolean,
+  PRIMARY KEY (id),
+  FOREIGN KEY (uploader_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ;
+
+
+DROP TABLE IF EXISTS document_info_file;
+CREATE TABLE document_info_file(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  document_info_id int(11) NOT NULL,
+  document_file_id int(11) NOT NULL,
+  PRIMARY KEY (id),
+ 
+  FOREIGN KEY (document_info_id) REFERENCES document_info (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+  FOREIGN KEY (document_file_id) REFERENCES document_file (id) ON DELETE NO ACTION ON UPDATE CASCADE
+) ;
+
+DROP TABLE IF EXISTS document_info_factors;
+CREATE TABLE document_info_factors(
+  id int(11) NOT NULL AUTO_INCREMENT,
+  document_info_id int(11) NOT NULL,
+  factors_id int(11) NOT NULL,
+  PRIMARY KEY (id),
+ 
+  FOREIGN KEY (document_info_id) REFERENCES document_info (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+  FOREIGN KEY (factors_id) REFERENCES factors (id) ON DELETE NO ACTION ON UPDATE CASCADE
+) ;
+
+
+
+
+

@@ -1,0 +1,9 @@
+1. create database by entering:
+DROP DATABASE IF EXISTS project;
+CREATE DATABASE project;
+
+2. create database user by entering:
+CREATE USER 'gents'@'localhost' identified by 'gents';
+
+3. grant privileges to user 'gents' using the command:
+grant all privileges on project.* to 'gents'@'localhost';

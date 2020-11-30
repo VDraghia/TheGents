@@ -1,0 +1,54 @@
+﻿@model ProjectManagementCollection.Models.Login
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Project Management  Collection  - Login</title>
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+    <main role="main" class="pb-3">
+        <div class="container">
+            <form asp-controller="Home" asp-action="Login" method="post">
+                <table>
+                    <tr>
+                        <td>
+                            <label asp-for="Email" class="login-label"> Email </label>
+                        </td>
+                        <td>
+                            <input type="text" asp-for="Email" size=20 />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="Password" class="login-label"> Password </label>
+                        </td>
+                        <td>
+                            <input type="password" asp-for="Password" size=20 />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="RememberMe" class="login-label"> Remember Me </label>
+                        </td>
+                        <td>
+                            <input type="checkbox" asp-for="RememberMe" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" asp-controller="Home" asp-action="Login" value="Login" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
