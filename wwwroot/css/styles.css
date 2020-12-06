@@ -112,6 +112,12 @@ body {
     max-width: 1400px;
 }
 
+.documentbar {
+    position: center;
+    align-content: center;
+    max-width: 1900px;
+}
+
 .search-results {
     display: block;
     border-top-style: solid;
