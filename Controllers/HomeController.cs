@@ -126,7 +126,22 @@ namespace ProjectManagementCollection.Controllers
             return View(searchModel);
         }
 
-
+        [Route("~/Home/ViewDocument")]
+        public IActionResult ViewDocument()
+        {
+            //Get the project by id
+            Project project = new Project { Name = "Project1", Uploaded = new DateTime(2020, 1, 1), DateCompleted = new DateTime(2016, 1, 1), Client = "client1", Location = "https://www.antennahouse.com/hubfs/xsl-fo-sample/pdf/basic-link-1.pdf?hsLang=en", Success = "Yes" };
+            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+            for(int i =0; i < 87; i++)
+            {
+                if(i % 3 ==0)
+                    factorDescriptions.Add( "factor" + i, "Yes");
+                else
+                    factorDescriptions.Add("factor" + i, "No");
+            }
+            project.Factors = factorDescriptions;
+            return View(project);
+        }
         [Route("~/Home/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
