@@ -1,0 +1,124 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    // Layout = "_NavBar";
+*@
+@model ProjectManagementCollection.Models.ViewModels.UserProject
+
+
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProjectDetail - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+
+<body>
+    <main role="main" class="pb-3">
+        <div class="container">
+
+            <h1>Project Detail</h1>
+            <hr />
+            <h4>@Model.User.FirstName, Please select the project to which you want to add document:</h4>
+
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div>
+                        <form asp-controller="Home" asp-action="ProjectDetailConfirm" method="post">
+                            <table>
+
+
+                                <tr>
+                                    <td>
+                                        @Html.DropDownList("PersonDropDown", (List<SelectListItem>)ViewData["Projects"])
+                                    </td>
+                                </tr>
+
+
+                            </table>
+                            <input type="submit" value="Select" />
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <br />
+            <div>
+                <a asp-action="Search">Back to Search</a>
+            </div>
+            <br />
+
+            @{var pName = ViewData["ProjectName"]; }
+
+            @if ((string)pName == "New")
+            {
+              <h4>Please input the information of your new project:</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <form asp-action="ProjectCreate">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Project.Name" class="control-label"></label>
+                                <input asp-for="Project.Name" class="form-control" />
+                                <span asp-validation-for="Project.Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Project.Uploaded" class="control-label"></label>
+                                <input asp-for="Project.Uploaded" class="form-control" />
+                                <span asp-validation-for="Project.Uploaded" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Project.DateCompleted" class="control-label"></label>
+                                <input asp-for="Project.DateCompleted" class="form-control" />
+                                <span asp-validation-for="Project.DateCompleted" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Project.Client" class="control-label"></label>
+                                <input asp-for="Project.Client" class="form-control" />
+                                <span asp-validation-for="Project.Client" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Project.Location" class="control-label"></label>
+                                <input asp-for="Project.Location" class="form-control" />
+                                <span asp-validation-for="Project.Location" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Project.Success" class="control-label"></label>
+                                <input asp-for="Project.Success" class="form-control" />
+                                <span asp-validation-for="Project.Success" class="text-danger"></span>
+                            </div>
+                            <div>
+
+                                <input type="hidden" asp-for="Project.Uploader_id" value="@Model.User.UserId" />
+
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Submit" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>}
+
+
+        </div>
+    </main>
+
+
+    @section Scripts{
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script type="text/javascript">
+            function AlertName(name) {
+
+                alert('You clicked ' + name + "!");
+
+            }</script>
+    }
+
+</body>
+</html>

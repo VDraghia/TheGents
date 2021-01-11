@@ -11,13 +11,16 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/styles.css" />
 </head>
+
 <body>
-    <div class="banner">
-        <p>
-            <a asp-action="Upload">Upload File</a>
-        </p>
-    </div>
+    
     <div class="search-container">
+
+        <div>
+            <form class="logout-button-container">
+                <input class="upload-button" type="submit" asp-controller="Home" asp-action="ProjectDetail" value="Upload File" />
+            </form>
+        </div>
         <div class="container navbar">
             <form asp-controller="Home" asp-action="Search">
                 <table class="nav-table">
@@ -130,35 +133,35 @@
                 </div>
             </div>
             @{ if (Model != null && Model.Projects.Count() > 0)
-                            {
-                                foreach (Project proj in Model.Projects)
-                                {
-                <div class="row d-flex justify-content-center">
-                    <div class="col-sm-1 border-top test">
-                        <input type="checkbox" id="" />
-                    </div>
-                    |
-                    <div class="col-sm-2 border-top test">
-                        <a asp-action="ViewDocument" asp-route-id="@proj.ProjectId">@proj.Name</a>
-                    </div>
-                    |
-                    <div class="col-sm-2 border-top">
-                        @proj.Location
-                    </div>
-                    |
-                    <div class="col-sm-2 border-top">
-                        @proj.Client
-                    </div>
-                    |
-                    <div class="col-sm-2 border-top">
-                        @proj.DateCompleted
-                    </div>
-                    |
-                    <div class="col-sm-2 border-top">
-                        @proj.Uploaded
-                    </div>
-                </div> }
-                            } }
+                {
+                    foreach (Project proj in Model.Projects)
+                    {
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-1 border-top test">
+            <input type="checkbox" id="" />
+        </div>
+        |
+        <div class="col-sm-2 border-top test">
+            <a asp-action="ViewDocument" asp-route-id="@proj.ProjectId">@proj.Name</a>
+        </div>
+        |
+        <div class="col-sm-2 border-top">
+            @proj.Location
+        </div>
+        |
+        <div class="col-sm-2 border-top">
+            @proj.Client
+        </div>
+        |
+        <div class="col-sm-2 border-top">
+            @proj.DateCompleted
+        </div>
+        |
+        <div class="col-sm-2 border-top">
+            @proj.Uploaded
+        </div>
+    </div> }
+} }
 
         </div>
     </div>

@@ -43,6 +43,16 @@ td {
     width: 70px;
 }
 
+.upload-button {
+    background-color: #ff8080;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    float: right;
+    height: 35px;
+    width: 140px;
+}
+
 .logout-button-container {
     float: right;
 }

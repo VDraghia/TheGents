@@ -10,8 +10,8 @@ using ProjectManagementCollection.Data;
 namespace ProjectManagementCollection.Migrations
 {
     [DbContext(typeof(PmcAppDbContext))]
-    [Migration("20201119143834_initialcreate")]
-    partial class initialcreate
+    [Migration("20210111044440_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -129,9 +129,6 @@ namespace ProjectManagementCollection.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<int?>("Project")
-                        .HasColumnType("int");
-
                     b.Property<string>("Success")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -139,9 +136,12 @@ namespace ProjectManagementCollection.Migrations
                     b.Property<DateTime>("Uploaded")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Uploader_id")
+                        .HasColumnType("int");
+
                     b.HasKey("ProjectId");
 
-                    b.HasIndex("Project");
+                    b.HasIndex("Uploader_id");
 
                     b.ToTable("Projects");
                 });
@@ -202,9 +202,11 @@ namespace ProjectManagementCollection.Migrations
 
             modelBuilder.Entity("ProjectManagementCollection.Models.Project", b =>
                 {
-                    b.HasOne("ProjectManagementCollection.Models.User", null)
+                    b.HasOne("ProjectManagementCollection.Models.User", "User")
                         .WithMany("Projects")
-                        .HasForeignKey("Project");
+                        .HasForeignKey("Uploader_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

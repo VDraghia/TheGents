@@ -20,8 +20,8 @@
         <input class="logout-button" type="submit" asp-controller="Home" asp-action="Login" value="Logout" />
     </form>
 </div>
-
+@RenderSection("Scripts", required: false)
 <body>
-            @RenderBody()
+    @RenderBody()
 </body>
 </html>

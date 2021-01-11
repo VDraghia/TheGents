@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectManagementCollection.Migrations
 {
-    public partial class initialcreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -89,17 +89,17 @@ namespace ProjectManagementCollection.Migrations
                     Client = table.Column<string>(maxLength: 50, nullable: false),
                     Location = table.Column<string>(maxLength: 50, nullable: false),
                     Success = table.Column<string>(nullable: false),
-                    Project = table.Column<int>(nullable: true)
+                    Uploader_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Projects", x => x.ProjectId);
                     table.ForeignKey(
-                        name: "FK_Projects_Users_Project",
-                        column: x => x.Project,
+                        name: "FK_Projects_Users_Uploader_id",
+                        column: x => x.Uploader_id,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,9 +129,9 @@ namespace ProjectManagementCollection.Migrations
                 column: "ProjectDocFk");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projects_Project",
+                name: "IX_Projects_Uploader_id",
                 table: "Projects",
-                column: "Project");
+                column: "Uploader_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
