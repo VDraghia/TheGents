@@ -341,12 +341,20 @@ namespace ProjectManagementCollection.Controllers
         {
             // the BindProperty is a int list collected the checked values from view selected by the user
             var aa = factorCate.AreChecked;
-            foreach (int a in aa)
+            if (aa != null)
             {
-                _context.ProjectFactorRels.Add(new ProjectFactorRel { FactorFk = a, ProjectFk = projId });
-                _context.SaveChanges();
-
+                foreach (int a in aa)
+                {
+                    var row = _context.ProjectFactorRels.FirstOrDefault(p => p.FactorFk == a && p.ProjectFk == projId);
+                    if (row == null)
+                    {
+                        _context.ProjectFactorRels.Add(new ProjectFactorRel { FactorFk = a, ProjectFk = projId });
+                        _context.SaveChanges();
+                    }
+                    
+                }
             }
+            
             return RedirectToAction("Search");
 
         }
