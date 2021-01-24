@@ -271,9 +271,9 @@ namespace ProjectManagementCollection.Controllers
 
         //by Tim
 
-        string AWS_accessKey = "AKIA5ZLP57WLNKVMPF2P";
-        string AWS_secretKey = "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";
-        string AWS_bucketName = "gentsproject2";
+        string AWS_accessKey = "**";
+        string AWS_secretKey = "**";
+        string AWS_bucketName = "**";
         string AWS_defaultFolder = "MyTest_Folder";
 
         [HttpPost]
