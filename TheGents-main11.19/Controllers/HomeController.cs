@@ -14,6 +14,11 @@ using System.IO;
 using Azure;
 using ProjectManagementCollection.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Amazon.S3;
+using Amazon;
+using Amazon.S3.Model;
+using Amazon.S3.Transfer;
+using Amazon.Runtime;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -21,6 +26,7 @@ namespace ProjectManagementCollection.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly PmcAppDbContext _context;
+
 
         public HomeController(PmcAppDbContext context, ILogger<HomeController> logger)
         {
@@ -263,54 +269,72 @@ namespace ProjectManagementCollection.Controllers
 
 
 
-        //2020-11-20 by Tim
+        //by Tim
+
+        string AWS_accessKey = "AKIA5ZLP57WLNKVMPF2P";
+        string AWS_secretKey = "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";
+        string AWS_bucketName = "gentsproject2";
+        string AWS_defaultFolder = "MyTest_Folder";
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile uploadFile, Project project)
         {
+
+            ViewBag.result = await UploadFileToAWSAsync(uploadFile, project);
+            return RedirectToAction("Factors");
+        }
+
+        protected async Task<string> UploadFileToAWSAsync(IFormFile uploadFile, Project project)
+        {
             projId = project.ProjectId;
+            var subFolder = project.Name;
+            var result = "";
             try
             {
+                var s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
+                var bucketName = AWS_bucketName;
+                var keyName = AWS_defaultFolder;
+                if (!string.IsNullOrEmpty(subFolder))
+                    keyName = keyName + "/" + subFolder.Trim();
+                keyName = keyName + "/" + uploadFile.FileName;
 
-                var newFolder = @"C:\Users\gdyjm\Desktop\2020Fall\ENG4001-070\git\TheGents\TheGents-main11.19\UploadingFiles\" + project.Name;
-                if (!System.IO.Directory.Exists(newFolder))
+                var fs = uploadFile.OpenReadStream();
+                var request = new Amazon.S3.Model.PutObjectRequest
                 {
-                    System.IO.Directory.CreateDirectory(newFolder);
-                }
-                var uploadFilePath = newFolder + "\\" + uploadFile.FileName.Substring(uploadFile.FileName.LastIndexOf("\\") + 1);
+                    BucketName = bucketName,
+                    Key = keyName,
+                    InputStream = fs,
+                    ContentType = uploadFile.ContentType,
+                    CannedACL = S3CannedACL.PublicRead
+                };
+                await s3Client.PutObjectAsync(request);
 
-                if (uploadFile.Length > 0)
-                {
-                    using (var stream = new FileStream(uploadFilePath, FileMode.Create))
-                    {
-                        await uploadFile.CopyToAsync(stream);
-                    }
-                }
-
+                result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
 
                 var file = new Document()
                 {
                     Name = uploadFile.FileName + _login.Password,
-                    Url = uploadFilePath,
+                    Url = uploadFile.FileName,
                     ProjectDocFk = projId
                 };
 
                 _context.Documents.Add(file);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
-            catch (RequestFailedException)
+            catch (Exception ex)
             {
-                View("Error");
+                result = ex.Message;
             }
-            return RedirectToAction("Factors");
-
+            return result;
         }
+
+
 
         //by tim
         public async Task<IActionResult> Factors()
         {
             ViewData["ProjId"] = projId;
-
+            ViewBag.Message = "File Uploaded Successfully!!";
             var viewModel = new FactorCate();
             viewModel.FactorSubCategories = await _context.FactorSubCategories.ToListAsync();
 
@@ -351,10 +375,10 @@ namespace ProjectManagementCollection.Controllers
                         _context.ProjectFactorRels.Add(new ProjectFactorRel { FactorFk = a, ProjectFk = projId });
                         _context.SaveChanges();
                     }
-                    
+
                 }
             }
-            
+
             return RedirectToAction("Search");
 
         }
