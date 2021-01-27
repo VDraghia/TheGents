@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using System.Linq;
+
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Azure;
@@ -20,12 +21,16 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Amazon.Runtime;
 
+
 namespace ProjectManagementCollection.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly PmcAppDbContext _context;
+
+
+
 
 
         public HomeController(PmcAppDbContext context, ILogger<HomeController> logger)
@@ -51,6 +56,7 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/")]
         [Route("~/Home")]
         [Route("~/Home/Login")]
+
         public IActionResult Login(Boolean logout, Login login)
         {
             _login = login;
@@ -75,7 +81,7 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Home/Search")]
         public IActionResult Search(Search searchModel)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return View();
             }
@@ -99,8 +105,7 @@ namespace ProjectManagementCollection.Controllers
                 query += "(Success = @Success OR Success = @Success2) ";
                 parameters.Add(new SqlParameter("@Success", "Yes"));
                 parameters.Add(new SqlParameter("@Success2", "No"));
-            }
-            else
+            } else
             {
                 query += "Success = @Success ";
                 parameters.Add(new SqlParameter("@Success", searchModel.Success));
@@ -163,7 +168,8 @@ namespace ProjectManagementCollection.Controllers
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
 
             //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
+
+            foreach(Factor factor in factors)
             {
                 FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
                 FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
@@ -176,7 +182,6 @@ namespace ProjectManagementCollection.Controllers
 
             return View(project);
         }
-
 
         //2020-11-20 by Tim
 
@@ -382,7 +387,6 @@ namespace ProjectManagementCollection.Controllers
             return RedirectToAction("Search");
 
         }
-
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
