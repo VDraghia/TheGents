@@ -1,4 +1,4 @@
-﻿@model ProjectManagementCollection.Models.Project
+@model ProjectManagementCollection.Models.Project
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -12,100 +12,87 @@
     <link rel="stylesheet" href="~/css/styles.css" />
 </head>
 <body>
-    <div class="container navbar" style="background:rgba(8, 115, 217, 0.91);");>
-        <form class="logout-button-container">
-            <input class="home-button" type="button" asp-controller="Home" asp-action="Home" value="Home" />
-            <input type="text" value="http://" id="http-address" size=150 />
-            <input type="submit" value="Enter" />
+
+    <div class="view-container">
+        <div></div>
+        <form asp-controller="Home" asp-action="Search" method="get">
+            <input type="submit" value="Back"/>
         </form>
-    </div>
-    <div  style="background:rgb(122, 243, 113);">
-        <form>
-        <table>
-            <tr>
-            <td>
-                <input type="button" value="Back" size=30/>
-            </td>
-            <td>
-                <table>
+        <div class="container">
+            <table>
                 <tr>
-                    <td> Name: <input type ="text" id="name" size=40 value="@Model.Name"/></td>
-                </tr>
-                    <tr>
-                    <td> Uploader: <input type ="text" id="uploader" size=40 value="@Model.Uploaded"/></td>
-                </tr>
-                    <tr>
-                    <td> Date: <input type ="text" id="date" size=40 value="@Model.DateCompleted"/></td>
-                </tr>
-                </table>
-            </td>
-                <td>
-                <table>
-                <tr>
-                    <td> Client: <input type ="text" id="Client" size=40 value="@Model.Client"/></td>
-                </tr>
-                    <tr>
-                    <td> Location: <input type ="text" id="location" size=40 value="@Model.Location"/></td>
-                </tr>
-                    <tr>
-                    <td> Success: 
-                        @if(@Model.Success == "Yes"){
-                            <input type ="checkbox" id="success" checked/>
-                        }
-                        else{
-                            <input type ="checkbox" id="success"/>
-                        }
+                    <td>
+                        Project Name :
+                    </td>
+                    <td>
+                        @Model.Name
                     </td>
                 </tr>
-                </table>
-            </td>
-                <td>
-                     <input type="button" value="Export To CSV" size=30/>
-                </td>
-                 <td>
-                     <input type="submit" value="Update" size=30/>
-                </td>
-            </tr>
-        </table>
-        </form>
-    </div>
-    <div class="view-container">
-        <div class="container">
-            <div style="position: absolute;left:5%;width:20%;background:rgba(56, 132, 237, 0.22);">
-                <table>
+                <tr>
+                    <td>
+                        Client :
+                    </td>
+                    <td>
+                        @Model.Client
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Location :
+                    </td>
+                    <td>
+                        @Model.Location
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Date Completed :
+                    </td>
+                    <td>
+                        @Model.DateCompleted
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Success :
+                    </td>
+                    <td>
+                        @Model.Success
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        Factors
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Main Category
+                    </td>
+                    <td>
+                        Sub Category
+                    </td>
+                </tr>
+
+                @foreach (KeyValuePair<string, string> fac in Model.Factors)
+                {
                     <tr>
-                        <td colspan="2" align="center">
-                            Factors
+                        <td>
+                            @fac.Value
+                        </td>
+                        <td>
+                            @fac.Key
                         </td>
                     </tr>
-                     @{var i = 0;}
-                    @foreach (KeyValuePair<string, string> fac in Model.Factors)
-                    {
-                        if(fac.Value == "Yes"){
-                            <td>
-                                <input type="checkbox" disabled checked/>  @fac.Key
-                            </td>
-                        }
-                       else{
-                            <td>
-                                <input type="checkbox"  disabled/>  @fac.Key
-                            </td>
-                        }
-                        i+= 1;
-                        if(i%2==0){
-                            <tr/>
-                        }
-                    }
-                </table>
-            </div>
-            <div id="tab_1" style="position: absolute;left:25%;height:100%;margin-left:10px;">
-                <iframe src= "@Model.Location"
-                       style="width:1300px;height:100%;"
-                >
-                </iframe>
-            </div>
+                }
+            </table>
+
         </div>
     </div>
-
 </body>
 </html>

@@ -1,4 +1,4 @@
-﻿@*
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -20,7 +20,8 @@
         <input class="logout-button" type="submit" asp-controller="Home" asp-action="Login" value="Logout" />
     </form>
 </div>
+@RenderSection("Scripts", required: false)
 <body>
-            @RenderBody()
+    @RenderBody()
 </body>
 </html>

@@ -1,0 +1,63 @@
+﻿
+@model ProjectManagementCollection.Models.ViewModels.FactorCate
+
+
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Factors - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+
+<body>
+    <main role="main" class="pb-3">
+        <div class="container">
+            <br />
+            <h4> <span style="color:#0094ff">@ViewBag.Message</span></h4>
+            
+            <h1>Factors Check</h1>
+
+            <h4>Please select the factors your poject has</h4>
+            <hr />
+            <div class="row">
+                <div class="col-md-12">
+                    <form asp-controller="Home" asp-action="FactorsConfirm" method="post">
+
+                        <table id="checkBundle">
+                            @foreach (KeyValuePair<string, int> item in Model.Factors)
+                            {
+                <tr>
+                    <td>
+                        <lable>@item.Key &nbsp;<input name="AreChecked" type="checkbox" value=@item.Value /></lable>
+
+                    </td>
+                </tr>}
+
+                        </table>
+
+                        <div class="form-group">
+                            <button name="Submit" class="btn btn-primary">Submit Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <a asp-action="Search">Back to Search</a>
+            </div>
+
+
+
+        </div>
+    </main>
+
+    @section Scripts{
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+
+</body>
+</html>

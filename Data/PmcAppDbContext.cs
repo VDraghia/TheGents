@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementCollection.Models;
 
 namespace ProjectManagementCollection.Data
@@ -28,6 +28,9 @@ namespace ProjectManagementCollection.Data
             modelBuilder.Entity<FactorSubCategory>()
                .Property(c => c.FactorSubCategoryId).ValueGeneratedOnAdd();
             base.OnModelCreating(modelBuilder);
+
+            //Mai 2010-11-20
+           // modelBuilder.Entity<Document>().ToTable("Documents");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementCollection.Models;
 using System;
 using System.Collections.Generic;
@@ -40,9 +40,9 @@ namespace ProjectManagementCollection.Data
             {
                 var projects = new Project[]
                 {
-                    new Project {Name="Project1", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success="Yes"},
-                    new Project {Name="Project2", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success="No"},
-                    new Project {Name="Project3", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success="Yes"},
+                    new Project {Name="Project1", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success="Yes", Uploader_id=1},
+                    new Project {Name="Project2", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success="No", Uploader_id=1 },
+                    new Project {Name="Project3", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success="Yes", Uploader_id=2},
                 };
 
                 foreach (Project project in projects)
