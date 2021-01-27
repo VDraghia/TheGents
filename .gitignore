@@ -5,3 +5,4 @@ appsettings.json
 *.v2
 .vs/ProjectManagementCollection/config/applicationhost.config
 .vs/ProjectManagementCollection/v16/.suo
+Migrations
