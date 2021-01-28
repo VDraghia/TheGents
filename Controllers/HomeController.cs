@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -9,18 +9,11 @@ using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using System.Linq;
-
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Azure;
 using ProjectManagementCollection.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Amazon.S3;
-using Amazon;
-using Amazon.S3.Model;
-using Amazon.S3.Transfer;
-using Amazon.Runtime;
-
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -28,10 +21,6 @@ namespace ProjectManagementCollection.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly PmcAppDbContext _context;
-
-
-
-
 
         public HomeController(PmcAppDbContext context, ILogger<HomeController> logger)
         {
@@ -56,7 +45,6 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/")]
         [Route("~/Home")]
         [Route("~/Home/Login")]
-
         public IActionResult Login(Boolean logout, Login login)
         {
             _login = login;
@@ -81,7 +69,7 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Home/Search")]
         public IActionResult Search(Search searchModel)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
@@ -105,7 +93,8 @@ namespace ProjectManagementCollection.Controllers
                 query += "(Success = @Success OR Success = @Success2) ";
                 parameters.Add(new SqlParameter("@Success", "Yes"));
                 parameters.Add(new SqlParameter("@Success2", "No"));
-            } else
+            }
+            else
             {
                 query += "Success = @Success ";
                 parameters.Add(new SqlParameter("@Success", searchModel.Success));
@@ -168,8 +157,7 @@ namespace ProjectManagementCollection.Controllers
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
 
             //Get Main and Sub Categories for description
-
-            foreach(Factor factor in factors)
+            foreach (Factor factor in factors)
             {
                 FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
                 FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
@@ -177,11 +165,20 @@ namespace ProjectManagementCollection.Controllers
                 factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
 
             }
+            //fake factors 
+            string factorStr = "1. Scope Statement (description)\n2. Work Breakdown Structure\n3. Definition of Scope\n4. Logging Requirement Activities\n5. Requirements Change Request process\n6. Requirement traceability matrix\n7. Milestone list (criteria and sequencing)\n8. Activity sequencing\n9. Schedule baseline\n10, Basis of estimates (fixed/variable)\n11. Budget breakdown\n12. Cost baseline\n13. Plan Quality Control\n14. Plan Quality Assurance\n15. Establish quality metrics (definition)\n16. Resource Breakdown Structure\n17. Resource tracking\n18. Resource Calendars (availability)\n19. Resource Acquisition Plan\n20, Stakeholder communication requirement\n21.Establish communication methods\n22. Communication schedule\n23. Risk register (process)\n24. Risk owner\n25. Risk mitigation plan\n26. Contracting terms and conditions\n27. Deliverables list\n28. Develop a statement of work\n29. Stakeholder register (process)\n30. Stakeholder communication plan\n31. Stakeholder power models\n32. Stakeholder categorization \n33. Standardized change process\n34. Change log (process)\n35. Impact assessments\n36. Requirement change requests\n37. Standardized configuration controls\n38. Project Scope Statement\n39. Work Breakdown Structure\n40. Scope change log\n41. Gantt Chart\n42. Milestone Chart\n43. Resource allocation\n44. Activity Cost Estimates\n45. Resource Cost Estimates\n46. Work Package Estimates\n47. Scope, Cost, Schedule Baselines\n48. Percent Complete Analysis\n49. Resource Performance Reports\n50. Life cycle description\n51. Framework for Project Lifecycle\n52. Hybrid \n53. Waterfall\n54. Agile\n55. Activity attributes\n56. Activity list\n57. Assumption log\n58. Basis of estimates (detailed including assumptions & constraints)\n59. Change log (process & data)\n60. Cost estimates\n61. Cost forecasts\n62. Duration estimates\n63. Issue log\n64. Lessons learned register\n65. Milestone list (with dates)\n66. Physical resource assignments\n67. Project calendars\n68. Project communication plan\n69. Project schedule\n70. Project schedule network diagram\n71. Project scope statement (details)\n72. Project team assignments\n73. Quality control measurements\n74. Quality metrics (collection and analysis process)\n75. Quality report\n76. Requirements documentation\n77. Requirements traceability matrix\n78. Resource breakdown structure\n79. Resource calendars (schedule, i.e., assignments)\n80. Resource requirements\n81. Risk register (format and data)\n82. Risk report\n83. Schedule data\n84. Schedule forecasts\n85. Stakeholder register (template and data)\n86. Team charter\n87. Test and evaluation documents";
+            string[] factorArray = factorStr.Split("\n");
+            foreach(string s in factorArray)
+            {
+                factorDescriptions.Add(s, "   Yes   ");
+            }
+            //fake factors 
 
             project.Factors = factorDescriptions;
 
             return View(project);
         }
+
 
         //2020-11-20 by Tim
 
@@ -274,66 +271,49 @@ namespace ProjectManagementCollection.Controllers
 
 
 
-        //by Tim
-
-        string AWS_accessKey = "**";
-        string AWS_secretKey = "**";
-        string AWS_bucketName = "**";
-        string AWS_defaultFolder = "MyTest_Folder";
-
+        //2020-11-20 by Tim
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile uploadFile, Project project)
         {
-
-            ViewBag.result = await UploadFileToAWSAsync(uploadFile, project);
-            return RedirectToAction("Factors");
-        }
-
-        protected async Task<string> UploadFileToAWSAsync(IFormFile uploadFile, Project project)
-        {
             projId = project.ProjectId;
-            var subFolder = project.Name;
-            var result = "";
             try
             {
-                var s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
-                var bucketName = AWS_bucketName;
-                var keyName = AWS_defaultFolder;
-                if (!string.IsNullOrEmpty(subFolder))
-                    keyName = keyName + "/" + subFolder.Trim();
-                keyName = keyName + "/" + uploadFile.FileName;
 
-                var fs = uploadFile.OpenReadStream();
-                var request = new Amazon.S3.Model.PutObjectRequest
+                var newFolder = @"~\pdf\" + project.Name + "_" + _login.Email;
+                if (!System.IO.Directory.Exists(newFolder))
                 {
-                    BucketName = bucketName,
-                    Key = keyName,
-                    InputStream = fs,
-                    ContentType = uploadFile.ContentType,
-                    CannedACL = S3CannedACL.PublicRead
-                };
-                await s3Client.PutObjectAsync(request);
+                    System.IO.Directory.CreateDirectory(newFolder);
+                }
+                // after the newFlolder created or if the newFolder is already existed,then
+                var uploadFilePath = newFolder + "\\" + uploadFile.FileName.Substring(uploadFile.FileName.LastIndexOf("\\") + 1);
 
-                result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
+                if (uploadFile.Length > 0)
+                {
+                    using (var stream = new FileStream(uploadFilePath, FileMode.Create))
+                    {
+                        await uploadFile.CopyToAsync(stream);
+                    }
+                }
+
 
                 var file = new Document()
                 {
-                    Name = uploadFile.FileName + _login.Password,
-                    Url = uploadFile.FileName,
+                    Name = uploadFile.FileName,
+                    Url = uploadFilePath,
                     ProjectDocFk = projId
                 };
 
                 _context.Documents.Add(file);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (RequestFailedException)
             {
-                result = ex.Message;
+                View("Error");
             }
-            return result;
+            return RedirectToAction("Factors");
+
         }
-
-
 
         //by tim
         public async Task<IActionResult> Factors()
@@ -387,6 +367,7 @@ namespace ProjectManagementCollection.Controllers
             return RedirectToAction("Search");
 
         }
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

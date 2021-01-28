@@ -1,4 +1,4 @@
-@model ProjectManagementCollection.Models.Project
+﻿@model ProjectManagementCollection.Models.Project
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -19,6 +19,7 @@
             <input type="submit" value="Back"/>
         </form>
         <div class="container">
+            <div style="position: absolute;left:5%;width:20%;background:rgba(56, 132, 237, 0.22);">
             <table>
                 <tr>
                     <td>
@@ -83,15 +84,21 @@
                 {
                     <tr>
                         <td>
-                            @fac.Value
+                            @fac.Key
                         </td>
                         <td>
-                            @fac.Key
+                            @fac.Value
                         </td>
                     </tr>
                 }
             </table>
-
+            </div>
+            <div id="tab_1" style="position: absolute;left:25%;height:100%;margin-left:10px;">
+                <iframe src= "@Model.Location"
+                       style="width:1300px;height:100%;"
+                >
+                </iframe>
+            </div>
         </div>
     </div>
 </body>
