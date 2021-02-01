@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using System.Linq;
-
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Azure;
@@ -20,7 +19,7 @@ using Amazon;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Amazon.Runtime;
-
+using Microsoft.Extensions.Configuration;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -28,9 +27,6 @@ namespace ProjectManagementCollection.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly PmcAppDbContext _context;
-
-
-
 
 
         public HomeController(PmcAppDbContext context, ILogger<HomeController> logger)
@@ -56,7 +52,6 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/")]
         [Route("~/Home")]
         [Route("~/Home/Login")]
-
         public IActionResult Login(Boolean logout, Login login)
         {
             _login = login;
@@ -81,7 +76,7 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Home/Search")]
         public IActionResult Search(Search searchModel)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
@@ -105,7 +100,8 @@ namespace ProjectManagementCollection.Controllers
                 query += "(Success = @Success OR Success = @Success2) ";
                 parameters.Add(new SqlParameter("@Success", "Yes"));
                 parameters.Add(new SqlParameter("@Success2", "No"));
-            } else
+            }
+            else
             {
                 query += "Success = @Success ";
                 parameters.Add(new SqlParameter("@Success", searchModel.Success));
@@ -168,8 +164,7 @@ namespace ProjectManagementCollection.Controllers
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
 
             //Get Main and Sub Categories for description
-
-            foreach(Factor factor in factors)
+            foreach (Factor factor in factors)
             {
                 FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
                 FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
@@ -182,6 +177,7 @@ namespace ProjectManagementCollection.Controllers
 
             return View(project);
         }
+
 
         //2020-11-20 by Tim
 
@@ -275,21 +271,20 @@ namespace ProjectManagementCollection.Controllers
 
 
         //by Tim
-
-        string AWS_accessKey = "**";
-        string AWS_secretKey = "**";
-        string AWS_bucketName = "**";
+        string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
+        string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
+        string AWS_bucketName = "gentsproject2";
         string AWS_defaultFolder = "MyTest_Folder";
 
         [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile uploadFile, Project project)
+        public async Task<IActionResult> Upload(List<IFormFile> uploadFile, Project project)
         {
 
             ViewBag.result = await UploadFileToAWSAsync(uploadFile, project);
             return RedirectToAction("Factors");
         }
 
-        protected async Task<string> UploadFileToAWSAsync(IFormFile uploadFile, Project project)
+        protected async Task<string> UploadFileToAWSAsync(List<IFormFile> uploadFile, Project project)
         {
             projId = project.ProjectId;
             var subFolder = project.Name;
@@ -301,30 +296,31 @@ namespace ProjectManagementCollection.Controllers
                 var keyName = AWS_defaultFolder;
                 if (!string.IsNullOrEmpty(subFolder))
                     keyName = keyName + "/" + subFolder.Trim();
-                keyName = keyName + "/" + uploadFile.FileName;
-
-                var fs = uploadFile.OpenReadStream();
-                var request = new Amazon.S3.Model.PutObjectRequest
+                foreach (var uFile in uploadFile)
                 {
-                    BucketName = bucketName,
-                    Key = keyName,
-                    InputStream = fs,
-                    ContentType = uploadFile.ContentType,
-                    CannedACL = S3CannedACL.PublicRead
-                };
-                await s3Client.PutObjectAsync(request);
+                    var fs = uFile.OpenReadStream();
+                    var request = new Amazon.S3.Model.PutObjectRequest
+                    {
+                        BucketName = bucketName,
+                        Key = (keyName + "/" + uFile.FileName),
+                        InputStream = fs,
+                        ContentType = uFile.ContentType,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+                    await s3Client.PutObjectAsync(request);
 
-                result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
+                    result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
 
-                var file = new Document()
-                {
-                    Name = uploadFile.FileName + _login.Password,
-                    Url = uploadFile.FileName,
-                    ProjectDocFk = projId
-                };
+                    var file = new Document()
+                    {
+                        Name = uFile.FileName,
+                        Url = keyName,
+                        ProjectDocFk = projId
+                    };
 
-                _context.Documents.Add(file);
-                await _context.SaveChangesAsync();
+                    _context.Documents.Add(file);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -387,6 +383,7 @@ namespace ProjectManagementCollection.Controllers
             return RedirectToAction("Search");
 
         }
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

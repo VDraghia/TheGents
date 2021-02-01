@@ -1,53 +1,84 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    // Layout = "_NavBar";
+*@
+@model ProjectManagementCollection.Models.ViewModels.UserProject
 
-namespace ProjectManagementCollection.Models
-{
-    public class Project
-    {
-        public int ProjectId { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
 
-        [Required]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Uploaded Date")]
-        public DateTime Uploaded { get; set; }
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
 
-        [Required]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Completed Date")]
-        public DateTime DateCompleted { get; set; }
+<body>
+    <main role="main" class="pb-3">
+        <div class="container">
 
-        [Required]
-        [MaxLength(50)]
-        public string Client { get; set; }
+            <h1>Upload</h1>
+            <hr />
+            <h4>Please upload your file</h4>
+            <br />
 
-        [Required]
-        [MaxLength(50)]
-        public string Location { get; set; }
 
-        [Required]
-        public string Success { get; set; }
+            <div class="row">
+                <div class="col-md-6">
+                    <form asp-controller="Home" asp-action="Upload" enctype="multipart/form-data">
 
-        //tim
-        public int Uploader_id { get; set; }
+                        <div>
+                            <table>
 
-        public User User { get; set; }
 
-        [ForeignKey("ProjectDocFk")]
-        public ICollection<Document> Documents { get; set; }
+                                <tr>
 
-        [NotMapped]
-        public Dictionary<string, string> Factors { get; set; }
-       
+                                    <td>
+                                        <input type="hidden" asp-for="Project.Name" value=@ViewData["ProjectName"] />
+                                    </td>
+                                    <td>
+                                        <input type="hidden" asp-for="Project.ProjectId" value=@ViewData["ProjectId"] />
+                                    </td>
+                                </tr>
+
+
+                            </table>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="btn btn-sm float-left">
+                                <input name="uploadFile" multiple="multiple" type="file" />
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <p><h5 style="color:#0094ff">You can upload multiple files by holding CTRL key and clicking your selected files in a folder</h5></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button name="Upload" class="btn btn-primary">Upload Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br />
+            <div>
+                <a asp-action="Search">Back to Search</a>
+            </div>
+        </div>
+    </main>
+
+
+
+
+
+    @section Scripts{
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
     }
-}
+
+</body>
+</html>
