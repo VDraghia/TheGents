@@ -19,6 +19,7 @@ using Amazon;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Amazon.Runtime;
+using Microsoft.Extensions.Configuration;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -270,21 +271,20 @@ namespace ProjectManagementCollection.Controllers
 
 
         //by Tim
-
-        string AWS_accessKey = "**";
-        string AWS_secretKey = "**";
-        string AWS_bucketName = "**";
+        string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
+        string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
+        string AWS_bucketName = "gentsproject2";
         string AWS_defaultFolder = "MyTest_Folder";
 
         [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile uploadFile, Project project)
+        public async Task<IActionResult> Upload(List<IFormFile> uploadFile, Project project)
         {
 
             ViewBag.result = await UploadFileToAWSAsync(uploadFile, project);
             return RedirectToAction("Factors");
         }
 
-        protected async Task<string> UploadFileToAWSAsync(IFormFile uploadFile, Project project)
+        protected async Task<string> UploadFileToAWSAsync(List<IFormFile> uploadFile, Project project)
         {
             projId = project.ProjectId;
             var subFolder = project.Name;
@@ -296,30 +296,31 @@ namespace ProjectManagementCollection.Controllers
                 var keyName = AWS_defaultFolder;
                 if (!string.IsNullOrEmpty(subFolder))
                     keyName = keyName + "/" + subFolder.Trim();
-                keyName = keyName + "/" + uploadFile.FileName;
-
-                var fs = uploadFile.OpenReadStream();
-                var request = new Amazon.S3.Model.PutObjectRequest
+                foreach (var uFile in uploadFile)
                 {
-                    BucketName = bucketName,
-                    Key = keyName,
-                    InputStream = fs,
-                    ContentType = uploadFile.ContentType,
-                    CannedACL = S3CannedACL.PublicRead
-                };
-                await s3Client.PutObjectAsync(request);
+                    var fs = uFile.OpenReadStream();
+                    var request = new Amazon.S3.Model.PutObjectRequest
+                    {
+                        BucketName = bucketName,
+                        Key = (keyName + "/" + uFile.FileName),
+                        InputStream = fs,
+                        ContentType = uFile.ContentType,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+                    await s3Client.PutObjectAsync(request);
 
-                result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
+                    result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
 
-                var file = new Document()
-                {
-                    Name = uploadFile.FileName + _login.Password,
-                    Url = uploadFile.FileName,
-                    ProjectDocFk = projId
-                };
+                    var file = new Document()
+                    {
+                        Name = uFile.FileName,
+                        Url = keyName,
+                        ProjectDocFk = projId
+                    };
 
-                _context.Documents.Add(file);
-                await _context.SaveChangesAsync();
+                    _context.Documents.Add(file);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
