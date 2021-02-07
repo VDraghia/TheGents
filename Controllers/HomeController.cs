@@ -144,7 +144,7 @@ namespace ProjectManagementCollection.Controllers
         }
 
 
-        [Route("~/Home/ViewDocument/{id}")]
+         [Route("~/Home/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
             //Get the project by id
@@ -172,11 +172,38 @@ namespace ProjectManagementCollection.Controllers
                 factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
 
             }
+            //fake factors 
+            string factorStr = "Scope Management Plan: Scope Statement, Work Breakdown Structure, Definition of Scope;Requirements Management Plan: Logging Requirement Activities, Requirements Change Requests,Developing a Requirements Traceability Matrix;Schedule Management Plan: Milestones List, Activity Sequencing,Schedule Baseline";
+            string[] factorArray = factorStr.Split(";");
+            foreach(string s in factorArray)
+            {
+                string[] sa2 = s.Split(":");
+                string[] sa3 = sa2[1].Split(",");
+                foreach(string s4 in sa3)
+                {
+                    factorDescriptions.Add(s4, sa2[0]);
+                }
+            }
+            //fake factors 
+            var dicSort = from objDic in factorDescriptions orderby objDic.Value descending select objDic;
+            project.Factors = dicSort.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            project.Factors = factorDescriptions;
+            foreach(var kp in project.Factors)
+            {
+                Console.WriteLine("{0}:{1}", kp.Key, kp.Value);
+            }
+            List<Document> documents = new List<Document>();
+            if(project.Name == "Project1")
+                documents.Add(new Document { DocumentId = 1, Name = "Project1", Url = @"/pdf/project1.pdf", ProjectDocFk = 1 });
+            if (project.Name == "Project2")
+                documents.Add(new Document { DocumentId = 2, Name = "Project2", Url = @"/pdf/project2.pdf", ProjectDocFk = 1 });
+            if (project.Name == "Project3")
+                documents.Add(new Document { DocumentId = 3, Name = "Project3", Url = @"/pdf/project3.pdf", ProjectDocFk = 2 });
 
+            project.Documents = documents; 
             return View(project);
         }
+
 
 
         //2020-11-20 by Tim
