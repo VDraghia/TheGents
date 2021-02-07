@@ -19,6 +19,7 @@
             <input type="submit" value="Back"/>
         </form>
         <div class="container">
+            <div style="position: absolute;left:5%;width:20%;background:rgba(56, 132, 237, 0.22);">
             <table>
                 <tr>
                     <td>
@@ -70,28 +71,32 @@
                         Factors
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        Main Category
-                    </td>
-                    <td>
-                        Sub Category
-                    </td>
-                </tr>
-
+                @{string mainCat = "";}
                 @foreach (KeyValuePair<string, string> fac in Model.Factors)
                 {
+                    @if(@fac.Value != mainCat){
+                    <tr />
                     <tr>
-                        <td>
-                            @fac.Value
+                        <td colspan="2" align="center">
+                           @fac.Value
                         </td>
-                        <td>
+                    </tr> 
+                    }
+                   mainCat = fac.Value;
+                    <tr>
+                        <td colspan="2" >
                             @fac.Key
                         </td>
                     </tr>
                 }
             </table>
-
+            </div>
+            <div id="tab_1" style="position: absolute;left:25%;height:100%;margin-left:10px;">
+                <iframe src= "@Model.Documents.First().Url"
+                       style="width:1300px;height:100%;"
+                >
+                </iframe>
+            </div>
         </div>
     </div>
 </body>
