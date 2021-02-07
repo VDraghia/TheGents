@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProjectManagementCollection.Models;
 
 namespace ProjectManagementCollection.Data
@@ -19,7 +19,7 @@ namespace ProjectManagementCollection.Data
 
         public DbSet<Factor> Factors { get; set; }
 
-        public DbSet<ProjectFactorRel> ProjectFactorRels { get; set; }
+        public DbSet<ProjectFactorRel> ProjectFactorRels{ get; set; }
 
         public DbSet<Document> Documents { get; set; }
 
@@ -30,7 +30,7 @@ namespace ProjectManagementCollection.Data
             base.OnModelCreating(modelBuilder);
 
             //Mai 2010-11-20
-            // modelBuilder.Entity<Document>().ToTable("Documents");
+           // modelBuilder.Entity<Document>().ToTable("Documents");
         }
     }
 }

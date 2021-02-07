@@ -1,4 +1,4 @@
-﻿@*
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
     // Layout = "_NavBar";
 *@
@@ -23,12 +23,12 @@
 
             <h1>Upload</h1>
             <hr />
-            <h4>@Model.User.FirstName, Please upload your file</h4>
+            <h4>Please upload your file</h4>
             <br />
 
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <form asp-controller="Home" asp-action="Upload" enctype="multipart/form-data">
 
                         <div>
@@ -51,8 +51,11 @@
 
                         <div class="form-group">
                             <div class="btn btn-sm float-left">
-
-                                <input name="uploadFile" type="file" />
+                                <input name="uploadFile" multiple="multiple" type="file" />
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <p><h5 style="color:#0094ff">You can upload multiple files by holding CTRL key and clicking your selected files in a folder</h5></p>
                             </div>
                         </div>
                         <div class="form-group">
