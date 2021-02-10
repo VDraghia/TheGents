@@ -9,7 +9,7 @@ namespace ProjectManagementCollection.Data
         public PmcAppDbContext(DbContextOptions<PmcAppDbContext> options) : base(options)
         {
         }
-
+        
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
 

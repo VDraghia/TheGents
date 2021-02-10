@@ -17,15 +17,15 @@ namespace ProjectManagementCollection
     {
         public Startup(IConfiguration configuration)
         {
+
+
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
+        public IConfiguration Configuration { get; set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             var connection = Configuration.GetConnectionString("DevDbConnection");
             services.AddDbContext<PmcAppDbContext>(options => options.UseSqlServer(connection));
 

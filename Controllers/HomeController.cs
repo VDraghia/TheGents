@@ -1,25 +1,22 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
-using System.IO;
-using Azure;
-using ProjectManagementCollection.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Amazon.S3;
 using Amazon;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Amazon.Runtime;
-using Microsoft.Extensions.Configuration;
+
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -207,7 +204,6 @@ namespace ProjectManagementCollection.Controllers
 
 
         //2020-11-20 by Tim
-
         public async Task<IActionResult> Upload()
         {
             var viewModel = new UserProject();
@@ -229,7 +225,6 @@ namespace ProjectManagementCollection.Controllers
             ViewData["ProjectId"] = viewModel.Project.ProjectId;
             return View(viewModel);
         }
-
 
 
         public async Task<IActionResult> ProjectDetail()
@@ -280,7 +275,6 @@ namespace ProjectManagementCollection.Controllers
 
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProjectCreate([Bind("ProjectId,Name,Uploaded,DateCompleted,Client,Location,Success,Uploader_id")] Project project)
@@ -295,18 +289,16 @@ namespace ProjectManagementCollection.Controllers
             return RedirectToAction("ProjectDetail");
         }
 
-
-
         //by Tim
-        string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
-        string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
-        string AWS_bucketName = "gentsproject2";
+
+        string AWS_accessKey = "**";
+        string AWS_secretKey = "**";
+        string AWS_bucketName = "**";
         string AWS_defaultFolder = "MyTest_Folder";
 
         [HttpPost]
         public async Task<IActionResult> Upload(List<IFormFile> uploadFile, Project project)
         {
-
             ViewBag.result = await UploadFileToAWSAsync(uploadFile, project);
             return RedirectToAction("Factors");
         }
@@ -366,7 +358,6 @@ namespace ProjectManagementCollection.Controllers
             var viewModel = new FactorCate();
             viewModel.FactorSubCategories = await _context.FactorSubCategories.ToListAsync();
 
-
             List<Factor> factors = await _context.Factors.ToListAsync();
 
             // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
@@ -385,7 +376,6 @@ namespace ProjectManagementCollection.Controllers
             viewModel.Factors = factorDescriptions;
             return View(viewModel);
         }
-
 
         //by Tim
         [HttpPost]
@@ -410,7 +400,6 @@ namespace ProjectManagementCollection.Controllers
             return RedirectToAction("Search");
 
         }
-
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

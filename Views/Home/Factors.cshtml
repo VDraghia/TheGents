@@ -19,27 +19,24 @@
         <div class="container">
             <br />
             <h4> <span style="color:#0094ff">@ViewBag.Message</span></h4>
-
+            
             <h1>Factors Check</h1>
-
             <h4>Please select the factors your poject has</h4>
             <hr />
             <div class="row">
                 <div class="col-md-12">
                     <form asp-controller="Home" asp-action="FactorsConfirm" method="post">
-
                         <table id="checkBundle">
                             @foreach (KeyValuePair<string, int> item in Model.Factors)
                             {
-                <tr>
-                    <td>
-                        <lable>@item.Key &nbsp;<input name="AreChecked" type="checkbox" value=@item.Value /></lable>
+                                <tr>
+                                    <td>
+                                        <lable>@item.Key &nbsp;<input name="AreChecked" type="checkbox" value=@item.Value /></lable>
 
-                    </td>
-                </tr>}
-
+                                    </td>
+                                </tr>
+                            }
                         </table>
-
                         <div class="form-group">
                             <button name="Submit" class="btn btn-primary">Submit Now</button>
                         </div>
@@ -49,15 +46,11 @@
             <div>
                 <a asp-action="Search">Back to Search</a>
             </div>
-
-
-
         </div>
     </main>
 
     @section Scripts{
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     }
-
 </body>
 </html>

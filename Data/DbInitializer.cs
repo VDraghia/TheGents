@@ -54,8 +54,6 @@ namespace ProjectManagementCollection.Data
             }
 
 
-
-
             List<FactorMainCategory> mainCategories = new List<FactorMainCategory>();
 
             if (!context.FactorMainCategories.Any())

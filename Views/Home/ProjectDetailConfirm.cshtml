@@ -31,15 +31,11 @@
                     <div>
                         <form asp-controller="Home" asp-action="ProjectDetailConfirm" method="post">
                             <table>
-
-
                                 <tr>
                                     <td>
                                         @Html.DropDownList("PersonDropDown", (List<SelectListItem>)ViewData["Projects"])
                                     </td>
                                 </tr>
-
-
                             </table>
                             <input type="submit" value="Select" />
                         </form>
