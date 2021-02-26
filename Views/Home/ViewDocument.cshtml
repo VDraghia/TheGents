@@ -1,7 +1,5 @@
-@model ProjectManagementCollection.Models.Project
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿@model ProjectManagementCollection.Models.Project
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
 <!DOCTYPE html>
 <html class="common" lang="en">
 <head>
@@ -15,88 +13,155 @@
 
     <div class="view-container">
         <div></div>
-        <form asp-controller="Home" asp-action="Search" method="get">
-            <input type="submit" value="Back"/>
-        </form>
+
+        <table style="table-layout:fixed;" width="100%">
+            <tr>
+                <td width="33%">
+                    <form asp-controller="Home" asp-action="Search" method="get">
+                        <input type="submit" value="Back" />
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="ViewDocument" asp-route-id="@Model.ProjectId" method="get">
+                        <input type="submit" value="View All" />
+                    </form>
+                </td>
+            </tr>
+        </table>
         <div class="container">
-            <div style="position: absolute;left:5%;width:20%;background:rgba(56, 132, 237, 0.22);">
-            <table>
-                <tr>
-                    <td>
-                        Project Name :
-                    </td>
-                    <td>
-                        @Model.Name
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Client :
-                    </td>
-                    <td>
-                        @Model.Client
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Location :
-                    </td>
-                    <td>
-                        @Model.Location
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Date Completed :
-                    </td>
-                    <td>
-                        @Model.DateCompleted
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Success :
-                    </td>
-                    <td>
-                        @Model.Success
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <br/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        Factors
-                    </td>
-                </tr>
-                @{string mainCat = "";}
-                @foreach (KeyValuePair<string, string> fac in Model.Factors)
-                {
-                    @if(@fac.Value != mainCat){
-                    <tr />
+            <div style="position: absolute;left:3%;width:30%;background:rgba(56, 132, 237, 0.22);height:100%;">
+                <table>
                     <tr>
                         <td colspan="2" align="center">
-                           @fac.Value
-                        </td>
-                    </tr> 
-                    }
-                   mainCat = fac.Value;
-                    <tr>
-                        <td colspan="2" >
-                            @fac.Key
+                            <h3> Project Information</h3>
                         </td>
                     </tr>
-                }
-            </table>
+                    <tr>
+                        <td>
+                            Project Name :
+                        </td>
+                        <td>
+                            @Model.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Client :
+                        </td>
+                        <td>
+                            @Model.Client
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Location :
+                        </td>
+                        <td>
+                            @Model.Location
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Date Completed :
+                        </td>
+                        <td>
+                            @Model.DateCompleted
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Success :
+                        </td>
+                        <td>
+                            @Model.Success
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br />
+                        </td>
+                    </tr>
+
+                    <tr><td colspan="2" align="center"></tr>
+
+                    <tr>
+                        <td colspan="2" align="center">
+                            <h3> Possession factors</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <b>Main Category</b>
+                        </td>
+                        <td align="center">
+                            <b>Sub Category</b>
+                        </td>
+                    </tr>
+                    @{ Dictionary<string, string> facMain = new Dictionary<string, string>();
+                        Dictionary<string, string> facNone = new Dictionary<string, string>(); }
+
+                    @foreach (KeyValuePair<string, string> fac in Model.Factors)
+                    {
+                        if (!fac.Value.Equals("none"))
+                        {
+                            facMain.Add(fac.Key, fac.Value);
+                        }
+                        else
+                        {
+                            facNone.Add(fac.Key, fac.Value);
+                        }
+                    }
+
+                    @foreach (KeyValuePair<string, string> fac in facMain)
+                    {
+                        <tr>
+                            <td>
+                                @fac.Value
+                            </td>
+                            <td>
+                                @fac.Key
+                            </td>
+                        </tr>
+                    }
+
+
+                    @for (int index = 0; index < facNone.Count; index++)
+                    {
+                        var item = facNone.ElementAt(index);
+                        if (index == 0)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Value
+                                </td>
+                                <td>
+                                    @item.Key
+                                </td>
+                            </tr>
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    @item.Key
+                                </td>
+                            </tr>
+
+                        }
+                    }
+
+                </table>
             </div>
-            <div id="tab_1" style="position: absolute;left:25%;height:100%;margin-left:10px;">
-                <iframe src= "@Model.Documents.First().Url"
-                       style="width:1300px;height:100%;"
-                >
+
+            <div id="tab_1" style="position: absolute;left:33.5%;height:100%;margin-left:10px;">
+                <iframe src="~/Home/ViewProjInfo/@Model.ProjectId"
+                        style="width:1258px;height:100%;">
                 </iframe>
             </div>
+
         </div>
     </div>
 </body>

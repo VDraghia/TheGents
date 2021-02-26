@@ -60,7 +60,12 @@ namespace ProjectManagementCollection.Controllers
                 _logger.LogWarning("User Logged out");
                 return View();
             }
-
+            // tim test login user, just test if email is in database
+            if (_context.Users.FirstOrDefault(p => p.Email == login.Email) == null)
+            {
+                ViewBag.msg = "User not exist";
+                return View();
+            }
             //return View("Search");
             return RedirectToAction("Search");
         }
@@ -144,7 +149,7 @@ namespace ProjectManagementCollection.Controllers
         }
 
 
-         [Route("~/Home/ViewDocument/{id}")]
+        [Route("~/Home/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
             //Get the project by id
@@ -172,181 +177,157 @@ namespace ProjectManagementCollection.Controllers
                 factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
 
             }
-            //fake factors 
-            string factorStr = "Scope Management Plan: Scope Statement, Work Breakdown Structure, Definition of Scope;Requirements Management Plan: Logging Requirement Activities, Requirements Change Requests,Developing a Requirements Traceability Matrix;Schedule Management Plan: Milestones List, Activity Sequencing,Schedule Baseline";
-            string[] factorArray = factorStr.Split(";");
-            foreach(string s in factorArray)
-            {
-                string[] sa2 = s.Split(":");
-                string[] sa3 = sa2[1].Split(",");
-                foreach(string s4 in sa3)
-                {
-                    factorDescriptions.Add(s4, sa2[0]);
-                }
-            }
-            //fake factors 
-            var dicSort = from objDic in factorDescriptions orderby objDic.Value descending select objDic;
-            project.Factors = dicSort.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            foreach(var kp in project.Factors)
-            {
-                Console.WriteLine("{0}:{1}", kp.Key, kp.Value);
-            }
-            List<Document> documents = new List<Document>();
-            if(project.Name == "Project1")
-                documents.Add(new Document { DocumentId = 1, Name = "Project1", Url = @"/pdf/project1.pdf", ProjectDocFk = 1 });
-            if (project.Name == "Project2")
-                documents.Add(new Document { DocumentId = 2, Name = "Project2", Url = @"/pdf/project2.pdf", ProjectDocFk = 1 });
-            if (project.Name == "Project3")
-                documents.Add(new Document { DocumentId = 3, Name = "Project3", Url = @"/pdf/project3.pdf", ProjectDocFk = 2 });
+            project.Factors = factorDescriptions;
 
-            project.Documents = documents; 
             return View(project);
         }
 
+        //by tim
+        [Route("~/Home/ViewProjInfo/{id}")]
+        public IActionResult ViewProjInfo(int id)
+        {
+            //Get the project by id
+            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
 
+            project.Documents = _context.Documents.Where(c => c.ProjectDocFk == id).ToArray();
 
-        //2020-11-20 by Tim
+            //Get the project factor relationships
+            List<ProjectFactorRel> projFactors = _context.ProjectFactorRels.Where(c => c.ProjectFk == id).ToList();
 
-        public async Task<IActionResult> Upload()
+            List<Factor> factors = new List<Factor>();
+
+            // Get the Factors related to the Projects
+            foreach (ProjectFactorRel projFac in projFactors)
+            {
+                factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
+            }
+
+            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+
+            //Get Main and Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+
+                factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+
+            }
+
+            project.Factors = factorDescriptions;
+
+            return View(project);
+        }
+
+        public async Task<IActionResult> UploadF()
         {
             var viewModel = new UserProject();
             viewModel.User = await _context.Users.FirstOrDefaultAsync(u => u.Email == _login.Email);
-            // need to modify the project model to match the database design
-            //viewModel.Projects= await _context.Projects.Where(p =>p.Client==_login.Email).ToListAsync();
-            viewModel.Projects = await _context.Projects.Where(p => p.Uploader_id == viewModel.User.UserId).ToListAsync();
 
-            var aList = new List<SelectListItem>();
-            aList.Add(new SelectListItem { Text = "New", Value = "New" });
-            foreach (var project in viewModel.Projects)
+            viewModel.Projects = await _context.Projects.ToListAsync();
+
+            viewModel.FactorSubCategories = await _context.FactorSubCategories.ToListAsync();
+
+            List<Factor> factors = await _context.Factors.ToListAsync();
+
+            // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
+            Dictionary<int, Tuple<string, string>> factorDescriptions = new Dictionary<int, Tuple<string, string>>();
+
+            //Get Sub Categories for description
+            foreach (Factor factor in factors)
             {
-                aList.Add(new SelectListItem { Text = project.Name, Value = project.Name });
+
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                FactorMainCategory value = _context.FactorMainCategories.Single(x => x.FactorMainCategoryId == factor.FactorMainCategoryFk);
+
+                // prepare for: the FactorId will be saved to database if the factor is checked
+                factorDescriptions.Add(factor.FactorId, new Tuple<string, string>(value.FactorMainCategoryDesc, key.FactorSubCategoryDesc));
             }
-            ViewData["Projects"] = aList;
-            // pass selected object Name and ProjectId to view
-            ViewData["ProjectName"] = resProject;
-            viewModel.Project = await _context.Projects.FirstOrDefaultAsync(m => m.Name == resProject);
-            ViewData["ProjectId"] = viewModel.Project.ProjectId;
+
+            // the Factors in viewModel is a dictioary
+            viewModel.Factors = factorDescriptions;
+
             return View(viewModel);
         }
-
-
-
-        public async Task<IActionResult> ProjectDetail()
-        {
-            var viewModel = new UserProject();
-            viewModel.User = await _context.Users.FirstOrDefaultAsync(u => u.Email == _login.Email);
-
-            viewModel.Projects = await _context.Projects.Where(p => p.Uploader_id == viewModel.User.UserId).ToListAsync();
-
-            var aList = new List<SelectListItem>();
-            aList.Add(new SelectListItem { Text = "New", Value = "New" });
-            foreach (var proj in viewModel.Projects)
-            {
-                aList.Add(new SelectListItem { Text = proj.Name, Value = proj.Name });
-            }
-            ViewData["Projects"] = aList;
-
-            return View(viewModel);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> ProjectDetailConfirm()
-        {
-            var viewModel = new UserProject();
-            viewModel.User = await _context.Users.FirstOrDefaultAsync(u => u.Email == _login.Email);
-            // need to modify the project model to match the database design
-            viewModel.Projects = await _context.Projects.Where(p => p.Uploader_id == viewModel.User.UserId).ToListAsync();
-
-            var aList = new List<SelectListItem>();
-            aList.Add(new SelectListItem { Text = "New", Value = "New" });
-            foreach (var proj in viewModel.Projects)
-            {
-                aList.Add(new SelectListItem { Text = proj.Name, Value = proj.Name });
-            }
-            ViewData["Projects"] = aList;
-            resProject = Request.Form["personDropDown"].ToString();
-            ViewData["ProjectName"] = resProject;
-            // if the selected option is "New", pass ViewData["ProjectName"] "New" to view to display the form for create new project; else direct to action "Upload"
-            if (resProject == "New")
-            {
-                return View(viewModel);
-            }
-            else
-            {
-                return RedirectToAction("Upload");
-            }
-
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProjectCreate([Bind("ProjectId,Name,Uploaded,DateCompleted,Client,Location,Success,Uploader_id")] Project project)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Projects.Add(project);
-                await _context.SaveChangesAsync();
-                resProject = project.Name;
-                return RedirectToAction("Upload");
-            }
-            return RedirectToAction("ProjectDetail");
-        }
-
-
 
         //by Tim
         string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
         string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
         string AWS_bucketName = "gentsproject2";
-        string AWS_defaultFolder = "MyTest_Folder";
+        //string AWS_defaultFolder = "MyTest_Folder";
 
         [HttpPost]
-        public async Task<IActionResult> Upload(List<IFormFile> uploadFile, Project project)
+        [RequestFormLimits(MultipartBodyLengthLimit = 1073741824)]
+        public async Task<IActionResult> UploadF(List<IFormFile> uploadFile, Project project, UserProject userProject)
         {
 
-            ViewBag.result = await UploadFileToAWSAsync(uploadFile, project);
-            return RedirectToAction("Factors");
+            ViewBag.result = await UploadFToAWSAsync(uploadFile, project, userProject);
+            return RedirectToAction("UploadF");
         }
 
-        protected async Task<string> UploadFileToAWSAsync(List<IFormFile> uploadFile, Project project)
+        protected async Task<string> UploadFToAWSAsync(List<IFormFile> uploadFile, Project project, UserProject userProject)
         {
-            projId = project.ProjectId;
-            var subFolder = project.Name;
             var result = "";
+            Project proj = new Project();
+            proj = await _context.Projects.FirstOrDefaultAsync(p => p.Name == project.Name);
+            if (proj == null)
+            {
+                TempData["message"] = "The project is not existed, Upload failed!!";
+                return result;
+            }
+            projId = proj.ProjectId;
+            var subFolder = project.Name;
+
             try
             {
                 var s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
                 var bucketName = AWS_bucketName;
-                var keyName = AWS_defaultFolder;
+                var keyName = "";
                 if (!string.IsNullOrEmpty(subFolder))
-                    keyName = keyName + "/" + subFolder.Trim();
+                    keyName = subFolder.Trim();
                 foreach (var uFile in uploadFile)
                 {
+                    var newKeyName = keyName + "/" + uFile.FileName;
                     var fs = uFile.OpenReadStream();
                     var request = new Amazon.S3.Model.PutObjectRequest
                     {
                         BucketName = bucketName,
-                        Key = (keyName + "/" + uFile.FileName),
+                        Key = newKeyName,
                         InputStream = fs,
                         ContentType = uFile.ContentType,
                         CannedACL = S3CannedACL.PublicRead
                     };
                     await s3Client.PutObjectAsync(request);
 
-                    result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, keyName);
+                    result = string.Format("http://{0}.s3.amazonaws.com/{1}", bucketName, newKeyName);
 
                     var file = new Document()
                     {
                         Name = uFile.FileName,
-                        Url = keyName,
+                        Url = newKeyName,
                         ProjectDocFk = projId
                     };
 
                     _context.Documents.Add(file);
                     await _context.SaveChangesAsync();
+                    TempData["message"] = "Uploaded Successfully!!";
+
+                    var aa = userProject.AreChecked;
+                    if (aa != null)
+                    {
+                        foreach (int a in aa)
+                        {
+                            var row = _context.ProjectFactorRels.FirstOrDefault(p => p.FactorFk == a && p.ProjectFk == projId);
+                            if (row == null)
+                            {
+                                _context.ProjectFactorRels.Add(new ProjectFactorRel { FactorFk = a, ProjectFk = projId });
+                                _context.SaveChanges();
+                            }
+
+                        }
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -354,61 +335,6 @@ namespace ProjectManagementCollection.Controllers
                 result = ex.Message;
             }
             return result;
-        }
-
-
-
-        //by tim
-        public async Task<IActionResult> Factors()
-        {
-            ViewData["ProjId"] = projId;
-            ViewBag.Message = "File Uploaded Successfully!!";
-            var viewModel = new FactorCate();
-            viewModel.FactorSubCategories = await _context.FactorSubCategories.ToListAsync();
-
-
-            List<Factor> factors = await _context.Factors.ToListAsync();
-
-            // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
-            Dictionary<string, int> factorDescriptions = new Dictionary<string, int>();
-
-            //Get Sub Categories for description
-            foreach (Factor factor in factors)
-            {
-
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                // because there are two same name factors, combine the factor description with factorId.
-                factorDescriptions.Add(key.FactorSubCategoryDesc + factor.FactorId.ToString(), factor.FactorId);
-
-            }
-            // the Factors in viewModel is a dictioary
-            viewModel.Factors = factorDescriptions;
-            return View(viewModel);
-        }
-
-
-        //by Tim
-        [HttpPost]
-        public IActionResult FactorsConfirm(FactorCate factorCate)
-        {
-            // the BindProperty is a int list collected the checked values from view selected by the user
-            var aa = factorCate.AreChecked;
-            if (aa != null)
-            {
-                foreach (int a in aa)
-                {
-                    var row = _context.ProjectFactorRels.FirstOrDefault(p => p.FactorFk == a && p.ProjectFk == projId);
-                    if (row == null)
-                    {
-                        _context.ProjectFactorRels.Add(new ProjectFactorRel { FactorFk = a, ProjectFk = projId });
-                        _context.SaveChanges();
-                    }
-
-                }
-            }
-
-            return RedirectToAction("Search");
-
         }
 
 
