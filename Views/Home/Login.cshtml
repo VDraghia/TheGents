@@ -1,7 +1,5 @@
 ﻿@model ProjectManagementCollection.Models.Login
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 <!DOCTYPE html>
 
@@ -15,7 +13,6 @@
 <body>
     <main role="main" class="pb-3">
         <div class="container">
-
             <form asp-controller="Home" asp-action="Login" method="post">
                 <table>
                     <tr>
@@ -49,7 +46,15 @@
                     </tr>
                 </table>
             </form>
+
         </div>
     </main>
+    <div>
+        @if (ViewBag.msg != null)
+        {
+<script>
+                       alert("@ViewBag.msg");
+</script>}
+    </div>
 </body>
 </html>

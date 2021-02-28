@@ -23,7 +23,6 @@ namespace ProjectManagementCollection.Models
         [MaxLength(50)]
         public string Email { get; set; }
 
-
         [ForeignKey("Uploader_id")]
         public ICollection<Project> Projects { get; set; }
 

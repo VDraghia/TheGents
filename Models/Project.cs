@@ -11,6 +11,7 @@ namespace ProjectManagementCollection.Models
 
         [Required]
         [MaxLength(50)]
+        [Display(Name = "Project Name")]
         public string Name { get; set; }
 
         [Required]
@@ -46,6 +47,6 @@ namespace ProjectManagementCollection.Models
 
         [NotMapped]
         public Dictionary<string, string> Factors { get; set; }
-       
+
     }
 }

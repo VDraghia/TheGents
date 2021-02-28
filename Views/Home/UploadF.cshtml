@@ -1,0 +1,152 @@
+﻿@model ProjectManagementCollection.Models.ViewModels.UserProject
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+
+    <div style="background:rgba(56, 132, 237, 0.22);">
+        <table style="table-layout:fixed;" width="100%">
+            <tr>
+                <td width="45%">
+                    <form asp-controller="Home" asp-action="Search" method="get">
+                        <input type="submit" value="Back" />
+                    </form>
+                </td>
+                <td>
+                    <b>Main - Category</b>
+                </td>
+
+                <td>
+                    <b>Sub - Category</b>
+                </td>
+                <td width="21%">
+                    <b>Select</b>
+                </td>
+            </tr>
+        </table>
+        <form asp-controller="Home" asp-action="UploadF" enctype="multipart/form-data">
+            <table style="table-layout:fixed;" width="100%">
+                <tr>
+                    <td width="42%">
+                        <div style="position: absolute;left:5%; bottom:400px">
+                            <div>
+                                <h1>Upload Document</h1>
+                            </div>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <div>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            &nbsp;&nbsp;&nbsp;<label asp-for="Project.Name" class="control-label"></label>
+                                        </td>
+                                        <td>
+                                            <input asp-for="Project.Name" class="form-control" />
+                                            <span asp-validation-for="Project.Name" class="text-danger"></span>
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Home" asp-action="ProjectDetail">
+                                                <div>
+                                                    <input type="button" value="Find/Create project" />
+                                                </div>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <table>
+                                                    <tr class="form-group">
+                                                        <td class="btn btn-sm float-left">
+                                                            &nbsp;<input name="uploadFile" multiple="multiple" type="file" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="col-md-7">
+                                                <b> <span style="color:#0094ff">Before upload the file, please select the factor(s) related to the file if it is.</span></b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            &nbsp;&nbsp;&nbsp;<button name="Upload" class="btn btn-primary">Upload Now</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+
+                        </div>
+
+                    </td>
+                    <td>
+                        <div style="height: 800px; border: 1px solid #ccc; font: 16px /26px Georgia, Garamond, Serif; overflow: auto;">
+                            <table id="checkBundle">
+                                @foreach (KeyValuePair<int, Tuple<string, string>> item in Model.Factors)
+                                {
+                                    <tr>
+                                        <td width="42%">
+                                            <lable>@item.Value.Item1 </lable>
+
+                                        </td>
+                                        <td width="5">
+                                            |&nbsp;&nbsp;&nbsp;&nbsp;
+                                        </td>
+                                        <td width="50%">
+                                            <lable>@item.Value.Item2</lable>
+                                        </td>
+                                        <td>
+                                            <input name="AreChecked" type="checkbox" value=@item.Key />
+                                        </td>
+                                    </tr>
+                                }
+
+                            </table>
+
+                        </div>
+
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+
+    <div>
+        @if (TempData["message"] != null)
+        {
+            <script>
+                 alert("@TempData["message"]");
+            </script>
+        }
+    </div>
+
+    @section Scripts{
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+         function myFunction() {
+        var txt="okkkk";
+        document.getElementById("demo").innerHTML = txt;
+            }
+        </script>
+
+    }
+</body>
+</html>
