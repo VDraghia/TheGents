@@ -4,7 +4,7 @@ using System;
 
 namespace ProjectManagementCollection.Models
 {
-    public class Upload
+    public class UploadViewModel
     {
         [Required]
         public string DocumentName { get; set; }
@@ -21,8 +21,6 @@ namespace ProjectManagementCollection.Models
 
         [Required]
         public List<Boolean> Factors { get; set; }
-
-
 
     }
 }

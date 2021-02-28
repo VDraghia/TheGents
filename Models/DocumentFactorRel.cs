@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagementCollection.Models
 {
-    public class ProjectFactorRel
+    public class DocumentFactorRel
     {
-        public int ProjectFactorRelId { get; set; }
+        public int DocumentFactorRelId { get; set; }
 
         [Required]
-        [ForeignKey("ProjectId")]
-        public int ProjectFk { get; set; }
+        [ForeignKey("DocumentId")]
+        public int DocumentFk { get; set; }
 
         [Required]
         [ForeignKey("FactorId")]

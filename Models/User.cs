@@ -7,16 +7,7 @@ namespace ProjectManagementCollection.Models
 {
     public class User
     {
-
         public int UserId { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string FirstName { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string LastName { get; set; }
 
         [Required]
         [DataType(DataType.EmailAddress)]
@@ -24,6 +15,10 @@ namespace ProjectManagementCollection.Models
         public string Email { get; set; }
 
         [ForeignKey("Uploader_id")]
+        [Required]
+        public int Permission { get; set; }
+
+        [ForeignKey("ProjectId")]
         public ICollection<Project> Projects { get; set; }
 
     }

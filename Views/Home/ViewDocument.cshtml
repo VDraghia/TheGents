@@ -1,5 +1,8 @@
 ﻿@model ProjectManagementCollection.Models.Project
 @{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 <!DOCTYPE html>
 <html class="common" lang="en">
 <head>
@@ -160,6 +163,59 @@
                 <iframe src="~/Home/ViewProjInfo/@Model.ProjectId"
                         style="width:1258px;height:100%;">
                 </iframe>
+            <div style="position: absolute;left:5%;width:20%;background:rgba(56, 132, 237, 0.22);">
+                <table>
+                    <tr>
+                        <td>
+                            Project Name :
+                        </td>
+                        <td>
+                            @Model.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Client :
+                        </td>
+                        <td>
+                            @Model.Client
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Location :
+                        </td>
+                        <td>
+                            @Model.Location
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Date Completed :
+                        </td>
+                        <td>
+                            @Model.DateCompleted
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Success :
+                        </td>
+                        <td>
+                            @Model.Success
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            Factors
+                        </td>
+                    </tr>
+                </table>
             </div>
 
         </div>

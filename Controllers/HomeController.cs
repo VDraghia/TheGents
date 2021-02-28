@@ -12,10 +12,7 @@ using ProjectManagementCollection.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Amazon.S3;
-using Amazon;
-using Amazon.S3.Model;
-using Amazon.S3.Transfer;
-using Amazon.Runtime;
+using ProjectManagementCollection.Models.ViewModels;
 
 
 namespace ProjectManagementCollection.Controllers
@@ -40,29 +37,27 @@ namespace ProjectManagementCollection.Controllers
             return View();
         }
 
-        // by tim
-        private static Login _login = new Login();
+       /*
+        private static ViewDocumentViewModel _login = new ViewDocumentViewModel();
         private static string resProject = "";
         private static int projId = 0;
+       */
 
         [HttpPost]
         [Route("~/")]
         [Route("~/Home")]
         [Route("~/Home/Login")]
-        public IActionResult Login(Boolean logout, Login login)
+        public IActionResult Login(Boolean logout)
         {
+            /*
             _login = login;
             if (logout)
             {
                 _logger.LogWarning("User Logged out");
                 return View();
             }
-            // tim test login user, just test if email is in database
-            if (_context.Users.FirstOrDefault(p => p.Email == login.Email) == null)
-            {
-                ViewBag.msg = "User not exist";
-                return View();
-            }
+            */
+
             //return View("Search");
             return RedirectToAction("Search");
         }
@@ -76,7 +71,7 @@ namespace ProjectManagementCollection.Controllers
 
         [HttpPost]
         [Route("~/Home/Search")]
-        public IActionResult Search(Search searchModel)
+        public IActionResult Search(SearchViewModel searchModel)
         {
             if (!ModelState.IsValid)
             {
@@ -91,11 +86,14 @@ namespace ProjectManagementCollection.Controllers
             }
 
             //Start query string
-            string query = @"SELECT * FROM dbo.Projects WHERE ";
+            string query = @"SELECT * FROM dbo.Projects WHERE 1=1";
+
+            
 
             //Build Parameter List
             List<SqlParameter> parameters = new List<SqlParameter>();
 
+            /*
             //Check if searching for success and failure of project
             if (searchModel.Success.Equals("Both"))
             {
@@ -108,6 +106,8 @@ namespace ProjectManagementCollection.Controllers
                 query += "Success = @Success ";
                 parameters.Add(new SqlParameter("@Success", searchModel.Success));
             }
+            */
+
 
             if (!string.IsNullOrEmpty(searchModel.Name))
             {
@@ -142,23 +142,54 @@ namespace ProjectManagementCollection.Controllers
 
             searchModel.Projects = _context.Projects.FromSqlRaw(query, parameters.ToArray()).ToList();
 
+
+            //testing search by factor
+            Factor testFac = new Factor { 
+                FactorId = 1,
+                FactorMainCategoryFk = 1, 
+                FactorSubCategoryFk = 2, 
+                Position = 1, 
+                FactorDesc = "desc" 
+            };
+
+            List<Factor> factorList = new List<Factor>();
+            factorList.Add(testFac);
+
+            // Factor list populated from 
+            searchModel.Factors = factorList;
+
+            if (searchModel.Factors.Any()) {
+
+                foreach (var factor in searchModel.Factors)
+                {
+                    var docs = from document in _context.Set<Document>()
+                               join documentFactorRel in _context.Set<DocumentFactorRel>()
+                                   on document.DocumentId equals documentFactorRel.DocumentFk
+                               join factors in _context.Set<Factor>()
+                                   on documentFactorRel.FactorFk equals factors.FactorId
+                               where factors.FactorId == factor.FactorId
+                                select new { document };                      
+                }
+            }
             return View(searchModel);
         }
 
 
-        [Route("~/Home/ViewDocument/{id}")]
+
+         [Route("~/Home/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
             //Get the project by id
             Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
 
             //Get the project factor relationships
-            List<ProjectFactorRel> projFactors = _context.ProjectFactorRels.Where(c => c.ProjectFk == id).ToList();
+            List<DocumentFactorRel> projFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
+
 
             List<Factor> factors = new List<Factor>();
 
             // Get the Factors related to the Projects
-            foreach (ProjectFactorRel projFac in projFactors)
+            foreach (DocumentFactorRel projFac in projFactors)
             {
                 factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
             }
@@ -174,8 +205,19 @@ namespace ProjectManagementCollection.Controllers
                 factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
 
             }
+ 
+            /*
+            List<Document> documents = new List<Document>();
+            if(project.Name == "Project1")
+                documents.Add(new Document { DocumentId = 1, Name = "Project1", Url = @"/pdf/project1.pdf", ProjectFk = 1 });
+            if (project.Name == "Project2")
+                documents.Add(new Document { DocumentId = 2, Name = "Project2", Url = @"/pdf/project2.pdf", ProjectFk = 1 });
+            if (project.Name == "Project3")
+                documents.Add(new Document { DocumentId = 3, Name = "Project3", Url = @"/pdf/project3.pdf", ProjectFk = 2 });
 
-            project.Factors = factorDescriptions;
+            project.Documents = documents; 
+
+            */
 
             return View(project);
         }
@@ -199,6 +241,16 @@ namespace ProjectManagementCollection.Controllers
             {
                 factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
             }
+            ViewData["Projects"] = aList;
+            // pass selected object Name and ProjectId to view
+            ViewData["ProjectName"] = resProject;
+            viewModel.Project = await _context.Projects.FirstOrDefaultAsync(m => m.Name == resProject);
+            ViewData["ProjectId"] = viewModel.Project.ProjectId;
+            
+            return View();
+            
+
+        }
 
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
 
@@ -219,7 +271,8 @@ namespace ProjectManagementCollection.Controllers
 
         public async Task<IActionResult> UploadF()
         {
-            var viewModel = new UserProject();
+            /*
+            var viewModel = new UserProjectViewModel();
             viewModel.User = await _context.Users.FirstOrDefaultAsync(u => u.Email == _login.Email);
 
             viewModel.Projects = await _context.Projects.ToListAsync();
@@ -246,7 +299,20 @@ namespace ProjectManagementCollection.Controllers
             // the Factors in viewModel is a dictioary
             viewModel.Factors = factorDescriptions;
 
-            return View(viewModel);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProjectCreate([Bind("ProjectId,Name,Uploaded,DateCompleted,Client,Location,Success,Uploader_id")] Project project)
+        {
+            /*
+            if (ModelState.IsValid)
+            {
+                _context.Projects.Add(project);
+                await _context.SaveChangesAsync();
+                resProject = project.Name;
+                return RedirectToAction("Upload");
+            }
+            */
+            return RedirectToAction("ProjectDetail");
         }
 
         //by Tim

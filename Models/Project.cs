@@ -16,14 +16,8 @@ namespace ProjectManagementCollection.Models
 
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Uploaded Date")]
-        public DateTime Uploaded { get; set; }
-
-        [Required]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Completed Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Year Completed")]
         public DateTime DateCompleted { get; set; }
 
         [Required]
@@ -34,19 +28,19 @@ namespace ProjectManagementCollection.Models
         [MaxLength(50)]
         public string Location { get; set; }
 
-        [Required]
+        [Required]  
         public string Success { get; set; }
 
-        //tim
-        public int Uploader_id { get; set; }
+        [Required]
+        [ForeignKey("UserId")]
+        public int UserFk { get; set; }
 
         public User User { get; set; }
 
-        [ForeignKey("ProjectDocFk")]
+        [ForeignKey("DocumentId")]
         public ICollection<Document> Documents { get; set; }
 
         [NotMapped]
         public Dictionary<string, string> Factors { get; set; }
-
     }
 }

@@ -1,5 +1,8 @@
-﻿@model ProjectManagementCollection.Models.Search
-@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+﻿@model ProjectManagementCollection.Models.SearchViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 <!DOCTYPE html>
 <html class="common" lang="en">
 <head>
@@ -9,9 +12,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/styles.css" />
 </head>
-
 <body>
-
     <div class="search-container">
 
         <div>
@@ -62,16 +63,18 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <label asp-for="Success" class="search-label">Was it a success?</label>
-                        </td>
-                        <td>
-                            <select asp-for="Success">
-                                <option>Both</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                            </select>
-                        </td>
+                        <!--
+    <td>
+        <label asp-for="Success" class="search-label">Was it a success?</label>
+    </td>
+    <td>
+        <select asp-for="Success">
+            <option>Both</option>
+            <option>Yes</option>
+            <option>No</option>
+        </select>
+    </td>
+    -->
                         <td>
                             <input type="submit" value="Search" class="search-button shadow" asp-controller="Home" asp-action="Search" />
                         </td>
@@ -79,7 +82,7 @@
                             <input type="submit" value="Export" class="basic-button shadow-sm" asp-controller="Home" asp-action="Search" disabled />
                         </td>
                         <td>
-                            <input type="submit" value="Stats" class="basic-button shadow-sm" asp-controller="Home" asp-action="Search" disabled />
+                            <input type="submit" value="Export" class="basic-button shadow-sm" asp-controller="Project" asp-action="Index" />
                         </td>
                     </tr>
                 </table>
@@ -130,9 +133,9 @@
                     Uploaded
                 </div>
             </div>
-            @{ if (Model != null && Model.Projects.Count() > 0)
+            @{ if (Model != null && Model.Documents.Count() > 0)
                 {
-                    foreach (Project proj in Model.Projects)
+                    foreach (Document doc in Model.Documents)
                     {
     <div class="row d-flex justify-content-center">
         <div class="col-sm-1 border-top test">
@@ -140,23 +143,25 @@
         </div>
         |
         <div class="col-sm-2 border-top test">
-            <a asp-action="ViewDocument" asp-route-id="@proj.ProjectId">@proj.Name</a>
+            <a asp-action="ViewDocument" asp-route-id="@doc.DocumentId">@doc.Name</a>
         </div>
         |
         <div class="col-sm-2 border-top">
-            @proj.Location
+            @{
+                  
+             }
         </div>
         |
         <div class="col-sm-2 border-top">
-            @proj.Client
+            @
         </div>
         |
         <div class="col-sm-2 border-top">
-            @proj.DateCompleted
+            @
         </div>
         |
         <div class="col-sm-2 border-top">
-            @proj.Uploaded
+            @
         </div>
     </div> }
 } }

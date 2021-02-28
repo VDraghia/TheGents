@@ -16,6 +16,9 @@ namespace ProjectManagementCollection.Models
         [ForeignKey("FactorSubCategoryId")]
         public int FactorSubCategoryFk { get; set; }
 
+        [Required]
+        public int Position { get; set; }
+
         [MaxLength(100)]
         public string FactorDesc { get; set; }
 

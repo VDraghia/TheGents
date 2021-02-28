@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+    <!-- horizontal -->
+    <div>
+
+        <!-- vertical -->
+        <div class="col-md-2">
+            <input type="button" label="Search Projects" />
+        </div>
+
+        <!-- vertical -->
+        <div class="col-lg-6">
+            <div class="row d-flex justify-content-center">
+                <div class="col-sm-1 border-top test">
+                    <input type="checkbox" id="" />
+                </div>
+                |
+                <div class="col-sm-2 border-top test">
+                    <a asp-action="Project" asp-route-id="@doc.DocumentId">@doc.Name</a>
+                </div>
+                |
+                <div class="col-sm-2 border-top">
+                    @{
+
+                    }
+                </div>
+                |
+                <div class="col-sm-2 border-top">
+                    @
+                </div>
+                |
+                <div class="col-sm-2 border-top">
+                    @
+                </div>
+                |
+                <div class="col-sm-2 border-top">
+                    @
+                </div>
+            </div>
+
+            <!-- vertical -->
+            <div class="col-md-2">
+                <div>
+                    <label class="search-proj">Location</label>
+                    <label class="search-proj">Client</label>
+                    <label class="search-proj">Completed</label>
+                    <input type="button" class="search-proj" value="Select/Create Project"/>
+                </div>
+                <div>
+                    <input type="text" class="search-label" />
+                    <input type="text" class="search-label" />
+                    <input type="text" class="search-label" />
+                </div>
+            </div>
+        </div>
+</body>

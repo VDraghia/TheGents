@@ -6,5 +6,14 @@ appsettings.json
 .vs/ProjectManagementCollection/config/applicationhost.config
 .vs/ProjectManagementCollection/v16/.suo
 Migrations
+Migrations/*
 Backup
 UpgradeLog.htm
+Migrations/20201119035131_initial-create.cs
+Migrations/20201119035131_initial-create.Designer.cs
+Migrations/20210117033734_initial.cs
+Migrations/20210117033734_initial.Designer.cs
+Migrations/PmcAppDbContextModelSnapshot.cs
+aws-beanstalk-tools-defaults.json
+aws-beanstalk-tools-defaults.json
+aws-beanstalk-tools-defaults.json

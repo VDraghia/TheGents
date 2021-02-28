@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {
-    public class UserProject
+    public class UserProjectViewModel
     {
         public User User { get; set; }
         public Project Project { get; set; }

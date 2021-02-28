@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {
-    public class FactorCate
+    public class FactorCateViewModel
     {
         public IEnumerable<FactorSubCategory> FactorSubCategories { get; set; }
 

@@ -8,6 +8,7 @@ namespace ProjectManagementCollection.Data
 
         public PmcAppDbContext(DbContextOptions<PmcAppDbContext> options) : base(options)
         {
+
         }
         
         public DbSet<User> Users { get; set; }
@@ -19,18 +20,28 @@ namespace ProjectManagementCollection.Data
 
         public DbSet<Factor> Factors { get; set; }
 
-        public DbSet<ProjectFactorRel> ProjectFactorRels{ get; set; }
+        public DbSet<DocumentFactorRel> DocumentFactorRels{ get; set; }
 
         public DbSet<Document> Documents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FactorSubCategory>()
-               .Property(c => c.FactorSubCategoryId).ValueGeneratedOnAdd();
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>()
+                .HasIndex(m => m.Email)
+                .IsUnique();
 
-            //Mai 2010-11-20
-           // modelBuilder.Entity<Document>().ToTable("Documents");
+            modelBuilder.Entity<Project>()
+                .HasIndex(m => m.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<Document>()
+                .HasOne(m => m.Project)
+                .WithMany(n => n.Documents);
+
+            modelBuilder.Entity<FactorSubCategory>()
+                .Property(c => c.FactorSubCategoryId).ValueGeneratedOnAdd();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

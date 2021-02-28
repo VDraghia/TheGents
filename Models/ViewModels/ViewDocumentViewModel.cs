@@ -3,17 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementCollection.Models
 {
-    public class Login
+    public class ViewDocumentViewModel
     {
         [Required]
-        public string Email { get; set; }
+        public int UserId { get; set; }
 
-
-        [Required]
-        [PasswordPropertyText]
-        public string Password { get; set; }
-
-        
         public bool RememberMe { get; set; }
 
     }
