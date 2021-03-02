@@ -1,7 +1,5 @@
-@model ProjectManagementCollection.Models.Project
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿@model ProjectManagementCollection.Models.Project
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
 <!DOCTYPE html>
 <html class="common" lang="en">
 <head>
@@ -15,50 +13,54 @@
 
     <div class="view-container">
         <div></div>
-        <form asp-controller="Home" asp-action="Search" method="get">
-            <input type="submit" value="Back"/>
-        </form>
+
+        <table style="table-layout:fixed;" width="100%">
+            <tr>
+                <td width="33%">
+                    <form asp-controller="Home" asp-action="Search" method="get">
+                        <input type="submit" value="Back" />
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="ViewDocument" asp-route-id="@Model.ProjectId" method="get">
+                        <input type="submit" value="View All" />
+                    </form>
+                </td>
+            </tr>
+        </table>
         <div class="container">
-            <div style="position: absolute;left:5%;width:20%;background:rgba(56, 132, 237, 0.22);">
+            <div style="position: absolute;left:1%;width:20%;height:100%;background:rgba(56, 132, 237, 0.22);">
             <table>
                 <tr>
-                    <td>
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         Project Name :
                     </td>
-                    <td>
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         @Model.Name
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td  style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         Client :
                     </td>
-                    <td>
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         @Model.Client
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         Location :
                     </td>
-                    <td>
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         @Model.Location
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                         Date Completed :
                     </td>
-                    <td>
-                        @Model.DateCompleted
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Success :
-                    </td>
-                    <td>
-                        @Model.Success
+                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
+                        @Model.DateCompleted.Year
                     </td>
                 </tr>
                 <tr>
@@ -68,35 +70,44 @@
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
-                        Factors
+                        <i>factors related to document</i>
                     </td>
                 </tr>
+                <tr />
+                    <tr>
+                        <td colspan="2" align="center">
+                           
+                        </td>
+                    </tr> 
                 @{string mainCat = "";}
                 @foreach (KeyValuePair<string, string> fac in Model.Factors)
                 {
                     @if(@fac.Value != mainCat){
-                    <tr />
                     <tr>
-                        <td colspan="2" align="center">
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                            @fac.Value
                         </td>
                     </tr> 
                     }
                    mainCat = fac.Value;
                     <tr>
-                        <td colspan="2" >
-                            @fac.Key
+                        <td colspan="2">
+                            &bull;&nbsp;@fac.Key
                         </td>
                     </tr>
                 }
             </table>
             </div>
-            <div id="tab_1" style="position: absolute;left:25%;height:100%;margin-left:10px;">
-                <iframe src= "@Model.Documents.First().Url"
-                       style="width:1300px;height:100%;"
-                >
+
+            <div id="tab_1" style="position: absolute;left:20.5%;height:100%;margin-left:10px;">
+                <iframe src="~/Home/ViewProjInfo/@Model.ProjectId"
+                        style="width:1258px;height:100%;">
                 </iframe>
             </div>
+
         </div>
     </div>
 </body>

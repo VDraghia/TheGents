@@ -11,6 +11,7 @@ namespace ProjectManagementCollection.Data
     {
         public static void Initialize(PmcAppDbContext context)
         {
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             /*
@@ -552,9 +553,10 @@ namespace ProjectManagementCollection.Data
             if (!context.Documents.Any())
             {
 
-                documents.Add(new Document { Name = "Doc1", Url = "doc1.aws.amazon.com", ProjectDocFk = 1 });
-                documents.Add(new Document { Name = "Doc2", Url = "doc2.aws.amazon.com", ProjectDocFk = 1 });
-                documents.Add(new Document { Name = "Doc3", Url = "doc3.aws.amazon.com", ProjectDocFk = 2 });
+                documents.Add(new Document { Name = "Doc1", Url = @"/pdf/project1.pdf", ProjectDocFk = 1 });
+                documents.Add(new Document { Name = "Doc2", Url = @"/pdf/project2.pdf", ProjectDocFk = 1 });
+                documents.Add(new Document { Name = "Doc3", Url = @"/pdf/project1.pdf", ProjectDocFk = 2 });
+                documents.Add(new Document { Name = "Doc4", Url = @"/pdf/project3.pdf", ProjectDocFk = 2 });
 
                 foreach (Document document in documents)
                 {
@@ -602,9 +604,9 @@ namespace ProjectManagementCollection.Data
             }
 
 
-            proj1.Documents = new List<Document>{ doc1 };
-            proj2.Documents = new List<Document>{ doc2 };
-            proj3.Documents = new List<Document>{ doc3 };
+            //proj1.Documents = new List<Document> { doc1, doc2 };
+            //proj2.Documents = new List<Document>{ doc2, doc3 };
+            //proj3.Documents = new List<Document>{ doc1, doc3 };
 
             context.Projects.Update(proj1);
             context.Projects.Update(proj2);
