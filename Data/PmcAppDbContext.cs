@@ -26,6 +26,11 @@ namespace ProjectManagementCollection.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Permission>()
+                .HasIndex(m => m.Level)
+                .IsUnique();
+
             modelBuilder.Entity<User>()
                 .HasIndex(m => m.Email)
                 .IsUnique();
@@ -37,9 +42,6 @@ namespace ProjectManagementCollection.Data
             modelBuilder.Entity<Document>()
                 .HasOne(m => m.Project)
                 .WithMany(n => n.Documents);
-
-            modelBuilder.Entity<FactorSubCategory>()
-                .Property(c => c.FactorSubCategoryId).ValueGeneratedOnAdd();
 
             base.OnModelCreating(modelBuilder);
         }

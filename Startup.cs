@@ -61,7 +61,7 @@ namespace ProjectManagementCollection
             {
                 endpoints.MapControllerRoute(
                     name: "login",
-                    pattern: "{controller=Home}/{action=Login}");
+                    pattern: "{controller=Login}/{action=Login}");
             });
         }
     }

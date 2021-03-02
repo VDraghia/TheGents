@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagementCollection.Models
@@ -14,12 +12,13 @@ namespace ProjectManagementCollection.Models
         [MaxLength(50)]
         public string Email { get; set; }
 
-        [ForeignKey("Uploader_id")]
         [Required]
-        public int Permission { get; set; }
+        [DataType(DataType.Password)]
+        [MaxLength(50)]
+        public string Password { get; set; }
 
-        [ForeignKey("ProjectId")]
-        public ICollection<Project> Projects { get; set; }
-
+        [Required]
+        [ForeignKey("PermissionId")]
+        public Permission Permission { get; set; }
     }
 }

@@ -28,19 +28,18 @@ namespace ProjectManagementCollection.Models
         [MaxLength(50)]
         public string Location { get; set; }
 
-        [Required]  
-        public string Success { get; set; }
+        [Required]
+        public bool Success { get; set; }
 
         [Required]
         [ForeignKey("UserId")]
-        public int UserFk { get; set; }
-
         public User User { get; set; }
 
-        [ForeignKey("DocumentId")]
+        [NotMapped]
         public ICollection<Document> Documents { get; set; }
 
         [NotMapped]
-        public Dictionary<string, string> Factors { get; set; }
+        public ICollection<Factor> Factors { get; set; } 
+
     }
 }

@@ -9,8 +9,9 @@ namespace ProjectManagementCollection.Models
         [MaxLength(50)]
         public string Name { get; set; }
 
+        [DataType(DataType.Password)]
         [MaxLength(50)]
-        public string Uploader { get; set; }
+        public string UploaderEmail { get; set; }
 
         public DateTime? DateRangeMin { get; set; }
 
@@ -26,10 +27,8 @@ namespace ProjectManagementCollection.Models
 
         public IEnumerable<Document> Documents { get; set; }
 
-        public IEnumerable<Project> Projects { get; set; }
+        public IEnumerable<Factor> MustHaveFactors { get; set; }
 
-        public IEnumerable<Factor> Factors { get; set; }
-
-        
+        public IEnumerable<Factor> NotHaveFactors { get; set; }
     }
 }

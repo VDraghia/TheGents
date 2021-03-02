@@ -21,7 +21,5 @@ namespace ProjectManagementCollection.Models
 
         [MaxLength(100)]
         public string FactorDesc { get; set; }
-
-
     }
 }

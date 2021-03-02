@@ -17,49 +17,16 @@ using ProjectManagementCollection.Models.ViewModels;
 
 namespace ProjectManagementCollection.Controllers
 {
-    public class HomeController : Controller
+    public class SearchController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<SearchController> _logger;
         private readonly PmcAppDbContext _context;
 
 
-        public HomeController(PmcAppDbContext context, ILogger<HomeController> logger)
+        public SearchController(PmcAppDbContext context, ILogger<SearchController> logger)
         {
             _logger = logger;
             _context = context;
-        }
-
-        [Route("~/")]
-        [Route("~/Home")]
-        [Route("~/Home/Login")]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-       /*
-        private static ViewDocumentViewModel _login = new ViewDocumentViewModel();
-        private static string resProject = "";
-        private static int projId = 0;
-       */
-
-        [HttpPost]
-        [Route("~/")]
-        [Route("~/Home")]
-        [Route("~/Home/Login")]
-        public IActionResult Login(Boolean logout)
-        {
-            /*
-            _login = login;
-            if (logout)
-            {
-                _logger.LogWarning("User Logged out");
-                return View();
-            }
-            */
-
-            //return View("Search");
-            return RedirectToAction("Search");
         }
 
         [HttpGet]
@@ -174,54 +141,6 @@ namespace ProjectManagementCollection.Controllers
             return View(searchModel);
         }
 
-
-
-         [Route("~/Home/ViewDocument/{id}")]
-        public IActionResult ViewDocument(int id)
-        {
-            //Get the project by id
-            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
-
-            //Get the project factor relationships
-            List<DocumentFactorRel> projFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
-
-
-            List<Factor> factors = new List<Factor>();
-
-            // Get the Factors related to the Projects
-            foreach (DocumentFactorRel projFac in projFactors)
-            {
-                factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
-            }
-
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
-
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
-            {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-
-                factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
-
-            }
- 
-            /*
-            List<Document> documents = new List<Document>();
-            if(project.Name == "Project1")
-                documents.Add(new Document { DocumentId = 1, Name = "Project1", Url = @"/pdf/project1.pdf", ProjectFk = 1 });
-            if (project.Name == "Project2")
-                documents.Add(new Document { DocumentId = 2, Name = "Project2", Url = @"/pdf/project2.pdf", ProjectFk = 1 });
-            if (project.Name == "Project3")
-                documents.Add(new Document { DocumentId = 3, Name = "Project3", Url = @"/pdf/project3.pdf", ProjectFk = 2 });
-
-            project.Documents = documents; 
-
-            */
-
-            return View(project);
-        }
-
         //by tim
         [Route("~/Home/ViewProjInfo/{id}")]
         public IActionResult ViewProjInfo(int id)
@@ -246,11 +165,6 @@ namespace ProjectManagementCollection.Controllers
             ViewData["ProjectName"] = resProject;
             viewModel.Project = await _context.Projects.FirstOrDefaultAsync(m => m.Name == resProject);
             ViewData["ProjectId"] = viewModel.Project.ProjectId;
-            
-            return View();
-            
-
-        }
 
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
 
