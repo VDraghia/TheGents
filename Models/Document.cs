@@ -19,7 +19,7 @@ namespace ProjectManagementCollection.Models
         [MaxLength(150)]
         public string Url { get; set; }
 
-        public int ProjectDocFk { get; set; }
+        public int ProjectId { get; set; }
 
         public Project Project { get; set; }
 

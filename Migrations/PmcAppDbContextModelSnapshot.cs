@@ -31,7 +31,7 @@ namespace ProjectManagementCollection.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<int>("ProjectDocFk")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -41,9 +41,31 @@ namespace ProjectManagementCollection.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.HasIndex("ProjectDocFk");
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("ProjectManagementCollection.Models.DocumentFactorRel", b =>
+                {
+                    b.Property<int>("DocumentFactorRelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FactorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DocumentFactorRelId");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("FactorId");
+
+                    b.ToTable("DocumentFactorRels");
                 });
 
             modelBuilder.Entity("ProjectManagementCollection.Models.Factor", b =>
@@ -134,7 +156,10 @@ namespace ProjectManagementCollection.Migrations
                     b.Property<DateTime>("Uploaded")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Uploader_id")
+                    b.Property<int?>("Uploader_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("ProjectId");
@@ -142,24 +167,6 @@ namespace ProjectManagementCollection.Migrations
                     b.HasIndex("Uploader_id");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("ProjectManagementCollection.Models.ProjectFactorRel", b =>
-                {
-                    b.Property<int>("ProjectFactorRelId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("FactorFk")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjectFk")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProjectFactorRelId");
-
-                    b.ToTable("ProjectFactorRels");
                 });
 
             modelBuilder.Entity("ProjectManagementCollection.Models.User", b =>
@@ -193,7 +200,22 @@ namespace ProjectManagementCollection.Migrations
                 {
                     b.HasOne("ProjectManagementCollection.Models.Project", "Project")
                         .WithMany("Documents")
-                        .HasForeignKey("ProjectDocFk")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjectManagementCollection.Models.DocumentFactorRel", b =>
+                {
+                    b.HasOne("ProjectManagementCollection.Models.Document", "document")
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectManagementCollection.Models.Factor", "factor")
+                        .WithMany()
+                        .HasForeignKey("FactorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -202,9 +224,7 @@ namespace ProjectManagementCollection.Migrations
                 {
                     b.HasOne("ProjectManagementCollection.Models.User", "User")
                         .WithMany("Projects")
-                        .HasForeignKey("Uploader_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Uploader_id");
                 });
 #pragma warning restore 612, 618
         }

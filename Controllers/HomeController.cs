@@ -155,15 +155,21 @@ namespace ProjectManagementCollection.Controllers
             //Get the project by id
             Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
 
-            //Get the project factor relationships
-            List<ProjectFactorRel> projFactors = _context.ProjectFactorRels.Where(c => c.ProjectFk == id).ToList();
+            project.Documents = _context.Documents.Where(d => d.ProjectId == id).ToList();
+
+            
 
             List<Factor> factors = new List<Factor>();
 
-            // Get the Factors related to the Projects
-            foreach (ProjectFactorRel projFac in projFactors)
+            foreach(Document doc in project.Documents)
             {
-                factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
+                //Get the document factor relationships
+                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentId == doc.DocumentId).ToList();
+                // Get the Factors related to the Projects
+                foreach (DocumentFactorRel docFac in docFactors)
+                {
+                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorId));
+                }
             }
 
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
@@ -178,9 +184,8 @@ namespace ProjectManagementCollection.Controllers
 
             }
 
-            project.Factors = factorDescriptions;
+            project.Factors = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
 
-            project.Documents = _context.Documents.Where(d => d.ProjectDocFk == id).ToList();
 
             return View(project);
         }
@@ -192,17 +197,19 @@ namespace ProjectManagementCollection.Controllers
             //Get the project by id
             Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
 
-            project.Documents = _context.Documents.Where(c => c.ProjectDocFk == id).ToArray();
-
-            //Get the project factor relationships
-            List<ProjectFactorRel> projFactors = _context.ProjectFactorRels.Where(c => c.ProjectFk == id).ToList();
+            project.Documents = _context.Documents.Where(c => c.ProjectId == id).ToArray();
 
             List<Factor> factors = new List<Factor>();
 
-            // Get the Factors related to the Projects
-            foreach (ProjectFactorRel projFac in projFactors)
+            foreach (Document doc in project.Documents)
             {
-                factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
+                //Get the document factor relationships
+                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentId == doc.DocumentId).ToList();
+                // Get the Factors related to the Projects
+                foreach (DocumentFactorRel docFac in docFactors)
+                {
+                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorId));
+                }
             }
 
             Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
@@ -308,22 +315,23 @@ namespace ProjectManagementCollection.Controllers
                     {
                         Name = uFile.FileName,
                         Url = newKeyName,
-                        ProjectDocFk = projId
+                        ProjectId = projId
                     };
 
                     _context.Documents.Add(file);
                     await _context.SaveChangesAsync();
                     TempData["message"] = "Uploaded Successfully!!";
 
+                    Document newDoc = await _context.Documents.FirstOrDefaultAsync(p => p.Name == file.Name);
                     var aa = userProject.AreChecked;
                     if (aa != null)
                     {
                         foreach (int a in aa)
                         {
-                            var row = _context.ProjectFactorRels.FirstOrDefault(p => p.FactorFk == a && p.ProjectFk == projId);
+                            var row = _context.DocumentFactorRels.FirstOrDefault(p => p.FactorId == a && p.DocumentId == newDoc.DocumentId);
                             if (row == null)
                             {
-                                _context.ProjectFactorRels.Add(new ProjectFactorRel { FactorFk = a, ProjectFk = projId });
+                                _context.DocumentFactorRels.Add(new DocumentFactorRel { FactorId = a, DocumentId = newDoc.DocumentId });
                                 _context.SaveChanges();
                             }
 
@@ -339,7 +347,92 @@ namespace ProjectManagementCollection.Controllers
             return result;
         }
 
+        public async Task<IActionResult> SearchDocumentsByFactors()
+        {
+            var viewModel = new FactorDocuments();
+            viewModel.Documents = new List<Document>();
 
+            List<Factor> factors = await _context.Factors.ToListAsync();
+
+            // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
+            Dictionary<int, Tuple<string, string>> factorDescriptions = new Dictionary<int, Tuple<string, string>>();
+
+            //Get Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                FactorMainCategory value = _context.FactorMainCategories.Single(x => x.FactorMainCategoryId == factor.FactorMainCategoryFk);
+
+                // prepare for: the FactorId will be saved to database if the factor is checked
+                factorDescriptions.Add(factor.FactorId, new Tuple<string, string>(value.FactorMainCategoryDesc, key.FactorSubCategoryDesc));
+            }
+
+            // the Factors in viewModel is a dictioary
+            viewModel.Factors = factorDescriptions;//.OrderBy(o => o.Value.Item1).ToDictionary(o => o.Key, p => p.Value);
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchDocumentsByFactors(FactorDocuments factorDocuments)
+        {
+            var viewModel = factorDocuments;
+            viewModel.Documents = new List<Document>();
+            List<int> docFactorsHas = new List<int>();
+            if (viewModel.factorsHas != null)
+            {
+                foreach (var hasFactorId in viewModel.factorsHas)
+                {
+                    List<DocumentFactorRel> temp = _context.DocumentFactorRels.Where(c => c.FactorId == hasFactorId).ToList();
+                    foreach (var t in temp)
+                    {
+                        if (!docFactorsHas.Contains(t.DocumentId))
+                        {
+                            docFactorsHas.Add(t.DocumentId);
+                        }
+                    }
+                }
+            }
+            if (viewModel.factorsNotHas != null)
+            {
+                foreach (var notHasFactorId in viewModel.factorsNotHas)
+                {
+                    List<DocumentFactorRel> temp = _context.DocumentFactorRels.Where(c => c.FactorId == notHasFactorId).ToList();
+                    foreach (var t in temp)
+                    {
+                        if (docFactorsHas.Contains(t.DocumentId))
+                        {
+                            docFactorsHas.Remove(t.DocumentId);
+                        }
+                    }
+                }
+            }
+            foreach(var d in docFactorsHas)
+            {
+                viewModel.Documents.Add(_context.Documents.Where(c => c.DocumentId == d).Single());
+            }
+            List<Factor> factors = await _context.Factors.ToListAsync();
+
+            // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
+            Dictionary<int, Tuple<string, string>> factorDescriptions = new Dictionary<int, Tuple<string, string>>();
+
+            //Get Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                FactorMainCategory value = _context.FactorMainCategories.Single(x => x.FactorMainCategoryId == factor.FactorMainCategoryFk);
+
+                // prepare for: the FactorId will be saved to database if the factor is checked
+                factorDescriptions.Add(factor.FactorId, new Tuple<string, string>(value.FactorMainCategoryDesc, key.FactorSubCategoryDesc));
+            }
+
+            // the Factors in viewModel is a dictioary
+            viewModel.Factors = factorDescriptions;//.OrderBy(o => o.Value.Item1).ToDictionary(o => o.Key, p => p.Value);
+            
+            return View(viewModel);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

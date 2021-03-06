@@ -40,11 +40,10 @@ namespace ProjectManagementCollection.Models
         public string Success { get; set; }
 
         //tim
-        public int Uploader_id { get; set; }
+        public int UserId { get; set; }
 
         public User User { get; set; }
 
-        [ForeignKey("ProjectDocFk")]
         public ICollection<Document> Documents { get; set; }
 
         [NotMapped]

@@ -41,9 +41,9 @@ namespace ProjectManagementCollection.Data
             {
                 var projects = new Project[]
                 {
-                    new Project {Name="Project1", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success="Yes", Uploader_id=1},
-                    new Project {Name="Project2", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success="No", Uploader_id=1 },
-                    new Project {Name="Project3", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success="Yes", Uploader_id=2},
+                    new Project {Name="Project1", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success="Yes", UserId=1},
+                    new Project {Name="Project2", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success="No", UserId=1 },
+                    new Project {Name="Project3", Uploaded= new DateTime(2020,1,1), DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success="Yes", UserId=2},
                 };
 
                 foreach (Project project in projects)
@@ -553,10 +553,10 @@ namespace ProjectManagementCollection.Data
             if (!context.Documents.Any())
             {
 
-                documents.Add(new Document { Name = "Doc1", Url = @"/pdf/project1.pdf", ProjectDocFk = 1 });
-                documents.Add(new Document { Name = "Doc2", Url = @"/pdf/project2.pdf", ProjectDocFk = 1 });
-                documents.Add(new Document { Name = "Doc3", Url = @"/pdf/project1.pdf", ProjectDocFk = 2 });
-                documents.Add(new Document { Name = "Doc4", Url = @"/pdf/project3.pdf", ProjectDocFk = 2 });
+                documents.Add(new Document { Name = "Doc1", Url = @"/pdf/project1.pdf", ProjectId = 1 });
+                documents.Add(new Document { Name = "Doc2", Url = @"/pdf/project2.pdf", ProjectId = 1 });
+                documents.Add(new Document { Name = "Doc3", Url = @"/pdf/project1.pdf", ProjectId = 2 });
+                documents.Add(new Document { Name = "Doc4", Url = @"/pdf/project3.pdf", ProjectId = 2 });
 
                 foreach (Document document in documents)
                 {
@@ -581,23 +581,29 @@ namespace ProjectManagementCollection.Data
             var proj2 = context.Projects.Where(c => c.ProjectId == 2).Single();
             var proj3 = context.Projects.Where(c => c.ProjectId == 3).Single();
 
-
             // Create Project Factor Relations
-            if (!context.ProjectFactorRels.Any())
+            if (!context.DocumentFactorRels.Any())
             {
-                List<ProjectFactorRel> projFactors = new List<ProjectFactorRel>() {
-                new ProjectFactorRel(){ ProjectFk = 1, FactorFk = 1 },
-                new ProjectFactorRel(){ ProjectFk = 1, FactorFk = 2 },
-                new ProjectFactorRel(){ ProjectFk = 1, FactorFk = 3 },
-                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 40 },
-                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 54 },
-                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 62 },
-                new ProjectFactorRel(){ ProjectFk = 2, FactorFk = 10 }
+                List<DocumentFactorRel> docFactors = new List<DocumentFactorRel>() {
+                new DocumentFactorRel(){ DocumentId = 1, FactorId = 1 },
+                new DocumentFactorRel(){ DocumentId = 1, FactorId = 2 },
+                new DocumentFactorRel(){ DocumentId = 1, FactorId = 3 },
+                new DocumentFactorRel(){ DocumentId = 2, FactorId = 40 },
+                new DocumentFactorRel(){ DocumentId = 2, FactorId = 54 },
+                new DocumentFactorRel(){ DocumentId = 2, FactorId = 62 },
+                new DocumentFactorRel(){ DocumentId = 2, FactorId = 10 },
+                new DocumentFactorRel(){ DocumentId = 3, FactorId = 1 },
+                new DocumentFactorRel(){ DocumentId = 3, FactorId = 2 },
+                new DocumentFactorRel(){ DocumentId = 3, FactorId = 3 },
+                new DocumentFactorRel(){ DocumentId = 3, FactorId = 40 },
+                new DocumentFactorRel(){ DocumentId = 4, FactorId = 54 },
+                new DocumentFactorRel(){ DocumentId = 4, FactorId = 62 },
+                new DocumentFactorRel(){ DocumentId = 4, FactorId = 10 }
             };
 
-                foreach (ProjectFactorRel rel in projFactors)
+                foreach (DocumentFactorRel rel in docFactors)
                 {
-                    context.ProjectFactorRels.Add(rel);
+                    context.DocumentFactorRels.Add(rel);
                 }
 
                 context.SaveChanges();

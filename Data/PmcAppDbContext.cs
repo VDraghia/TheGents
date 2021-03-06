@@ -19,7 +19,8 @@ namespace ProjectManagementCollection.Data
 
         public DbSet<Factor> Factors { get; set; }
 
-        public DbSet<ProjectFactorRel> ProjectFactorRels{ get; set; }
+        //public DbSet<ProjectFactorRel> ProjectFactorRels{ get; set; }
+        public DbSet<DocumentFactorRel> DocumentFactorRels { get; set; }
 
         public DbSet<Document> Documents { get; set; }
 

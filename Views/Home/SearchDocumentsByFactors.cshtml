@@ -1,0 +1,132 @@
+﻿@model ProjectManagementCollection.Models.ViewModels.FactorDocuments
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+
+    <div style="background:rgba(56, 132, 237, 0.22);">
+        <form asp-controller="Home" asp-action="Search" method="get">
+            <input type="submit" value="Back" />
+        </form>
+        <table style="table-layout:fixed;" width="100%">
+            <tr>
+                <td width="35%">
+                    <table>
+                        @if (Model.Documents.Count == 0)
+                        {
+                            <tr><td>There is no document for selected factors</td></tr>
+                        }
+                        else
+                        {
+                            var oLink = "";
+                            var link = "";
+                            @foreach (var item in Model.Documents)
+                            {
+                                <!--oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + @item.Url.Replace(" ", "+");-->
+                                oLink = @item.Url;
+                                link = oLink;
+                                if (item.Name.Contains(".doc") || item.Name.Contains(".docx") || item.Name.Contains(".xlsx") || item.Name.Contains(".pptx") || item.Name.Contains(".ppt") || item.Name.Contains(".xls"))
+                                {
+                                    link = "https://view.officeapps.live.com/op/embed.aspx?src=" + link;
+
+                                }
+                                <tr>
+                                    <td><a href=@link>@item.Name</a></td>
+                                    <td>
+                                        <a href=@oLink><input type="button" value="Download" /></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="SearchDocumentsByFactors" enctype="multipart/form-data">
+                        <table style="table-layout:fixed;" width="100%">
+                            <tr>
+                                <td>
+                                    <div style="height: 800px; border: 1px solid #ccc; font: 16px /26px Georgia, Garamond, Serif; overflow: auto;">
+                                        <table id="checkBundle">
+                                            <tr>
+                                                <td>
+                                                        &nbsp;&nbsp;&nbsp;<button name="Search" class="btn btn-primary">Acceppt Search Factors</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Main - Category</b>
+                                                </td>
+
+                                                <td>
+                                                    <b>Sub - Category</b>
+                                                </td>
+                                                <td>
+                                                    <b>Must Have</b>
+                                                </td>
+                                                <td>
+                                                    <b>Not Have</b>
+                                                </td>
+                                            </tr>
+                                            @foreach (KeyValuePair<int, Tuple<string, string>> item in Model.Factors)
+                                            {
+                                                <tr>
+                                                    <td >
+                                                        <lable>@item.Value.Item1 </lable>
+
+                                                    </td>
+                                                    <td>
+                                                        <lable>@item.Value.Item2</lable>
+                                                    </td>
+                                                    <td>
+                                                        <input name="factorsHas" type="checkbox" value=@item.Key />
+                                                    </td>
+                                                    <td>
+                                                        <input name="factorsNotHas" type="checkbox" value=@item.Key />
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        </table>
+
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        
+    </div>
+
+    <div>
+        @if (TempData["message"] != null)
+        {
+            <script>
+                 alert("@TempData["message"]");
+            </script>
+        }
+    </div>
+
+    @section Scripts{
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+         function myFunction() {
+        var txt="okkkk";
+        document.getElementById("demo").innerHTML = txt;
+            }
+        </script>
+
+    }
+</body>
+</html>
