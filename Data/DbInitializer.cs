@@ -11,7 +11,7 @@ namespace ProjectManagementCollection.Data
     {
         public static void Initialize(PmcAppDbContext context)
         {
-            context.Database.EnsureDeleted();
+            //context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             /*
