@@ -27,5 +27,6 @@ namespace ProjectManagementCollection.Models
 
         public IEnumerable<Project> Projects { get; set; }
 
+        public Dictionary<int, Tuple<string, string>> Factors { get; set; }
     }
 }

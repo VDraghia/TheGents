@@ -74,7 +74,28 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Home/Search")]
         public IActionResult Search()
         {
-            return View();
+            Search searchModel = new Search();
+            //get all the factors for the view page
+            List<Factor> factors = _context.Factors.ToList();
+
+            // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
+            Dictionary<int, Tuple<string, string>> factorDescriptions = new Dictionary<int, Tuple<string, string>>();
+
+            //Get Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                FactorMainCategory value = _context.FactorMainCategories.Single(x => x.FactorMainCategoryId == factor.FactorMainCategoryFk);
+
+                // prepare for: the FactorId will be saved to database if the factor is checked
+                factorDescriptions.Add(factor.FactorId, new Tuple<string, string>(value.FactorMainCategoryDesc, key.FactorSubCategoryDesc));
+            }
+
+            // the Factors in viewModel is a dictioary
+            searchModel.Factors = factorDescriptions.OrderBy(o => o.Value.Item1).ToDictionary(o => o.Key, p => p.Value);
+
+            return View(searchModel);
         }
 
         [HttpPost]
@@ -145,6 +166,27 @@ namespace ProjectManagementCollection.Controllers
 
             searchModel.Projects = _context.Projects.FromSqlRaw(query, parameters.ToArray()).ToList();
 
+
+            List<Factor> factors = _context.Factors.ToList();
+
+            // prepare for creating a dictionary have pair values: FactorSubCategoryDesc and FactorId which will be listed in view
+            Dictionary<int, Tuple<string, string>> factorDescriptions = new Dictionary<int, Tuple<string, string>>();
+
+            //Get Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                FactorMainCategory value = _context.FactorMainCategories.Single(x => x.FactorMainCategoryId == factor.FactorMainCategoryFk);
+
+                // prepare for: the FactorId will be saved to database if the factor is checked
+                factorDescriptions.Add(factor.FactorId, new Tuple<string, string>(value.FactorMainCategoryDesc, key.FactorSubCategoryDesc));
+            }
+
+            // the Factors in viewModel is a dictioary
+            searchModel.Factors = factorDescriptions.OrderBy(o => o.Value.Item1).ToDictionary(o => o.Key, p => p.Value);
+
+
             return View(searchModel);
         }
 
@@ -179,8 +221,9 @@ namespace ProjectManagementCollection.Controllers
             {
                 FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
                 FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-
-                factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+                //donot add if another document already has the same factor
+                if(!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
 
             }
 
@@ -219,8 +262,9 @@ namespace ProjectManagementCollection.Controllers
             {
                 FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
                 FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-
-                factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+                //donot add if another document already has the same factor
+                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
 
             }
 

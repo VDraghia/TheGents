@@ -90,14 +90,18 @@
                                 <input type="button" class="basic-button factor-button" value="Factors" disabled />
                             </td>
                             <td class="factor-list" rowspan="4" colspan="4">
-                                <u>Factor List, added through factor button</u>
-                                Must have   Main Category - Sub Category
-                                Must have   Main Category - Sub Category
-                                Must have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
+                                <div  style="height:200px;width:450px;overflow:scroll;">
+                                    <b>Main Category  -  Sub Category</b><br />
+                                    <ul>
+                                    @foreach (KeyValuePair<int, Tuple<string, string>> item in Model.Factors)
+                                    {
+                                        <li>
+                                            @item.Value.Item1  - @item.Value.Item2
+                                        </li>
+                                    }
+                                    </ul>
+                                </div>
+                                
                             </td>
                         </tr>
                         <tr>
@@ -135,7 +139,7 @@
                     Uploaded
                 </div>
             </div>
-            @{ if (Model != null && Model.Projects.Count() > 0)
+            @{ if (Model != null && Model.Projects!=null && Model.Projects.Count() > 0)
                 {
                     foreach (Project proj in Model.Projects)
                     {
