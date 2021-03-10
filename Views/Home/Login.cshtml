@@ -1,7 +1,6 @@
-
-﻿@model ProjectManagementCollection.Models.ViewModels.LoginViewModel
+﻿@model ProjectManagementCollection.Models.ViewModels.LoginModel
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
 
@@ -11,7 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title> - Project Management  Collection  - Login</title>
-    <link rel="stylesheet" href="~/css/styles.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
 </head>
 <body>
     <main role="main" class="pb-3">
@@ -36,14 +35,6 @@
                     </tr>
                     <tr>
                         <td>
-                            <label asp-for="RememberMe" class="login-label"> Remember Me </label>
-                        </td>
-                        <td>
-                            <input type="checkbox" asp-for="RememberMe" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
                             <input type="submit" asp-controller="Home" asp-action="Login" value="Login" />
                         </td>
                     </tr>
@@ -52,12 +43,5 @@
 
         </div>
     </main>
-    <div>
-        @if (ViewBag.msg != null)
-        {
-<script>
-                       alert("@ViewBag.msg");
-</script>}
-    </div>
 </body>
 </html>

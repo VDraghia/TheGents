@@ -11,8 +11,12 @@ namespace ProjectManagementCollection.Models
         [ForeignKey("DocumentId")]
         public int DocumentFk { get; set; }
 
+        public Document Document { get; set; }
+
         [Required]
         [ForeignKey("FactorId")]
         public int FactorFk { get; set; }
+
+        public Factor Factor { get; set; }
     }
 }

@@ -1,0 +1,90 @@
+﻿@model ProjectManagementCollection.Models.ViewModels.FindCreateProjectModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects - Project Management Collection </title>
+</head>
+<body>
+    <div class="container row">
+        <div class="col">
+            <div class="col-md-3">
+                <div class="container">
+                    <form class="row mt-2 mb-2" method="get">
+                        <div class="flex-row">
+                            <table>
+                                <tr>
+                                    <td><label>Project&nbsp;Name</label></td>
+                                    <td><input type="text" class="search-label" asp-for="FindProjectName" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <input type="submit" class="btn btn-secondary mt-2 mb-2" asp-route="FindCreateProject" value="Find Project" />
+                        <input type="text" asp-for="FindProject" value="true" hidden />
+
+                    </form>
+                </div>
+            </div>
+            @{ // Display error message if trying to find project
+                if (Model.Message != null && Model.FindProject == true)
+                {
+                    <p class="text-danger">@Model.Message</p>
+                }
+            }
+            <br />
+            <br />
+            <div class="col-md-3">
+                <form asp-controller="Project" asp-action="FindCreateProject" method="get">
+                    <table>
+                        <tr>
+                            <td>
+                                <label class="search-proj">Project&nbsp;Name</label>
+                            </td>
+                            <td>
+                                <input type="text" asp-for="CreateProjectName" class="search-label" />
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="text" asp-for="CreateProject" value="true" hidden />
+                    <input type="submit" class="btn btn-secondary mt-2 mb-2" value="Create Project" />
+
+                </form>
+            </div>
+            @{ // Print error message if trying to create project
+                if (Model.Message != null && Model.CreateProject == true)
+                {
+                    <p class="text-danger">@Model.Message</p>
+                }
+
+                if (Model.Message != null && Model.CreateSuccess == true)
+                {
+                    <p class="text-info">@Model.Message</p>
+                }
+            }
+        </div>
+        <!-- Results sections -->
+        <div class="col-lg-6 col">
+            <!-- Results header sections -->
+            <div class="row d-flex justify-content-center width">
+                <div class="col-sm-4 border-top">
+                    <h2>Project&nbsp;List</h2>
+                </div>
+            </div>
+
+            <!-- Display results sections -->
+            @foreach(var proj in Model.Projects)
+            {
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-4 border-top test">
+                        <a asp-controller="Document" asp-action="Upload" asp-route-id="@proj.ProjectId">@proj.Name</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

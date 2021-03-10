@@ -16,38 +16,36 @@ namespace ProjectManagementCollection.Data
             /*
              * Create User Data
              */
-            if (!context.Users.Any())
+            if (!context.Permissions.Any())
             {
-                var users = new User[]
+                var permissions = new Permission[]
                 {
-                    new User {Email="prof1@school.com" },
-                    new User {Email="prof2@school.com" },
-                    new User {Email="student3@school.com" }
+                    new Permission {Level=1, Name="admin" },
+                    new Permission {Level=2, Name="students" }
                 };
 
-                foreach (User user in users) {
-                    context.Users.Add(user);
+                foreach (Permission perm in permissions)
+                {
+                    context.Permissions.Add(perm);
                 }
 
                 context.SaveChanges();
             }
 
-
             /*
-             * Create Project Data
+             * Create User Data
              */
-            if (!context.Projects.Any())
+            if (!context.Users.Any())
             {
-                var projects = new Project[]
+                var users = new User[]
                 {
-                    new Project {Name="Project1", DateCompleted=new DateTime(2016,1,1), Client="client1", Location="loc1", Success="Yes", UserFk=1},
-                    new Project {Name="Project2", DateCompleted=new DateTime(2018,1,1), Client="client1", Location="loc2", Success="No", UserFk=2},
-                    new Project {Name="Project3", DateCompleted=new DateTime(2019,1,1), Client="client2", Location="loc1", Success="Yes", UserFk=3},
+                    new User {Email="prof1@school.com", Password="test123", PermissionLevel=1 },
+                    new User {Email="prof2@school.com", Password="test123", PermissionLevel=1 },
+                    new User {Email="student3@school.com", Password="test123", PermissionLevel=2 }
                 };
 
-                foreach (Project project in projects)
-                {
-                    context.Projects.Add(project);
+                foreach (User user in users) {
+                    context.Users.Add(user);
                 }
 
                 context.SaveChanges();
@@ -627,6 +625,7 @@ namespace ProjectManagementCollection.Data
                     Position = 87
                 });
 
+
                 foreach (var factor in factors)
                 {
                     context.Factors.Add(factor);
@@ -634,15 +633,39 @@ namespace ProjectManagementCollection.Data
                 context.SaveChanges();
             }
 
+            /*
+             * Create Project Data
+             */
+            if (!context.Projects.Any())
+            {
+                var projects = new Project[]
+                {
+                    new Project {Name="Project1", Success="Yes"},
+                    new Project {Name="Project2", Success="Yes"},
+                    new Project {Name="Project3", Success="Yes"},
+                };
+
+                foreach (Project project in projects)
+                {
+                    context.Projects.Add(project);
+                }
+
+                context.SaveChanges();
+            }
+
+            var proj1 = context.Projects.Where(c => c.Name == "Project1").Single();
+            var proj2 = context.Projects.Where(c => c.Name == "Project2").Single();
+            var proj3 = context.Projects.Where(c => c.Name == "Project3").Single();
+
             List<Document> documents = new List<Document>();
 
             if (!context.Documents.Any())
             {
-
-                documents.Add(new Document { Name = "Doc1", Url = "doc1.aws.amazon.com", ProjectFk = 1 });
-                documents.Add(new Document { Name = "Doc2", Url = "doc2.aws.amazon.com", ProjectFk = 1 });
-                documents.Add(new Document { Name = "Doc3", Url = "doc3.aws.amazon.com", ProjectFk = 2 });
-
+                documents.Add(new Document { Name = "Doc1", Url = "doc1.aws.amazon.com", ProjectFk = proj1.ProjectId });
+                documents.Add(new Document { Name = "Doc2", Url = "doc2.aws.amazon.com", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "Doc3", Url = "doc3.aws.amazon.com", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "Doc4", Url = "doc3.aws.amazon.com", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "Doc5", Url = "doc3.aws.amazon.com", ProjectFk = proj3.ProjectId });
                 foreach (Document document in documents)
                 {
                     context.Documents.Add(document);
@@ -654,6 +677,8 @@ namespace ProjectManagementCollection.Data
             var doc1 = context.Documents.Where(c => c.DocumentId == 1).Single();
             var doc2 = context.Documents.Where(c => c.DocumentId == 2).Single();
             var doc3 = context.Documents.Where(c => c.DocumentId == 3).Single();
+            var doc4 = context.Documents.Where(c => c.DocumentId == 4).Single();
+            var doc5 = context.Documents.Where(c => c.DocumentId == 5).Single();
 
             var fac1 = context.Factors.Where(c => c.FactorId == 1).Single();
             var fac2 = context.Factors.Where(c => c.FactorId == 2).Single();
@@ -661,10 +686,6 @@ namespace ProjectManagementCollection.Data
             var fac4 = context.Factors.Where(c => c.FactorId == 4).Single();
             var fac5 = context.Factors.Where(c => c.FactorId == 5).Single();
             var fac6 = context.Factors.Where(c => c.FactorId == 6).Single();
-
-            var proj1 = context.Projects.Where(c => c.ProjectId == 1).Single();
-            var proj2 = context.Projects.Where(c => c.ProjectId == 2).Single();
-            var proj3 = context.Projects.Where(c => c.ProjectId == 3).Single();
 
             // Create Project Factor Relations
             if (!context.DocumentFactorRels.Any())
@@ -675,8 +696,10 @@ namespace ProjectManagementCollection.Data
                 new DocumentFactorRel(){ DocumentFk = 1, FactorFk = 3 },
                 new DocumentFactorRel(){ DocumentFk = 2, FactorFk = 40 },
                 new DocumentFactorRel(){ DocumentFk = 2, FactorFk = 54 },
-                new DocumentFactorRel(){ DocumentFk = 2, FactorFk = 62 },
-                new DocumentFactorRel(){ DocumentFk = 2, FactorFk = 10 }
+                new DocumentFactorRel(){ DocumentFk = 3, FactorFk = 62 },
+                new DocumentFactorRel(){ DocumentFk = 3, FactorFk = 10 },
+                new DocumentFactorRel(){ DocumentFk = 4, FactorFk = 62 },
+                new DocumentFactorRel(){ DocumentFk = 5, FactorFk = 10 }
             };
 
                 foreach (DocumentFactorRel rel in docFactors)
@@ -687,16 +710,7 @@ namespace ProjectManagementCollection.Data
                 context.SaveChanges();
             }
 
-            proj1.Documents = new List<Document>{ doc1 };
-            proj2.Documents = new List<Document>{ doc2 };
-            proj3.Documents = new List<Document>{ doc3 };
-
-            context.Projects.Update(proj1);
-            context.Projects.Update(proj2);
-            context.Projects.Update(proj3);
-
             context.SaveChanges();
-        
         }
     }
 }

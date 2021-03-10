@@ -17,8 +17,6 @@ namespace ProjectManagementCollection
     {
         public Startup(IConfiguration configuration)
         {
-
-
             Configuration = configuration;
         }
 
@@ -31,6 +29,17 @@ namespace ProjectManagementCollection
 
             //var blobConnection = Configuration.GetConnectionString("AzureBlobStorage");
             //services.AddSingleton(new BlobServiceClient(blobConnection));
+
+            services.AddDistributedMemoryCache();
+
+
+            // Used for tracking login
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(500);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddControllersWithViews();
         }
@@ -57,11 +66,13 @@ namespace ProjectManagementCollection
 
             app.UseAuthorization();
 
+            app.UseSession();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "login",
-                    pattern: "{controller=Login}/{action=Login}");
+                    pattern: "{controller=Home}/{action=Login}");
             });
         }
     }

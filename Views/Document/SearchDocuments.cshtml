@@ -1,0 +1,90 @@
+﻿@model ProjectManagementCollection.Models.ViewModels.SearchDocumentModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Document - Project Management Collection </title>
+</head>
+<body>
+    <div class="search-container">
+        <div class="container navbar row">
+            <form asp-controller="Document" asp-action="Search">
+                <table class="nav-table">
+                    <tr>
+                        <td colspan="8" align="center">
+                            <h3>Search Documents</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="DocumentName" class="search-label"> Document&nbsp;Name </label>
+                        </td>
+                        <td colspan="2">
+                            <input type="text" asp-for="DocumentName" size=39 />
+                        </td>
+                    </tr>
+                    <tr>
+                </table>
+                <div class="search-factors">
+                    <table align="right">
+                        <tr>
+                            <td valign="top">
+                                <input type="button" class="btn btn-secondary" value="Factors" />
+                            </td>
+                            <td class="factor-list" rowspan="4" colspan="4">
+                                <u>Factor List, added through factor button</u>
+                                Must have   Main Category - Sub Category
+                                Must have   Main Category - Sub Category
+                                Must have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                                Not  have   Main Category - Sub Category
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div class="search-results" overflow: auto;>
+            <div class="row border-bot d-flex justify-content-lg-start">
+                <div class="col-sm-1 border-bot ">
+                    select
+                </div>
+                |
+                <div class="col-sm-4 border-bot justify-content-center">
+                    Document Name
+                </div>
+                |
+                <div class="col-sm-4 border-bot justify-content-center">
+                    Project Name
+                </div>
+            </div>
+            @{ if (Model != null && Model.Documents.Count() > 0)
+               {
+                    foreach (Document doc in Model.Documents)
+                    {
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-sm-1 border-top">
+                                <input type="checkbox" id="" />
+                            </div>
+                            |
+                            <div class="col-sm-2 border-top">
+                                <a asp-controller="Document" asp-action="View" asp-route-id="@doc.DocumentId">@doc.Name</a>
+                            </div>
+                            |
+                            <div class="col-sm-2 border-top">
+                                <a asp-action="Project" asp-route-id="@doc.ProjectFk">@Model.ProjectNames.GetValueOrDefault(doc.ProjectFk)</a>
+                            </div>
+                        </div> 
+                    }
+               }
+            }
+        </div>
+    </div>
+</body>
+</html>

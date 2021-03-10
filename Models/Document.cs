@@ -17,10 +17,7 @@ namespace ProjectManagementCollection.Models
 
         [Required]
         [ForeignKey("ProjectId")]
+        public int ProjectFk { get; set; }
         public Project Project { get; set; }
-
-        [Required]
-        [ForeignKey("UserId")]
-        public User Uploader { get; set; }
     }
 }

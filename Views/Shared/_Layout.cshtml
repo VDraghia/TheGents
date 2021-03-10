@@ -1,27 +1,26 @@
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-
-}
-
-<!DOCTYPE html>
-
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project Management  Collection </title>
+    <title>Project Management Collection </title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
 </head>
-<div class="banner">
-    Project Management Collection - Algonquin College
-    <form class="logout-button-container">
-        <input class="logout-button" type="submit" asp-controller="Home" asp-action="Login" value="Logout" />
-    </form>
-</div>
-@RenderSection("Scripts", required: false)
 <body>
+    <div class="banner row">
+        Project Management Collection App - Algonquin College
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="logout-button-container">
+            <form>
+                <input type="submit" value="Upload" class="nav-button shadow-sm" asp-controller="Document" asp-action="Upload" />
+                <input type="submit" value="Documents" class="nav-button shadow-sm" asp-controller="Document" asp-action="SearchDocuments" />
+                <input type="submit" value="Projects" class="nav-button shadow-sm" asp-controller="Project" asp-action="SearchProjects" />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input class="logout-button" type="submit" asp-controller="Home" asp-action="Login" value="Logout" />
+            </form>
+        </div>
+    </div>
     @RenderBody()
 </body>
 </html>

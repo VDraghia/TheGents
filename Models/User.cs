@@ -13,12 +13,12 @@ namespace ProjectManagementCollection.Models
         public string Email { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
         [MaxLength(50)]
         public string Password { get; set; }
 
         [Required]
         [ForeignKey("PermissionId")]
+        public int PermissionLevel { get; set; }
         public Permission Permission { get; set; }
     }
 }

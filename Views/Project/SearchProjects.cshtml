@@ -1,0 +1,73 @@
+﻿@model ProjectManagementCollection.Models.ViewModels.SearchProjectModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+</head>
+<body>
+    <div class="search-container">
+        <div class="container navbar">
+            <form asp-controller="Project" asp-action="Search">
+                <table class="nav-table">
+                    <tr>
+                        <td colspan="8" align="center">
+                            <h3>Search Projects</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label asp-for="Name" class="search-label">Project&nbsp;Name</label>
+                        </td>
+                        <td colspan="2">
+                            <input type="text" asp-for="Name" size=39 />
+                        </td>
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <input type="submit" value="Search" class="btn btn-primary" asp-controller="Project" asp-action="Search" />
+                        </td>
+                        <td>
+                            <input type="submit" value="Export" class="btn btn-secondary" asp-controller="Project" asp-action="Export" disabled />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="search-results">
+            <div class="row border-bot d-flex justify-content-lg-start">
+                <div class="col-sm-1 border-bot ">
+                    select
+                </div>
+                |
+                <div class="col-sm-3 border-bot justify-content-center">
+                    Name
+                </div>
+            </div>
+            @{ if (Model != null && Model.Projects.Count() > 0)
+                {
+                    foreach (Project proj in Model.Projects)
+                    {
+                        <div class="row d-flex justify-content-start">
+                            <div class="col-sm-1 border-top">
+                                <input type="checkbox" id="@proj.ProjectId" />
+                            </div>
+                            |
+                            <div class="col-sm-3 border-top">
+                                <a asp-action="ViewProject" asp-route-id="@proj.ProjectId">@proj.Name</a>
+                            </div>
+                        </div> 
+                    }
+               }
+        }
+        </div>
+    </div>
+</body>
+</html>

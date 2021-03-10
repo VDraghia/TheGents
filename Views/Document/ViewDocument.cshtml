@@ -1,0 +1,79 @@
+﻿@model ProjectManagementCollection.Models.ViewDocumentModel
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+
+    <div class="view-container">
+        <div></div>
+
+        <table style="table-layout:fixed;" width="100%">
+            <tr>
+                <td width="33%">
+                    <form asp-controller="Home" asp-action="Search" method="get">
+                        <input type="submit" value="Back" />
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Document" asp-action="ViewDocument" asp-route-id="1" method="get">
+                        <input type="submit" value="View All" />
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <div class="container">
+            <div style="position: absolute;left:3%;width:30%;background:rgba(56, 132, 237, 0.22);height:100%;">
+                <table>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <h3> Project Information</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Project Name :
+                        </td>
+                        <td>
+                            @Model.Project.Name
+                        </td>
+                    </tr>
+                    <tr><td colspan="2" align="center"></tr>
+
+                    <tr>
+                        <td colspan="2" align="center">
+                            <h3>Associated Factors</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <b>Main Category</b>
+                        </td>
+                        <td align="center">
+                            <b>Sub Category</b>
+                        </td>
+                    </tr>
+                    <!--
+                        Display list of Factors    
+                    -->
+
+                </table>
+            </div>
+            <div id="tab_1" style="position: absolute;left:33.5%;height:100%;margin-left:10px;">
+                <iframe src="~/Home/ViewProjInfo/@{/*some id*/}"
+                        style="width:1258px;height:100%;">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

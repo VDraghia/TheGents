@@ -12,9 +12,13 @@ namespace ProjectManagementCollection.Models
         [ForeignKey("FactorMainCategoryId")]
         public int FactorMainCategoryFk { get; set; }
 
+        public FactorMainCategory FactorMainCategory { get; set; }
+
         [Required]
         [ForeignKey("FactorSubCategoryId")]
         public int FactorSubCategoryFk { get; set; }
+
+        public FactorSubCategory FactorSubCategory { get; set; }
 
         [Required]
         public int Position { get; set; }

@@ -10,8 +10,11 @@ namespace ProjectManagementCollection.Data
         {
 
         }
-        
+
+        public DbSet<Permission> Permissions { get; set; }
+
         public DbSet<User> Users { get; set; }
+
         public DbSet<Project> Projects { get; set; }
 
         public DbSet<FactorSubCategory> FactorSubCategories { get; set; }
@@ -26,7 +29,6 @@ namespace ProjectManagementCollection.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<Permission>()
                 .HasIndex(m => m.Level)
                 .IsUnique();

@@ -14,26 +14,7 @@ namespace ProjectManagementCollection.Models
         [Display(Name = "Project Name")]
         public string Name { get; set; }
 
-        [Required]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Year Completed")]
-        public DateTime DateCompleted { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Client { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Location { get; set; }
-
-        [Required]
-        public bool Success { get; set; }
-
-        [Required]
-        [ForeignKey("UserId")]
-        public User User { get; set; }
+        public string Success { get; set; }
 
         [NotMapped]
         public ICollection<Document> Documents { get; set; }
