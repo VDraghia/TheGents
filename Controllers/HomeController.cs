@@ -29,7 +29,15 @@ namespace ProjectManagementCollection.Controllers
         {
             return View();
         }
-
+        
+        [HttpGet]
+        [Route("~/Home/Export")]
+        public IActionResult Export()
+        {
+            return Export();
+        }
+        
+        
         [HttpPost]
         [Route("~/")]
         [Route("~/Home")]
@@ -55,5 +63,26 @@ namespace ProjectManagementCollection.Controllers
             //return View("Login");
             return RedirectToAction("SearchProjects", "Project");
         }
+        [HttpPost]
+        public IActionResult Export(Export project) { 
+
+            List<ProjectFactorRel> projFactors = _context.ProjectFactorRels.Where(c => c.ProjectFk == projId).ToList();
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Factors");
+                foreach (var projects in projFactors)
+                {
+                    sb.AppendLine($"{projects.FactorFk}");
+                }
+                return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "project.csv");
+            }
+            catch
+            {
+                return View(project);
+            }
+        }
+
+       
     }
 }
