@@ -12,7 +12,7 @@ namespace ProjectManagementCollection.Models.ViewModels
         [MaxLength(50)]
         public string Name { get; set; }
 
-        public IList<Factor> MatchingFactors { get; set;}
+        public IList<Factor> MatchingFactors { get; set; }
 
         IList<Project> MatchingProjects { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿@model ProjectManagementCollection.Models.ViewDocumentModel
+﻿@model ProjectManagementCollection.Models.Project
 @{ Layout = "~/Views/Shared/_Layout.cshtml"; }
 <!DOCTYPE html>
 <html class="common" lang="en">
@@ -16,9 +16,22 @@
 
         <table style="table-layout:fixed;" width="100%">
             <tr>
-                <td width="33%">
-                    <form asp-controller="Document" asp-action="SearchDocuments" method="get">
+                <td width="15%">
+                    <form asp-controller="Project" asp-action="Search" method="get">
                         <input type="submit" value="Back" />
+                    </form>
+                </td>
+
+                <td width="10%">
+                    <form asp-controller="Project" asp-action="AddFavoriteProj" method="post">
+                        <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
+                        <input type="submit" value="Add Favorite" />
+                    </form>
+                </td>
+
+                <td>
+                    <form asp-controller="Project" asp-action="ViewProject" asp-route-id="@Model.ProjectId" method="get">
+                        <input type="submit" value="View All" />
                     </form>
                 </td>
             </tr>
@@ -28,10 +41,10 @@
                 <table>
                     <tr>
                         <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
-                            Document Name :
+                            Project Name :
                         </td>
                         <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
-                            @Model.Document.Name
+                            @Model.Name
                         </td>
                     </tr>
                     <tr>
@@ -75,12 +88,20 @@
             </div>
 
             <div id="tab_1" style="position: absolute;left:20.5%;height:100%;margin-left:10px;">
-                <iframe src="@Model.Document.Url"
+                <iframe src="~/Project/ViewProjInfo/@Model.ProjectId"
                         style="width:1258px;height:100%;">
                 </iframe>
             </div>
 
         </div>
+    </div>
+    <div>
+        @if (TempData["message"] != null)
+        {
+            <script>
+                 alert("@TempData["message"]");
+            </script>
+        }
     </div>
 </body>
 </html>

@@ -1,0 +1,47 @@
+﻿@model ProjectManagementCollection.Models.Project
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+
+    <div>
+        <div>
+            <form asp-controller="Project" asp-action="SearchProjects" method="get">
+                <input type="submit" value="Back" />
+            </form>
+        </div>
+
+        @*<table style="table-layout:fixed;" width="100%">
+                <tr>
+                    <td>
+                        <form asp-controller="Project" asp-action="SearchProjects" method="get">
+                            <input type="submit" value="Back" />
+                        </form>
+                    </td>
+                </tr>
+            </table>*@
+
+        <div>
+            <div id="tab_1" style="height:100%; margin-left:50px;">
+                <iframe src=@TempData["link"] class="col-lg-11 border-top" height="830">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    <div>
+        @if (TempData["message"] != null)
+        {
+            <script>
+                 alert("@TempData["message"]");
+            </script>
+        }
+    </div>
+</body>
+</html>

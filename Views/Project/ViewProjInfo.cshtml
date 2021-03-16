@@ -15,7 +15,7 @@
         <table>
             @if (Model.Documents.Count == 0)
             {
-                <tr><td>There is no document for this project</td></tr>
+                <tr><td>There is no document for this project</td></tr> 
             }
             else
             {
@@ -35,12 +35,25 @@
                         <td>
                             <a href=@oLink><input type="button" value="Download" /></a>
                         </td>
+                        <td>
+                            <form asp-controller="Document" asp-action="AddFavoriteDoc" method="post">
+                            @*<input type="hidden" asp-for="@Model.Document" value="@item" />*@
+                               <input type="hidden" name="docId" value="@item.DocumentId" />
+                               <input type="hidden" name="projId" value="@Model.ProjectId" />
+                               <input type="submit" value="Add Favorite" />
+                            </form>
+                             @*<a asp-controller="Home" asp-action="AddFavoriteDoc" asp-route-documentId="@item.DocumentId">Add Favorite</a>*@
+
+                        </td>
                     </tr>
-                }
+                } 
             }
         </table>
 
     </div>
-
+    @if (TempData["message"] != null)
+    {
+        <p class="text-info">&nbsp;&nbsp;&nbsp;&nbsp;<b> <span style="color:#0094ff">@TempData["message"]</span></b></p>
+    }
 </body>
 </html>

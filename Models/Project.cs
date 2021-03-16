@@ -20,7 +20,9 @@ namespace ProjectManagementCollection.Models
         public ICollection<Document> Documents { get; set; }
 
         [NotMapped]
-        public ICollection<Factor> Factors { get; set; } 
+        public ICollection<Factor> Factors { get; set; }
 
+        [NotMapped]
+        public Dictionary<string, string> FactorStrings { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,9 +16,12 @@ namespace ProjectManagementCollection.Models.ViewModels
 
         public IList<Document> Documents { get; set; }
 
-        public IList<Factor> MustHaveFactors { get; set; }
+        public IList<ListFactorDescriptorModel> ListFactorDesc { get; set; }
 
-        public IList<Factor> NotHaveFactors { get; set; }
- 
+        [BindProperty]
+        public IList<int> MustHaveFactors { get; set; }
+        [BindProperty]
+        public IList<int> NotHaveFactors { get; set; }
+
     }
 }

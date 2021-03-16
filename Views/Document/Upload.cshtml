@@ -26,7 +26,7 @@
                 </td>
             </tr>
         </table>
-        <form asp-controller="Document" asp-action="Upload" enctype="multipart/form-data" method="post">
+        <form asp-controller="Document" asp-action="UploadConfirm" enctype="multipart/form-data" method="post">
             <table style="table-layout:fixed;" width="100%">
                 <tr>
                     <td width="42%">
@@ -42,11 +42,11 @@
                                 <table>
                                     <tr>
                                         <td>
-                                            &nbsp;&nbsp;&nbsp;<label asp-for="ProjectName" class="control-label">Project&nbsp;Name</label>
+                                            &nbsp;&nbsp;&nbsp;<label asp-for="@Model.ProjectName" class="control-label">Project&nbsp;Name</label>
                                         </td>
                                         <td>
-                                            <input asp-for="DocumentName" class="form-control" value="@Model.ProjectName" />
-                                            <span asp-validation-for="DocumentName" class="text-danger"></span>
+                                            <input asp-for="@Model.ProjectName" class="form-control" />
+                                            <span asp-validation-for="@Model.ProjectName" class="text-danger"></span>
                                         </td>
                                         <td>
                                             <a asp-controller="Project" asp-action="FindCreateProject">
@@ -57,6 +57,7 @@
                                         </td>
                                     </tr>
                                 </table>
+
                                 <table>
                                     <tr>
                                         <td>
@@ -64,7 +65,7 @@
                                                 <table>
                                                     <tr class="form-group">
                                                         <td class="btn btn-sm float-left">
-                                                            &nbsp;<input name="uploadFile" asp-for="File" type="file" />
+                                                            &nbsp;<input name="uploadFile" type="file" />
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -92,20 +93,18 @@
                             <div class="container">
                                 @{ for (int i = 0; i < Model.ListFactorDesc.Count(); i++)
                                     {
-                                        <div class="row">
-                                            <div class="col-4">
-                                                @Model.ListFactorDesc[i].MainCategoryDesc
-                                            </div>
-                                            <div class="col-4">
-                                                @Model.ListFactorDesc[i].SubCategoryDesc
-                                            </div>
-                                            <div class="col-4">
-                                                <input  asp-for="@Model.ListFactorDesc[i].Checked" type="checkbox" />
-                                                <input  asp-for="@Model.ListFactorDesc[i].FactorId" hidden/>
-                                            </div>
-                                        </div>
-                                    }
-                                }
+                        <div class="row">
+                            <div class="col-4">
+                                @Model.ListFactorDesc[i].MainCategoryDesc
+                            </div>
+                            <div class="col-4">
+                                @Model.ListFactorDesc[i].SubCategoryDesc
+                            </div>
+                            <div class="col-4">
+                                <input asp-for="@Model.ListFactorDesc[i].Checked" type="checkbox" />
+                                <input asp-for="@Model.ListFactorDesc[i].FactorId" hidden />
+                            </div>
+                        </div> } }
                             </div>
                         </div>
                     </td>
@@ -114,13 +113,25 @@
         </form>
     </div>
 
+
+
+    <div>
+        @if (Model.Message != null)
+        {
+<script>
+                 alert("@Model.Message");
+</script>}
+    </div>
+
+
+
+
     <div>
         @if (TempData["message"] != null)
         {
-            <script>
+<script>
                  alert("@TempData["message"]");
-            </script>
-        }
+</script>}
     </div>
 </body>
 </html>
