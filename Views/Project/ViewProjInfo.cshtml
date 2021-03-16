@@ -6,6 +6,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Search - Project Management Collection </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
 </head>
 <body>
 
@@ -23,7 +25,8 @@
                 var link = "";
                 @foreach (var item in Model.Documents)
                 {
-                    oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + @item.Url.Replace(" ", "+");
+                    <!--oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + @item.Url.Replace(" ", "+");-->
+                    oLink = @item.Url;
                     link = oLink;
                     if (item.Name.Contains(".doc") || item.Name.Contains(".docx") || item.Name.Contains(".xlsx") || item.Name.Contains(".pptx") || item.Name.Contains(".ppt") || item.Name.Contains(".xls"))
                     {

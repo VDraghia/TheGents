@@ -13,7 +13,7 @@
     <div class="search-container">
         <div class="container navbar row">
             <form asp-controller="Document" asp-action="Search">
-                <table class="nav-table">
+                <table class="nav-table" >
                     <tr>
                         <td colspan="8" align="center">
                             <h3>Search Documents</h3>
@@ -28,22 +28,34 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>
+                            <input type="submit" value="Search" class="btn btn-primary" asp-controller="Document" asp-action="SearchDocuments" />
+                        </td>
+                    </tr>
                 </table>
-                <div class="search-factors">
+                <div class="search-factors" style="position: absolute;left:70%;">
                     <table align="right">
                         <tr>
                             <td valign="top">
                                 <input type="button" class="btn btn-secondary" value="Factors" />
                             </td>
                             <td class="factor-list" rowspan="4" colspan="4">
-                                <u>Factor List, added through factor button</u>
-                                Must have   Main Category - Sub Category
-                                Must have   Main Category - Sub Category
-                                Must have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
+                               <div  style="height:130px;width:600px;overflow:scroll;">
+                                   <b>Main Category  -  Sub Category  - Must Have  -   Not Have</b><br />
+                                   <ul>
+                                    @{ for (int i = 0; i < Model.ListFactorDesc.Count(); i++)
+                                        {
+                                               <li>
+                                                    @Model.ListFactorDesc[i].MainCategoryDesc
+                                                    -
+                                                    @Model.ListFactorDesc[i].SubCategoryDesc
+                                                    -<input name="MustHaveFactors" type="checkbox" value=@Model.ListFactorDesc[i].FactorId />
+                                                    -<input name="NotHaveFactors" type="checkbox" value=@Model.ListFactorDesc[i].FactorId />
+                                                </li>
+                                        }
+                                    }
+                                       </ul>
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -64,21 +76,21 @@
                     Project Name
                 </div>
             </div>
-            @{ if (Model != null && Model.Documents.Count() > 0)
+            @{ if (Model != null && Model.Documents != null && Model.Documents.Count() > 0)
                {
                     foreach (Document doc in Model.Documents)
                     {
-                        <div class="row d-flex justify-content-center">
+                        <div class="row d-flex justify-content-lg-start">
                             <div class="col-sm-1 border-top">
                                 <input type="checkbox" id="" />
                             </div>
                             |
-                            <div class="col-sm-2 border-top">
-                                <a asp-controller="Document" asp-action="View" asp-route-id="@doc.DocumentId">@doc.Name</a>
+                            <div class="col-sm-4 border-top">
+                                <a asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.DocumentId">@doc.Name</a>
                             </div>
                             |
-                            <div class="col-sm-2 border-top">
-                                <a asp-action="Project" asp-route-id="@doc.ProjectFk">@Model.ProjectNames.GetValueOrDefault(doc.ProjectFk)</a>
+                           <div class="col-sm-4 border-top">
+                                 &nbsp;&nbsp;&nbsp;
                             </div>
                         </div> 
                     }

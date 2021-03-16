@@ -11,6 +11,7 @@ namespace ProjectManagementCollection.Data
     {
         public static void Initialize(PmcAppDbContext context)
         {
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             /*
@@ -661,11 +662,11 @@ namespace ProjectManagementCollection.Data
 
             if (!context.Documents.Any())
             {
-                documents.Add(new Document { Name = "Doc1", Url = "doc1.aws.amazon.com", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Doc2", Url = "doc2.aws.amazon.com", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "Doc3", Url = "doc3.aws.amazon.com", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "Doc4", Url = "doc3.aws.amazon.com", ProjectFk = proj3.ProjectId });
-                documents.Add(new Document { Name = "Doc5", Url = "doc3.aws.amazon.com", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "Doc1", Url = @"/pdf/project1.pdf", ProjectFk = proj1.ProjectId });
+                documents.Add(new Document { Name = "Doc2", Url = @"/pdf/project2.pdf", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "Doc3", Url = @"/pdf/project3.pdf", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "Doc4", Url = @"/pdf/project1.pdf", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "Doc5", Url = @"/pdf/project2.pdf", ProjectFk = proj3.ProjectId });
                 foreach (Document document in documents)
                 {
                     context.Documents.Add(document);

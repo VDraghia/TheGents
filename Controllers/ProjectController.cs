@@ -109,5 +109,85 @@ namespace ProjectManagementCollection.Controllers
 
             return View(model);
         }
+
+        [Route("~/Project/ViewProject/{id}")]
+        public IActionResult ViewProject(int id)
+        {
+            //Get the project by id
+            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
+
+            project.Documents = _context.Documents.Where(d => d.ProjectFk == id).ToList();
+
+
+
+            List<Factor> factors = new List<Factor>();
+
+            foreach (Document doc in project.Documents)
+            {
+                //Get the document factor relationships
+                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
+                // Get the Factors related to the Projects
+                foreach (DocumentFactorRel docFac in docFactors)
+                {
+                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
+                }
+            }
+
+            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+
+            //Get Main and Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                //donot add if another document already has the same factor
+                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+
+            }
+
+            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+
+
+            return View(project);
+        }
+        [Route("~/Project/ViewProjInfo/{id}")]
+        public IActionResult ViewProjInfo(int id)
+        {
+            //Get the project by id
+            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
+
+            project.Documents = _context.Documents.Where(c => c.ProjectFk == id).ToArray();
+
+            List<Factor> factors = new List<Factor>();
+
+            foreach (Document doc in project.Documents)
+            {
+                //Get the document factor relationships
+                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
+                // Get the Factors related to the Projects
+                foreach (DocumentFactorRel docFac in docFactors)
+                {
+                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
+                }
+            }
+
+            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+
+            //Get Main and Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                //donot add if another document already has the same factor
+                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+
+            }
+
+            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+
+            return View(project);
+        }
     }
 }
