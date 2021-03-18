@@ -25,5 +25,10 @@ namespace ProjectManagementCollection.Models.ViewModels
 
         public IList<Project> Projects { get; set; }
 
+        public IEnumerable<Project> AllProjects { get; set; }
+        public IEnumerable<Document> Documents { get; set; }
+        public IEnumerable<FavorProj> FavorProjs { get; set; }
+        public IEnumerable<FavorDoc> FavorDocs { get; set; }
+
     }
 }

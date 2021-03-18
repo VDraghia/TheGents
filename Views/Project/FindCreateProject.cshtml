@@ -1,7 +1,7 @@
 ﻿@model ProjectManagementCollection.Models.ViewModels.FindCreateProjectModel
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    }
 <!DOCTYPE html>
 <html class="common" lang="en">
 <head>
@@ -33,7 +33,7 @@
                 if (Model.Message != null && Model.FindProject == true)
                 {
                     <p class="text-danger">@Model.Message</p>
-                }
+                } 
             }
             <br />
             <br />
@@ -62,7 +62,7 @@
 
                 if (Model.Message != null && Model.CreateSuccess == true)
                 {
-                    <p class="text-info">@Model.Message</p>
+                     <p class="text-info">@Model.Message</p> 
                 }
             }
         </div>
@@ -76,13 +76,13 @@
             </div>
 
             <!-- Display results sections -->
-            @foreach(var proj in Model.Projects)
+            @foreach (var proj in Model.Projects)
             {
                 <div class="row d-flex justify-content-center">
                     <div class="col-sm-4 border-top test">
                         <a asp-controller="Document" asp-action="Upload" asp-route-id="@proj.ProjectId">@proj.Name</a>
                     </div>
-                </div>
+                </div>            
             }
         </div>
     </div>
