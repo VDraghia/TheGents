@@ -45,6 +45,15 @@
                              @*<a asp-controller="Home" asp-action="AddFavoriteDoc" asp-route-documentId="@item.DocumentId">Add Favorite</a>*@
 
                         </td>
+
+                        <td>
+                            <form asp-controller="Document" asp-action="DeleteDoc" method="post">
+                               <input type="hidden" name="docId" value="@item.DocumentId" />
+                               <input type="hidden" name="projId" value="@Model.ProjectId" />
+                               <input type="submit" value="Delete" />
+                            </form>
+                        </td>
+
                     </tr>
                 } 
             }

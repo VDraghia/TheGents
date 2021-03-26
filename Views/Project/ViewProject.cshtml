@@ -16,13 +16,20 @@
 
         <table style="table-layout:fixed;" width="100%">
             <tr>
-                <td width="15%">
+                <td width="7%">
                     <form asp-controller="Project" asp-action="Search" method="get">
                         <input type="submit" value="Back" />
                     </form>
                 </td>
 
-                <td width="10%">
+                <td width="7%">
+                    <form asp-controller="Project" asp-action="DeleteProj" method="post">
+                        <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
+                        <button type="submit" onclick="return ConfirmDelete()">Delete</button>
+                    </form>
+                </td>
+
+                <td width="14%">
                     <form asp-controller="Project" asp-action="AddFavoriteProj" method="post">
                         <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
                         <input type="submit" value="Add Favorite" />
@@ -103,5 +110,16 @@
             </script>
         }
     </div>
+
+    @section Scripts{
+        <script>
+            function ConfirmDelete() {
+                if (confirm("Delete a project will delete all the files in the project. Are you sure you want to delete @Model.Name?") == false)
+                    return false;
+            }
+        </script>
+
+    }
+
 </body>
 </html>

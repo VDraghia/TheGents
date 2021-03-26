@@ -75,7 +75,21 @@
             </div>
 
             <div id="tab_1" style="position: absolute;left:20.5%;height:100%;margin-left:10px;">
-                <iframe src="@Model.Document.Url"
+
+                @{ var oLink = "";
+                    var link = "";
+                    oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + Model.Document.Url.Replace(" ", "+");
+                    link = oLink;
+                    if (Model.Document.Name.Contains(".doc") || Model.Document.Name.Contains(".docx") || Model.Document.Name.Contains(".xlsx") || Model.Document.Name.Contains(".pptx") || Model.Document.Name.Contains(".ppt") || Model.Document.Name.Contains(".xls"))
+                    {
+                        link = "https://view.officeapps.live.com/op/embed.aspx?src=" + link;
+
+                    }
+
+                }
+
+
+                <iframe src="@link"
                         style="width:1258px;height:100%;">
                 </iframe>
             </div>
