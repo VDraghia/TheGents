@@ -18,5 +18,7 @@ namespace ProjectManagementCollection.Models
         public int FactorFk { get; set; }
 
         public Factor Factor { get; set; }
+
+        public int ProjectFactor { get; set; }
     }
 }

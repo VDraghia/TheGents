@@ -115,7 +115,7 @@ namespace ProjectManagementCollection.Controllers
         public IActionResult Export(Export project)
         {
 
-            var query = _context.DocumentFactorRels.Select(s => s.DocumentFk).ToArray();
+            var query = _context.DocumentFactorRels.Select(s => s.ProjectFactor).ToArray();
 
             try
             {
