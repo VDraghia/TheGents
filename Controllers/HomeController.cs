@@ -4,8 +4,9 @@ using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using ProjectManagementCollection.Models.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -66,7 +67,7 @@ namespace ProjectManagementCollection.Controllers
         [HttpPost]
         public IActionResult Export(Export project) { 
 
-            List<ProjectFactorRel> projFactors = _context.ProjectFactorRels.Where(c => c.ProjectFk == projId).ToList();
+            List<DocumentFactorRel> projFactors = _context.DocumentFactorRels.Where(c => c.ProjectFk == projId).ToList();
             try
             {
                 StringBuilder sb = new StringBuilder();
