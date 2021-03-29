@@ -29,6 +29,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/Search")]
         public IActionResult SearchProjects()
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             return View();
         }
 
@@ -38,6 +42,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/Search")]
         public IActionResult SearchProjects(SearchProjectModel searchModel)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             if (!ModelState.IsValid)
             {
                 return View();
@@ -56,6 +64,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/FindCreateProject/{id}")]
         public IActionResult FindCreateProject(FindCreateProjectModel findCreateModel)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             FindCreateProjectModel model = new FindCreateProjectModel();
             model.Projects = new List<Project>();
 
@@ -113,6 +125,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/ViewProject/{id}")]
         public IActionResult ViewProject(int id)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             //Get the project by id
             Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
 
@@ -154,6 +170,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/ViewProjInfo/{id}")]
         public IActionResult ViewProjInfo(int id)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             //Get the project by id
             Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
 

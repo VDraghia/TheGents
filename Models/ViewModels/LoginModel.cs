@@ -11,5 +11,6 @@ namespace ProjectManagementCollection.Models.ViewModels
 
         public string Password { get; set; }
 
+        public bool error { get; set; }
     }
 }

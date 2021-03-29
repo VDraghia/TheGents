@@ -30,6 +30,10 @@ namespace ProjectManagementCollection.Controllers
         [HttpGet]
         public IActionResult SearchDocuments()
         {
+            if(HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             SearchDocumentModel viewModel = new SearchDocumentModel();
             //Get all factors and categories for description
             IList<Factor> factors = _context.Factors.ToList();
@@ -69,6 +73,10 @@ namespace ProjectManagementCollection.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchDocuments(SearchDocumentModel modelFromView)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -166,6 +174,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Document/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             ViewDocumentModel viewModel = new ViewDocumentModel();
             //Get the project by id
             viewModel.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
@@ -205,7 +217,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Document/Upload/{id}")]
         public IActionResult Upload([FromRoute] int? id)
         {
-
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             UploadDocumentModel uploadModel = new UploadDocumentModel();
             Project proj = new Project();
 
@@ -262,7 +277,10 @@ namespace ProjectManagementCollection.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 1073741824)]
         public async Task<IActionResult> Upload(UploadDocumentModel modelFromView)
         {
-
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             UploadDocumentModel modelToView= new UploadDocumentModel();
 
             //

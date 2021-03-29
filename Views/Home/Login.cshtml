@@ -33,6 +33,16 @@
                             <input type="password" asp-for="Password" size=20 />
                         </td>
                     </tr>
+                    @{ if (Model != null && Model.error)
+                        {
+                    <tr>
+                        <td></td>
+                        <td style="color:red">
+                        Did not find the User or Password is wrong!
+                        </td>
+                    </tr>
+                        }
+                    }
                     <tr>
                         <td>
                             <input type="submit" asp-controller="Home" asp-action="Login" value="Login" />
