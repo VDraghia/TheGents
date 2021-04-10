@@ -847,7 +847,27 @@ namespace ProjectManagementCollection.Data
                 context.SaveChanges();
             }
 
-            context.SaveChanges();
+            if (!context.DocumentFactorRels.Any())
+            {
+                List<DocumentFactorRel> projectFactors = new List<DocumentFactorRel>()
+                {
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0},
+                    new DocumentFactorRel(){ProjectFactor = 0}
+                };
+                foreach (DocumentFactorRel rel in projectFactors)
+                {
+                    context.DocumentFactorRels.Add(rel);
+                }
+                context.SaveChanges();
+            }
         }
     }
 }

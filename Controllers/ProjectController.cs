@@ -8,6 +8,7 @@ using ProjectManagementCollection.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProjectManagementCollection.Controllers
@@ -162,6 +163,30 @@ namespace ProjectManagementCollection.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Export(Export project)
+        {
+
+            var query = _context.DocumentFactorRels.Select(s => s.ProjectFactor).ToArray();
+
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in query)
+                {
+
+                    sb.AppendLine(item.ToString());
+                    sb.AppendLine(",");
+
+                }
+                return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "project.csv");
+            }
+            catch
+            {
+                return View(project);
+            }
         }
 
         [HttpGet]
@@ -354,7 +379,6 @@ namespace ProjectManagementCollection.Controllers
             }
             return Redirect(url);
         }
-
 
     }
 }
