@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
-using ProjectManagementCollection.Models;
 using ProjectManagementCollection.Models.ViewModels;
-using System;
-using System.Linq;
 
 
 namespace ProjectManagementCollection.Controllers
@@ -49,8 +46,9 @@ namespace ProjectManagementCollection.Controllers
 
             if (user != null && user.Password == model.Password)
             {
-                return RedirectToAction("SearchProject", "Project");
+                return RedirectToAction("SearchProjects", "Project");
             }
+            
             */
             //return View("Login");
             return RedirectToAction("SearchProjects", "Project");

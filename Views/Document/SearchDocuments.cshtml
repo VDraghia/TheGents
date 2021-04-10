@@ -12,7 +12,7 @@
 <body>
     <div class="search-container">
         <div class="container navbar row">
-            <form asp-controller="Document" asp-action="Search">
+            <form asp-controller="Document" asp-action="SearchDocuments">
                 <table class="nav-table">
                     <tr>
                         <td colspan="8" align="center">
@@ -21,13 +21,20 @@
                     </tr>
                     <tr>
                         <td>
-                            <label asp-for="DocumentName" class="search-label"> Document&nbsp;Name </label>
+                            <label class="search-label"> Document&nbsp;Name </label>
                         </td>
                         <td colspan="2">
                             <input type="text" asp-for="DocumentName" size=39 />
                         </td>
                     </tr>
                     <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="button" class="btn btn-primary" value="Search" />
+                        </td>
+                    </tr>
                 </table>
                 <div class="search-factors">
                     <table align="right">
@@ -36,14 +43,20 @@
                                 <input type="button" class="btn btn-secondary" value="Factors" />
                             </td>
                             <td class="factor-list" rowspan="4" colspan="4">
-                                <u>Factor List, added through factor button</u>
-                                Must have   Main Category - Sub Category
-                                Must have   Main Category - Sub Category
-                                Must have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
-                                Not  have   Main Category - Sub Category
+                                <div class="col">
+                                    <div class="row">
+                                        <u>Search Factor List</u>
+                                    </div>
+                                    <div class="row">
+                                        None
+                                    </div>
+                                    <div class="row">
+                                       
+                                    </div>
+                                    <div class="row">
+   
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -52,11 +65,7 @@
         </div>
         <div class="search-results" overflow: auto;>
             <div class="row border-bot d-flex justify-content-lg-start">
-                <div class="col-sm-1 border-bot ">
-                    select
-                </div>
-                |
-                <div class="col-sm-4 border-bot justify-content-center">
+                <div class="col-sm-6 border-bot justify-content-center">
                     Document Name
                 </div>
                 |
@@ -68,17 +77,13 @@
                {
                     foreach (Document doc in Model.Documents)
                     {
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-sm-1 border-top">
-                                <input type="checkbox" id="" />
+                        <div class="row border-bot d-flex justify-content-lg-start">
+                            <div class="col-sm-6 border-top ">
+                                <a asp-controller="Document" asp-action="ViewDocuments" asp-route-id="@doc.DocumentId">@doc.Name</a>
                             </div>
                             |
-                            <div class="col-sm-2 border-top">
-                                <a asp-controller="Document" asp-action="View" asp-route-id="@doc.DocumentId">@doc.Name</a>
-                            </div>
-                            |
-                            <div class="col-sm-2 border-top">
-                                <a asp-action="Project" asp-route-id="@doc.ProjectFk">@Model.ProjectNames.GetValueOrDefault(doc.ProjectFk)</a>
+                            <div class="col-sm-4 border-top">
+                                <a asp-controller="Project" asp-action="ViewProject" asp-route="@doc.ProjectFk">@Model.ProjectNames.GetValueOrDefault(doc.ProjectFk)</a>
                             </div>
                         </div> 
                     }

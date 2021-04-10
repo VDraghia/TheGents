@@ -28,12 +28,16 @@ namespace ProjectManagementCollection.Controllers
         }
 
         [HttpGet]
+        [Route("~/Document/SearchDocuments")]
+        [Route("~/Document/SearchDocuments/{id}")]
         public IActionResult SearchDocuments()
         {
             return View();
         }
 
         [HttpPost]
+        [Route("~/Document/SearchDocuments")]
+        [Route("~/Document/SearchDocuments/{id}")]
         public async Task<IActionResult> SearchDocuments(SearchDocumentModel modelFromView)
         {
 
@@ -41,6 +45,8 @@ namespace ProjectManagementCollection.Controllers
             {
                 return View();
             }
+
+            IList<Document> docs = _context.Documents.Where(p => p.Name.Contains(modelFromView.DocumentName)).ToList();
 
             // Model for view
             SearchDocumentModel docModel = new SearchDocumentModel();
@@ -70,7 +76,7 @@ namespace ProjectManagementCollection.Controllers
                     }
                 }
             }
-            
+
             // Add Must Have Factors if any
             if (modelFromView.NotHaveFactors.Count() > 0)
             {
@@ -98,9 +104,9 @@ namespace ProjectManagementCollection.Controllers
 
             // Get All Project
             IList<Project> projects = await _context.Projects.ToListAsync();
-            
+
             // Create Project id:name relation
-            foreach(var proj in projects)
+            foreach (var proj in projects)
             {
                 docModel.ProjectNames.Add(proj.ProjectId, proj.Name);
             }
@@ -118,12 +124,13 @@ namespace ProjectManagementCollection.Controllers
             Project proj = new Project();
 
             // Return Project Name
-            if (id != null) {
+            if (id != null)
+            {
                 proj = _context.Projects.Where(p => p.ProjectId == id).Single();
             }
 
             // Populate text field with empty string
-            if(proj.ProjectId == 0)
+            if (proj.ProjectId == 0)
             {
                 uploadModel.ProjectName = "";
             }
@@ -135,17 +142,17 @@ namespace ProjectManagementCollection.Controllers
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
             //Build Factor descriptor list to display
-            foreach(var fac in factors)
+            foreach (var fac in factors)
             {
                 //Get Category description
                 FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
-                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -171,7 +178,7 @@ namespace ProjectManagementCollection.Controllers
         public async Task<IActionResult> Upload(UploadDocumentModel modelFromView)
         {
 
-            UploadDocumentModel modelToView= new UploadDocumentModel();
+            UploadDocumentModel modelToView = new UploadDocumentModel();
 
             //
             if (modelFromView.ProjectName == null)
@@ -183,7 +190,7 @@ namespace ProjectManagementCollection.Controllers
 
             /*
              * AWS Credentials
-             */ 
+             */
             string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
             string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
             string AWS_bucketName = "gentsproject2";
@@ -202,7 +209,7 @@ namespace ProjectManagementCollection.Controllers
             try
             {
                 AmazonS3Client s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
-                
+
                 string newKeyName = existingProject + "/" + modelFromView.File.FileName;
                 var fs = modelFromView.File.OpenReadStream();
 
@@ -231,7 +238,7 @@ namespace ProjectManagementCollection.Controllers
                 //Save document
                 _context.Documents.Add(doc);
                 await _context.SaveChangesAsync();
-               
+
                 //Create document factor relation and add to database
                 foreach (var factor in modelFromView.ListFactorDesc)
                 {
@@ -260,63 +267,61 @@ namespace ProjectManagementCollection.Controllers
             return View(modelToView);
         }
 
-
-        [Route("~/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
 
-            //Get the project by id
-            Document doc = _context.Documents.Where(c => c.DocumentId == id).Single();
+            ViewDocumentModel model = new ViewDocumentModel();
 
+            // Get Document and Project
+            try { 
+            model.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
+            model.Project = _context.Projects.Where(p => p.ProjectId == model.Document.ProjectFk).Single();
+            } catch (Exception ex)
+            {
+                _logger.LogError("Could not find Document or Project");
+                return View();
+            }
             //Get the project factor relationships
-            List<DocumentFactorRel> projFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
+            List<DocumentFactorRel> docFactorsRels = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
 
             IList<Factor> factors = new List<Factor>();
 
             // Get the Factors related to the Projects
-            foreach (DocumentFactorRel projFac in projFactors)
+            foreach (DocumentFactorRel docFacRel in docFactorsRels)
             {
-                factors.Add(_context.Factors.Single(c => c.FactorId == projFac.FactorFk));
+                factors.Add(_context.Factors.Single(c => c.FactorId == docFacRel.FactorFk));
             }
 
-            Dictionary<string, IList<string>> factorDescriptions = new Dictionary<string, IList<string>>();
+            //Get all factors and categories for description
+            IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
+
+            //Build Factor descriptor list to display
+            foreach (var fac in factors)
             {
-                FactorMainCategory mainCategory = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory subCategory = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                //Get Category description
+                FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+                FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
-                /*
-                 * If main category exists as key in dictionary, 
-                 * append sub category to value list, 
-                 * else create dictionary entry with new list of sub category
-                 */
-                if (factorDescriptions.ContainsKey(mainCategory.FactorMainCategoryDesc))
+                //Build new List factor descriptor
+                ListFactorDescriptor factorDescriptor = new ListFactorDescriptor()
                 {
-                    factorDescriptions[mainCategory.FactorMainCategoryDesc].Add(subCategory.FactorSubCategoryDesc);
-                } else
-                {
-                    factorDescriptions.Add(mainCategory.FactorMainCategoryDesc, new List<string>() { subCategory.FactorSubCategoryDesc });
-                }
+                    FactorId = fac.FactorId,
+                    Position = fac.Position,
+                    MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+                    SubCategoryDesc = subDesc.FactorSubCategoryDesc
+                };
+
+                listFactors.Add(factorDescriptor);
             }
 
-           /*
-                List<Document> documents = new List<Document>();
-                if(project.Name == "Project1")
-                    documents.Add(new Document { DocumentId = 1, Name = "Project1", Url = @"/pdf/project1.pdf", ProjectFk = 1 });
-                if (project.Name == "Project2")
-                    documents.Add(new Document { DocumentId = 2, Name = "Project2", Url = @"/pdf/project2.pdf", ProjectFk = 1 });
-                if (project.Name == "Project3")
-                    documents.Add(new Document { DocumentId = 3, Name = "Project3", Url = @"/pdf/project3.pdf", ProjectFk = 2 });
+            listFactors.OrderBy(f => f.Position);
 
-                project.Documents = documents;
-            */
+            model.Factors = listFactors;
 
-            return View();
+            return View(model);
         }
-
     }
-
-
 }

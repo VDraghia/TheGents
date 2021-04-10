@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projects - Project Management Collection </title>
+    <title>Projects - Project Management Collection</title>
 </head>
 <body>
     <div class="container row">
@@ -25,7 +25,6 @@
                         </div>
                         <input type="submit" class="btn btn-secondary mt-2 mb-2" asp-route="FindCreateProject" value="Find Project" />
                         <input type="text" asp-for="FindProject" value="true" hidden />
-
                     </form>
                 </div>
             </div>
@@ -51,7 +50,6 @@
                     </table>
                     <input type="text" asp-for="CreateProject" value="true" hidden />
                     <input type="submit" class="btn btn-secondary mt-2 mb-2" value="Create Project" />
-
                 </form>
             </div>
             @{ // Print error message if trying to create project

@@ -8,7 +8,7 @@ namespace ProjectManagementCollection.Models
         public int DocumentId { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(150)]
         public string Name { get; set; }
 
         [Required]

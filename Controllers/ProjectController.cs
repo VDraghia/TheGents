@@ -23,7 +23,6 @@ namespace ProjectManagementCollection.Controllers
             _context = context;
         }
 
-
         [Route("~/")]
         [Route("~/Project/")]
         [Route("~/Project/Search")]
@@ -106,6 +105,73 @@ namespace ProjectManagementCollection.Controllers
                     return View(model);
                 }
             }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("~/Project/ViewProject/{id}")]
+        public IActionResult ViewProject(int id)
+        {
+            //Create View Model
+            ViewProjectModel model = new ViewProjectModel();
+
+            //Get Documents related to project
+            IList<Document> docs = _context.Documents.Where(d => d.ProjectFk == id).ToList();
+
+            // Get document factor relations
+            IList<DocumentFactorRel> projectFactors = new List<DocumentFactorRel>();
+            foreach (Document doc in docs)
+            {
+                // Find the Document Factor Relation
+                IList<DocumentFactorRel> docRels = _context.DocumentFactorRels.Where(f => f.DocumentFk == doc.DocumentId).ToList();
+
+                //Add document factor relation to project factor relation
+                foreach (DocumentFactorRel rel in docRels)
+                {
+                    projectFactors.Add(rel);
+                }
+            }
+
+            //Get all factors for the project from the list of related documents
+            IList<Factor> factors = new List<Factor>();
+            foreach (DocumentFactorRel projFac in projectFactors)
+            {
+                factors.Add(_context.Factors.Where(f => f.FactorId == projFac.FactorFk).Single());
+            }
+
+            //Get all factors and categories for description
+            IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
+
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
+
+            //Build Factor descriptor list to display
+            foreach (var fac in factors)
+            {
+                //Get Category description
+                FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+                FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
+
+                //Build new List factor descriptor
+                ListFactorDescriptor factorDescriptor = new ListFactorDescriptor()
+                {
+                    FactorId = fac.FactorId,
+                    Position = fac.Position,
+                    MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+                    SubCategoryDesc = subDesc.FactorSubCategoryDesc
+                };
+
+                listFactors.Add(factorDescriptor);
+            }
+
+            listFactors.OrderBy(f => f.Position);
+
+            listFactors = new HashSet<ListFactorDescriptor>(listFactors).ToList();
+
+            model.SelectedProject = _context.Projects.Where(p => p.ProjectId == id).SingleOrDefault();
+            model.SelectedProject.Documents = docs;
+            model.FactorDescriptiors = listFactors;
 
             return View(model);
         }

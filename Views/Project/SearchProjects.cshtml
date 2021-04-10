@@ -10,7 +10,7 @@
     <title>Search - Project Management Collection </title>
 </head>
 <body>
-    <div class="search-container">
+    <div class="container-fluid align-content-start">
         <div class="container navbar">
             <form asp-controller="Project" asp-action="Search">
                 <table class="nav-table">
@@ -41,14 +41,10 @@
                 </table>
             </form>
         </div>
-        <div class="search-results">
-            <div class="row border-bot d-flex justify-content-lg-start">
-                <div class="col-sm-1 border-bot ">
-                    select
-                </div>
-                |
+        <div class="container-fluid">
+            <div class="row border-bot justify-content-lg-start">
                 <div class="col-sm-3 border-bot justify-content-center">
-                    Name
+                    Project Name
                 </div>
             </div>
             @{ if (Model != null && Model.Projects.Count() > 0)
@@ -56,10 +52,6 @@
                     foreach (Project proj in Model.Projects)
                     {
                         <div class="row d-flex justify-content-start">
-                            <div class="col-sm-1 border-top">
-                                <input type="checkbox" id="@proj.ProjectId" />
-                            </div>
-                            |
                             <div class="col-sm-3 border-top">
                                 <a asp-action="ViewProject" asp-route-id="@proj.ProjectId">@proj.Name</a>
                             </div>

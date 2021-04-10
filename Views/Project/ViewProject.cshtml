@@ -1,0 +1,78 @@
+﻿@model ProjectManagementCollection.Models.ViewModels.ViewProjectModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html class="common" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> View - Project Management Collection </title>
+</head>
+<body>
+    <div class="container-fluid">
+        <h4>Project Documents List</h4>
+        <div class="container">
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-3">
+                        <b>Project Name:</b>
+</div>
+                    <div class="col-5">
+                        @Model.SelectedProject.Name
+                    </div>
+                    <div class="col-auto">
+                        <b>Project Factors</b>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5">
+                    @if (Model.SelectedProject.Documents.Count == 0)
+                    {
+                    <div class="alert-warning">There is no document for this project</div>
+                    }
+                    else
+                    {
+                        @foreach (var doc in Model.SelectedProject.Documents)
+                        {
+                    <div class="row">
+                    <div class="col-10">
+                        <a asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.DocumentId">@doc.Name</a>
+                    </div>
+                       @{
+                           var oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + doc.Url.Replace(" ", "+");
+                           var link = oLink;
+                           if (doc.Name.Contains(".doc") || doc.Name.Contains(".docx") || doc.Name.Contains(".xlsx") || doc.Name.Contains(".pptx") || doc.Name.Contains(".ppt") || doc.Name.Contains(".xls"))
+                           {
+                               link = "https://view.officeapps.live.com/op/embed.aspx?src=" + link;
+                           }
+                       }
+                        <div class="col-2">
+                            <a href=@oLink><input class="btn-secondary" type="button" value="Download" /></a>
+                        </div>
+                    </div>
+                        }
+                    }
+                </div>
+                <div class="col-lg-7">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-5"><b>Main Category</b></div>
+                            <div class="col-5"><b>Sub Category</b></div>
+                        </div>
+                        @foreach (var desc in Model.FactorDescriptiors)
+                        {
+                            <div class="row">
+                                <div class="col-5">@desc.MainCategoryDesc</div>
+                                <div class="col-5">@desc.SubCategoryDesc</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
