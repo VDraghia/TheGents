@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {
     public class ViewProjectModel
     {
 
-        [MaxLength(50)]
-        public string Name { get; set; }
+        public Project SelectedProject{ get; set; }
 
-        public IList<Factor> MatchingFactors { get; set;}
+        public IList<ListFactorDescriptor> FactorDescriptiors { get; set; }
 
-        IList<Project> MatchingProjects { get; set; }
     }
 }

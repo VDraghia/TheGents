@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
 namespace ProjectManagementCollection.Models
 {
-    public class ListFactorDescriptorModel
+    public class ListFactorDescriptor
     {
-
         public int FactorId { get; set; }
 
         public int Position { get; set; }

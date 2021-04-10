@@ -15,6 +15,7 @@ namespace ProjectManagementCollection.Models.ViewModels
         public bool CreateSuccess { get; set; }
 
         public string Message { get; set; }
+
         public IList<Project> Projects { get; set; }
     }
 }

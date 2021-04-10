@@ -1,7 +1,4 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {
@@ -15,9 +12,14 @@ namespace ProjectManagementCollection.Models.ViewModels
 
         public IList<Document> Documents { get; set; }
 
-        public IList<Factor> MustHaveFactors { get; set; }
+        public IList<ListFactorDescriptorModel> ListFactorDesc { get; set; }
+
+        [BindProperty]
+        public IList<int> MustHaveFactors { get; set; }
+        [BindProperty]
+        public IList<int> NotHaveFactors { get; set; }
 
         public IList<Factor> NotHaveFactors { get; set; }
- 
+
     }
 }

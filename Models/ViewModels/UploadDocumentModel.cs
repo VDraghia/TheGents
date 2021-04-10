@@ -1,7 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using System;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {
@@ -18,15 +16,11 @@ namespace ProjectManagementCollection.Models.ViewModels
 
         public IFormFile File { get; set; }
 
-        public IList<ListFactorDescriptorModel> ListFactorDesc { get; set; }
-
+        public IList<ListFactorDescriptor> ListFactorDesc { get; set; }
 
         public bool Error { get; set; }
 
         public string Message { get; set; }
-
-
-
     }
 }
 
