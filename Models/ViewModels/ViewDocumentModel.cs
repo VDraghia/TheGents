@@ -1,6 +1,8 @@
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagementCollection.Models
 {
@@ -8,7 +10,7 @@ namespace ProjectManagementCollection.Models
     {
 
         // Document to display
-        public Document Document{ get; set; }
+        public Document Document { get; set; }
 
         //Related Project
         public Project Project { get; set; }
@@ -19,5 +21,7 @@ namespace ProjectManagementCollection.Models
          */
         public IList<ListFactorDescriptor> Factors { get; set; }
 
+        [NotMapped]
+        public Dictionary<string, string> FactorStrings { get; set; }
     }
 }

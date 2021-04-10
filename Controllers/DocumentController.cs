@@ -9,9 +9,11 @@ using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using ProjectManagementCollection.Models.ViewModels;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -20,6 +22,12 @@ namespace ProjectManagementCollection.Controllers
 
         private readonly ILogger<DocumentController> _logger;
         private readonly PmcAppDbContext _context;
+        /*
+             * AWS Credentials
+             */
+        string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
+        string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
+        string AWS_bucketName = "gentsproject2";
 
         public DocumentController(PmcAppDbContext context, ILogger<DocumentController> logger)
         {
@@ -32,7 +40,40 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Document/SearchDocuments/{id}")]
         public IActionResult SearchDocuments()
         {
-            return View();
+            SearchDocumentModel viewModel = new SearchDocumentModel();
+            //Get all factors and categories for description
+            IList<Factor> factors = _context.Factors.ToList();
+            IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
+
+            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+
+            //Build Factor descriptor list to display
+            foreach (var fac in factors)
+            {
+                //Get Category description
+                FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+                FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
+
+                //Build new List factor descriptor
+                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                {
+                    FactorId = fac.FactorId,
+                    Position = fac.Position,
+                    MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+                    SubCategoryDesc = subDesc.FactorSubCategoryDesc
+                };
+
+                listFactors.Add(newListModel);
+            }
+
+            /*
+             * Order factors by position number to place them in sequential category
+             * This simplifies displaying on page.
+             */
+            viewModel.ListFactorDesc = listFactors.OrderBy(f => f.Position).ToList();
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -51,82 +92,170 @@ namespace ProjectManagementCollection.Controllers
             // Model for view
             SearchDocumentModel docModel = new SearchDocumentModel();
 
-            string queryDocuments = @"SELECT *
-                                    FROM dbo.Documents doc
-                                    INNER JOIN dbo.DocumentFactorRel rel ON
-                                    doc.DocumentId = rel.DocumentId 
-                                    WHERE 1=1";
+            docModel.Documents = _context.Documents.Where(c => c.Name.Contains(modelFromView.DocumentName)).ToList();
 
             // Add Must Have Factors if any
-            if (modelFromView.MustHaveFactors.Count() > 0)
+            if (modelFromView.MustHaveFactors != null && modelFromView.MustHaveFactors.Count() > 0)
             {
-                // Append " AND " before first Factor
-                queryDocuments += " AND ";
 
-                // Loop to add Factors
                 for (int i = 0; i < modelFromView.MustHaveFactors.Count(); i++)
                 {
-
-                    queryDocuments += "rel.FactorId = " + modelFromView.MustHaveFactors.ElementAt(i).FactorId;
-
-                    // Append 'AND' between Factors
-                    if (i + 1 < modelFromView.MustHaveFactors.Count() && modelFromView.MustHaveFactors.Count() != 1)
+                    List<Document> temp = new List<Document>();
+                    foreach (var doc in docModel.Documents)
                     {
-                        queryDocuments += " AND ";
+                        if (_context.DocumentFactorRels.Where(dr => dr.DocumentFk == doc.DocumentId).Where(dr => dr.FactorFk == modelFromView.MustHaveFactors.ElementAt(i)).Count() == 1)
+                        {
+                            temp.Add(doc);
+                        }
                     }
+                    docModel.Documents = temp;
                 }
             }
 
             // Add Must Have Factors if any
-            if (modelFromView.NotHaveFactors.Count() > 0)
+            if (modelFromView.NotHaveFactors != null && modelFromView.NotHaveFactors.Count() > 0)
             {
 
-                // Append " AND NOT" before first Factor
-                queryDocuments += " AND NOT (";
-
-                // Loop to add Factors
                 for (int i = 0; i < modelFromView.NotHaveFactors.Count(); i++)
                 {
-                    queryDocuments += "rel.FactorId = " + modelFromView.NotHaveFactors.ElementAt(i).FactorId;
-
-                    // Append 'OR' between Factors but not if last Factor
-                    if (i + 1 < modelFromView.NotHaveFactors.Count() && modelFromView.NotHaveFactors.Count() != 1)
+                    List<Document> temp = new List<Document>();
+                    foreach (var doc in docModel.Documents)
                     {
-                        queryDocuments += " OR ";
+                        if (_context.DocumentFactorRels.Where(dr => dr.DocumentFk == doc.DocumentId).Where(dr => dr.FactorFk == modelFromView.NotHaveFactors.ElementAt(i)).Count() != 1)
+                        {
+                            temp.Add(doc);
+                        }
                     }
+                    docModel.Documents = temp;
                 }
-
-                queryDocuments += ")";
             }
+
 
             // Run query
-            docModel.Documents = await _context.Documents.FromSqlRaw(queryDocuments).ToListAsync();
+            // _context.Documents.FromSqlRaw(queryDocuments).ToListAsync();
+            //docModel.Documents = await _context.Documents.FromSqlRaw(queryDocuments).ToListAsync();
 
-            // Get All Project
-            IList<Project> projects = await _context.Projects.ToListAsync();
+            //// Get All Project
+            //IList<Project> projects = await _context.Projects.ToListAsync();
 
-            // Create Project id:name relation
-            foreach (var proj in projects)
+            //// Create Project id:name relation
+            //foreach(var proj in projects)
+            //{
+            //    docModel.ProjectNames.Add(proj.ProjectId, proj.Name);
+            //}
+            //Get all factors and categories for description
+            IList<Factor> factors = await _context.Factors.ToListAsync();
+            IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
+
+            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+
+            //Build Factor descriptor list to display
+            foreach (var fac in factors)
             {
-                docModel.ProjectNames.Add(proj.ProjectId, proj.Name);
+                //Get Category description
+                FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+                FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
+
+                //Build new List factor descriptor
+                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                {
+                    FactorId = fac.FactorId,
+                    Position = fac.Position,
+                    MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+                    SubCategoryDesc = subDesc.FactorSubCategoryDesc
+                };
+
+                listFactors.Add(newListModel);
             }
+
+            /*
+             * Order factors by position number to place them in sequential category
+             * This simplifies displaying on page.
+             */
+            docModel.ListFactorDesc = listFactors.OrderBy(f => f.Position).ToList();
 
             return View(docModel);
         }
 
+        //[HttpGet]
+        //[Route("~/Document/Upload")]
+        //[Route("~/Document/Upload/{id}")]
+        //public IActionResult Upload([FromRoute] int? id)
+        //{
+
+        //    UploadDocumentModel uploadModel = new UploadDocumentModel();
+
+        //    Project proj = new Project();
+
+        //    // Return Project Name
+        //    if (id != null) {
+        //        // clear the model ProjectId
+        //        //uploadModel.ProjectId = (int)id;
+        //        proj = _context.Projects.Where(p => p.ProjectId == id).Single();
+        //    }
+
+        //    // Populate text field with empty string
+        //    if(proj.ProjectId == 0)
+        //    {
+        //        uploadModel.ProjectName = "";
+        //    }
+
+        //    uploadModel.ProjectName = proj.Name;
+
+        //    //Get all factors and categories for description
+        //    IList<Factor> factors = _context.Factors.ToList();
+        //    IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+        //    IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
+
+        //    IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+
+        //    //Build Factor descriptor list to display
+        //    foreach(var fac in factors)
+        //    {
+        //        //Get Category description
+        //        FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+        //        FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
+
+        //        //Build new List factor descriptor
+        //        ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+        //        {
+        //            FactorId = fac.FactorId,
+        //            Position = fac.Position,
+        //            MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+        //            SubCategoryDesc = subDesc.FactorSubCategoryDesc
+        //        };
+
+        //        listFactors.Add(newListModel);
+        //    }
+
+        //    /*
+        //     * Order factors by position number to place them in sequential category
+        //     * This simplifies displaying on page.
+        //     */
+        //    uploadModel.ListFactorDesc = listFactors.OrderBy(f => f.Position).ToList();
+
+        //    return View(uploadModel);
+        //}
+
+
+
         [HttpGet]
         [Route("~/Document/Upload")]
         [Route("~/Document/Upload/{id}")]
-        public IActionResult Upload([FromRoute] int? id)
+        public async Task<IActionResult> Upload([FromRoute] int? id)
         {
 
             UploadDocumentModel uploadModel = new UploadDocumentModel();
+
             Project proj = new Project();
 
             // Return Project Name
             if (id != null)
             {
-                proj = _context.Projects.Where(p => p.ProjectId == id).Single();
+                // clear the model ProjectId
+                //uploadModel.ProjectId = (int)id;
+                proj = await _context.Projects.FirstOrDefaultAsync(u => u.ProjectId == id);
             }
 
             // Populate text field with empty string
@@ -173,9 +302,10 @@ namespace ProjectManagementCollection.Controllers
         }
 
 
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1073741824)]
-        public async Task<IActionResult> Upload(UploadDocumentModel modelFromView)
+        public async Task<IActionResult> UploadConfirm(IFormFile uploadFile, UploadDocumentModel modelFromView)
         {
 
             UploadDocumentModel modelToView = new UploadDocumentModel();
@@ -183,26 +313,21 @@ namespace ProjectManagementCollection.Controllers
             //
             if (modelFromView.ProjectName == null)
             {
-                modelToView.Error = true;
-                modelToView.Message = "Please enter an existing project name.";
+                //modelToView.Error = true;
+                //modelToView.Message = "Please enter an existing project name.";
+                TempData["message"] = "Please enter an existing project name.";
                 return RedirectToAction("Upload", "Document");
             }
-
-            /*
-             * AWS Credentials
-             */
-            string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
-            string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
-            string AWS_bucketName = "gentsproject2";
 
             // Check project exists
             Project existingProject = await _context.Projects.FirstOrDefaultAsync(p => p.Name == modelFromView.ProjectName);
 
             // Return to upload page if project does not exit
-            if (existingProject != null)
+            if (existingProject == null)
             {
-                modelToView.Error = true;
-                modelToView.Message = "Project does not exist. Create a project first.";
+                //modelToView.Error = true;
+                //modelToView.Message = "Project does not exist. Create a project first.";
+                TempData["message"] = "Please enter an existing project name.";
                 return RedirectToAction("Upload", "Document");
             }
 
@@ -213,12 +338,13 @@ namespace ProjectManagementCollection.Controllers
                 string newKeyName = existingProject + "/" + modelFromView.File.FileName;
                 var fs = modelFromView.File.OpenReadStream();
 
+
                 PutObjectRequest request = new PutObjectRequest
                 {
                     BucketName = AWS_bucketName,
                     Key = newKeyName,
                     InputStream = fs,
-                    ContentType = modelFromView.File.ContentType,
+                    ContentType = modelFromView.ContentType,
                     CannedACL = S3CannedACL.PublicRead
                 };
 
@@ -230,7 +356,7 @@ namespace ProjectManagementCollection.Controllers
                 //Create new document
                 Document doc = new Document()
                 {
-                    Name = modelFromView.File.FileName,
+                    Name = modelFromView.FileName,
                     Url = newKeyName,
                     ProjectFk = existingProject.ProjectId
                 };
@@ -253,7 +379,8 @@ namespace ProjectManagementCollection.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                modelToView.Message = "Uploaded Successfully!!";
+                // modelToView.Message = "Uploaded Successfully!!";
+                TempData["message"] = "Uploaded Successfully!!";
             }
             catch (Exception ex)
             {
@@ -262,9 +389,42 @@ namespace ProjectManagementCollection.Controllers
             }
 
             // Empty the project name string before returning to upload page
-            modelToView.ProjectName = "";
+            //modelToView.ProjectName = "";
 
-            return View(modelToView);
+
+            //IList<Factor> factors = _context.Factors.ToList();
+            //IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            //IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
+
+            //IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+
+            ////Build Factor descriptor list to display
+            //foreach (var fac in factors)
+            //{
+            //    //Get Category description
+            //    FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+            //    FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
+
+            //    //Build new List factor descriptor
+            //    ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+            //    {
+            //        FactorId = fac.FactorId,
+            //        Position = fac.Position,
+            //        MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+            //        SubCategoryDesc = subDesc.FactorSubCategoryDesc
+            //    };
+
+            //    listFactors.Add(newListModel);
+            //}
+
+            ///*
+            // * Order factors by position number to place them in sequential category
+            // * This simplifies displaying on page.
+            // */
+            //modelToView.ListFactorDesc = listFactors.OrderBy(f => f.Position).ToList();
+
+            return RedirectToAction("Upload", "Document");
+            //return View(modelToView);
         }
 
         public IActionResult ViewDocument(int id)
@@ -284,8 +444,11 @@ namespace ProjectManagementCollection.Controllers
             //Get the project factor relationships
             List<DocumentFactorRel> docFactorsRels = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
 
-            IList<Factor> factors = new List<Factor>();
 
+            List<Factor> factors = new List<Factor>();
+
+            //Get the document factor relationships
+            List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == viewModel.Document.DocumentId).ToList();
             // Get the Factors related to the Projects
             foreach (DocumentFactorRel docFacRel in docFactorsRels)
             {
@@ -322,6 +485,107 @@ namespace ProjectManagementCollection.Controllers
             model.Factors = listFactors;
 
             return View(model);
+        }
+                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                //donot add if another document already has the same factor
+                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+
+            }
+
+            viewModel.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+
+
+            return View(viewModel);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Download(string url)
+        {
+            var s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
+
+            string[] keySplit = url.Split('/');
+            string fileName = keySplit[keySplit.Length - 1];
+
+
+            GetObjectRequest request1 = new GetObjectRequest();
+            request1.BucketName = AWS_bucketName + "/" + keySplit[0];
+            request1.Key = fileName;
+
+            using GetObjectResponse response = await s3Client.GetObjectAsync(request1);
+            using Stream responseStream = response.ResponseStream;
+            var stream = new MemoryStream();
+            await responseStream.CopyToAsync(stream);
+            stream.Position = 0;
+
+            string contentType = response.Headers["Content-Type"];
+            var token = new CancellationToken();
+            await response.WriteResponseStreamToFileAsync(null, false, token);
+
+            TempData["message"] = fileName;
+
+            return RedirectToAction("ViewDocument");
+        }
+
+
+        [HttpPost]
+        public IActionResult FavoriteDoc()
+        {
+            var url = Request.Form["urldoc"].ToString();
+            var command = Request.Form["cmdDoc"].ToString();
+            if (command.Equals("Display") && !url.Equals(""))
+            {
+                TempData["link"] = url;
+                return RedirectToAction("ViewFavorDoc", "Document");
+            }
+            else if (command.Equals("Remove") && !url.Equals(""))
+            {
+                // favorDoc url stroed format is: projectName/documentName.ext(should change seeding data format to match this)
+                string[] urlSplit = url.Split('/');
+                string favorUrl = urlSplit[urlSplit.Length - 2] + "/" + urlSplit[urlSplit.Length - 1].Replace("+", " ");
+                var docId = _context.Documents.Where(d => d.Url.Equals(favorUrl)).FirstOrDefault().DocumentId;
+                FavorDoc doc = _context.FavorDocs.Where(p => p.DocumentId == docId).Single();
+                _context.FavorDocs.Remove(doc);
+                _context.SaveChanges();
+                TempData["message"] = "Remove the document successfully!!";
+                return RedirectToAction("SearchProjects", "Project");
+            }
+            else
+            {
+                TempData["message"] = "Please select a project";
+                return RedirectToAction("SearchProjects", "Project");
+            }
+        }
+
+        [HttpGet]
+        [Route("~/Document/ViewFavorDoc")]
+        public IActionResult ViewFavorDoc()
+        {
+            return View();
+        }
+
+        [HttpPost]
+
+        public IActionResult AddFavoriteDoc()
+        {
+            var docId = Int32.Parse(Request.Form["docId"].ToString());
+            if (_context.FavorDocs.Where(p => p.DocumentId == docId).FirstOrDefault() == null)
+            {
+                var doc = new FavorDoc() { DocumentId = docId };
+                _context.FavorDocs.Add(doc);
+                _context.SaveChanges();
+                TempData["message"] = "Add favorite document successfully!!";
+            }
+            else
+            {
+                TempData["message"] = "There is no document added or the document was already your favorite!!";
+            }
+            var projId = Request.Form["projId"].ToString();
+            var url = "~/Project/ViewProjInfo/" + projId;
+            return Redirect(url);
         }
     }
 }

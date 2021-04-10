@@ -8,5 +8,6 @@ namespace ProjectManagementCollection.Models.ViewModels
         public Project SelectedProject{ get; set; }
 
         public IList<ListFactorDescriptor> FactorDescriptiors { get; set; }
+
     }
 }

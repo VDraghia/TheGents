@@ -23,10 +23,11 @@ namespace ProjectManagementCollection.Data
 
         public DbSet<Factor> Factors { get; set; }
 
-        public DbSet<DocumentFactorRel> DocumentFactorRels{ get; set; }
+        public DbSet<DocumentFactorRel> DocumentFactorRels { get; set; }
 
         public DbSet<Document> Documents { get; set; }
-
+        public DbSet<FavorProj> FavorProjs { get; set; }
+        public DbSet<FavorDoc> FavorDocs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Permission>()

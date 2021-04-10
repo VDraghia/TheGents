@@ -22,5 +22,7 @@ namespace ProjectManagementCollection.Models
         [NotMapped]
         public IList<Factor> Factors { get; set; } 
 
+        [NotMapped]
+        public Dictionary<string, string> FactorStrings { get; set; }
     }
 }

@@ -12,34 +12,98 @@
 <body>
     <div class="container-fluid align-content-start">
         <div class="container navbar">
-            <form asp-controller="Project" asp-action="Search">
-                <table class="nav-table">
-                    <tr>
-                        <td colspan="8" align="center">
-                            <h3>Search Projects</h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label asp-for="Name" class="search-label">Project&nbsp;Name</label>
-                        </td>
-                        <td colspan="2">
-                            <input type="text" asp-for="Name" size=39 />
-                        </td>
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                            <input type="submit" value="Search" class="btn btn-primary" asp-controller="Project" asp-action="Search" />
-                        </td>
-                        <td>
-                            <input type="submit" value="Export" class="btn btn-secondary" asp-controller="Project" asp-action="Export" disabled />
-                        </td>
-                    </tr>
-                </table>
-            </form>
+
+            <table>
+                <tr>
+                    <td>
+                        <form asp-controller="Project" asp-action="Search">
+                            <table class="nav-table">
+                                <tr>
+                                    <td colspan="8" align="center">
+                                        <h3>Search Projects</h3>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label asp-for="Name" class="search-label">Project&nbsp;Name</label>
+                                    </td>
+                                    <td colspan="2">
+                                        <input type="text" asp-for="Name" size=39 />
+                                    </td>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <input type="submit" value="Search" class="btn btn-primary" asp-controller="Project" asp-action="Search" />
+                                    </td>
+                                    <td>
+                                        <input type="submit" value="Export" class="btn btn-secondary" asp-controller="Project" asp-action="Export" disabled />
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+
+                    <td>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <form asp-controller="Project" asp-action="FavoriteProj" method="post">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("urlproj", (List<SelectListItem>)ViewData["Projects"], "Favorite Projects", new { id = "urlproj_list" })
+                                                    </td>
+                                                    <td>
+                                                        <input class="upload-button" type="submit" name="cmdProj" value="Display" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="upload-button" type="submit" name="cmdProj" value="Remove" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>
+                                        <form asp-controller="Document" asp-action="FavoriteDoc" method="post">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("urldoc", (List<SelectListItem>)ViewData["Docs"], "Favorite Documents", new { id = "urldoc_list" })
+                                                    </td>
+                                                    <td>
+                                                        <input class="upload-button" type="submit" name="cmdDoc" value="Display" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="upload-button" type="submit" name="cmdDoc" value="Remove" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div>
+                            @if (TempData["message"] != null)
+                            {
+                                <script>
+                                  alert("@TempData["message"]");
+                                </script>
+                            }
+                        </div>
+
+                    </td>
+
+                </tr>
+            </table>
+
+            
         </div>
         <div class="container-fluid">
             <div class="row border-bot justify-content-lg-start">
