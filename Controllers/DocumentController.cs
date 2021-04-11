@@ -602,7 +602,7 @@ namespace ProjectManagementCollection.Controllers
                 FavorDoc doc = _context.FavorDocs.Where(p => p.DocumentId == docId).Single();
                 _context.FavorDocs.Remove(doc);
                 _context.SaveChanges();
-                TempData["message"] = "Remove the document successfully!!";
+                TempData["message"] = "Removed the document successfully!!";
                 return RedirectToAction("SearchProjects", "Project");
             }
             else
@@ -629,7 +629,7 @@ namespace ProjectManagementCollection.Controllers
                 var doc = new FavorDoc() { DocumentId = docId };
                 _context.FavorDocs.Add(doc);
                 _context.SaveChanges();
-                TempData["message"] = "Add favorite document successfully!!";
+                TempData["message"] = "Added favorite document successfully!!";
             }
             else
             {
@@ -637,6 +637,53 @@ namespace ProjectManagementCollection.Controllers
             }
             var projId = Request.Form["projId"].ToString();
             var url = "~/Project/ViewProjInfo/" + projId;
+            return Redirect(url);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDoc()
+        {
+            var docId = Int32.Parse(Request.Form["docId"].ToString());
+            var projectId = Int32.Parse(Request.Form["projId"].ToString());
+            AmazonS3Client s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
+
+            Project project = new Project();
+
+            List<DocumentFactorRel> docFacRels = new List<DocumentFactorRel>();
+
+            docFacRels = await _context.DocumentFactorRels.Where(d => d.DocumentFk == docId).ToListAsync();
+            if (docFacRels.FirstOrDefault() != null)
+            {
+                foreach (var docFacRel in docFacRels)
+                {
+                    _context.DocumentFactorRels.Remove(docFacRel);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            Document doc = await _context.Documents.FindAsync(docId);
+            if (doc != null)
+            {
+                try
+                {
+                    DeleteObjectRequest request = new DeleteObjectRequest
+                    {
+                        BucketName = AWS_bucketName,
+                        Key = doc.Url
+                    };
+                    await s3Client.DeleteObjectAsync(request);
+                }
+                catch (AmazonS3Exception ex)
+                {
+                    TempData["message"] = ex.Message;
+                }
+
+                _context.Documents.Remove(doc);
+                await _context.SaveChangesAsync();
+            }
+
+            TempData["message"] = "Deleted the document successfully!!";
+            var url = "~/Project/ViewProjInfo/" + projectId.ToString();
             return Redirect(url);
         }
     }

@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
+using Amazon.S3;
+using Amazon.S3.Model;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -81,7 +84,7 @@ namespace ProjectManagementCollection.Controllers
             // Model for view
             SearchProjectModel searchProject = new SearchProjectModel();
 
-            searchProject.Projects = _context.Projects.Where(p => p.Name.Contains(searchModel.Name)).ToList();
+            searchProject.Projects =  _context.Projects.Where(p => p.Name.Contains(searchModel.Name)).ToList();
 
 
             searchProject.AllProjects = _context.Projects.FromSqlRaw("SELECT * FROM dbo.Projects").ToList();
@@ -132,7 +135,7 @@ namespace ProjectManagementCollection.Controllers
                     // Check if Project name exists
                     if (_context.Projects.Where(p => p.Name == findCreateModel.CreateProjectName).Any())
                     {
-                        model.Message = "Cannot Create Project, Already Exists";
+                        model.Message = "Cannot Create Project, Already Existed";
                         model.CreateProject = true;
                         return View(model);
                     }
@@ -329,7 +332,7 @@ namespace ProjectManagementCollection.Controllers
                 FavorProj proj = _context.FavorProjs.Where(p => p.Url == url).Single();
                 _context.FavorProjs.Remove(proj);
                 _context.SaveChanges();
-                TempData["message"] = "Remove the project successfully!!";
+                TempData["message"] = "Removed the project successfully!!";
                 return RedirectToAction("SearchProjects", "Project");
             }
             else
@@ -350,7 +353,7 @@ namespace ProjectManagementCollection.Controllers
                 var proj = new FavorProj() { ProjectId = projectId, Url = url };
                 _context.FavorProjs.Add(proj);
                 await _context.SaveChangesAsync();
-                TempData["message"] = "Add favorite project successfully!!";
+                TempData["message"] = "Added favorite project successfully!!";
             }
             else
             {
@@ -359,5 +362,64 @@ namespace ProjectManagementCollection.Controllers
             return Redirect(url);
         }
 
+        /*
+         * AWS Credentials
+         */
+        string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
+        string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
+        string AWS_bucketName = "gentsproject2";
+        [HttpPost]
+        public async Task<IActionResult> DeleteProj(int projectId)
+        {
+            AmazonS3Client s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
+
+            Project project = new Project();
+            project = await _context.Projects.FindAsync(projectId);
+            project.Documents = await _context.Documents.Where(c => c.ProjectFk == projectId).ToListAsync();
+            //TempData["message"] = "successfully!!"+project.Name;
+            List<DocumentFactorRel> docFacRels = new List<DocumentFactorRel>();
+            List<Document> docs = (List<Document>)project.Documents;
+            foreach (var doc in docs)
+            {
+                docFacRels = await _context.DocumentFactorRels.Where(d => d.DocumentFk == doc.DocumentId).ToListAsync();
+                if(docFacRels.FirstOrDefault()!=null)
+                {
+                    foreach (var docFacRel in docFacRels)
+                    {
+                        _context.DocumentFactorRels.Remove(docFacRel);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                //Document docRemove = _context.Documents.Find(doc.DocumentId);
+            }
+
+            foreach (var doc in docs.ToList())
+            {
+                if (doc != null)
+                {
+                    try
+                    {
+                        DeleteObjectRequest request = new DeleteObjectRequest
+                        {
+                            BucketName = AWS_bucketName,
+                            Key = doc.Url
+                        };
+                        await s3Client.DeleteObjectAsync(request);
+                    }catch(AmazonS3Exception ex)
+                    {
+                        TempData["message"] = ex.Message;
+                    }
+                    
+                    _context.Documents.Remove(doc);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
+
+            TempData["message"] = "Deleted the project successfully!!";
+            return RedirectToAction("SearchProjects", "Project");
+        }
     }
 }

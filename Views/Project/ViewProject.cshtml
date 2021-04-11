@@ -11,6 +11,38 @@
     <title> View - Project Management Collection </title>
 </head>
 <body>
+    <div class="view-container">
+        <div></div>
+
+        <table style="table-layout:fixed;" width="100%">
+            <tr>
+                <td width="7%">
+                    <form asp-controller="Project" asp-action="Search" method="get">
+                        <input type="submit" value="Back" />
+                    </form>
+                </td>
+
+                <td width="7%">
+                    <form asp-controller="Project" asp-action="DeleteProj" method="post">
+                        <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
+                        <button type="submit" onclick="return ConfirmDelete()">Delete</button>
+                    </form>
+                </td>
+
+                <td width="14%">
+                    <form asp-controller="Project" asp-action="AddFavoriteProj" method="post">
+                        <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
+                        <input type="submit" value="Add Favorite" />
+                    </form>
+                </td>
+
+                <td>
+                    <form asp-controller="Project" asp-action="ViewProject" asp-route-id="@Model.ProjectId" method="get">
+                        <input type="submit" value="View All" />
+                    </form>
+                </td>
+            </tr>
+        </table>
     <div class="container-fluid">
         <h4>Project Documents List</h4>
         <div class="container">
@@ -74,5 +106,23 @@
             </div>
         </div>
     </div>
+    <div>
+        @if (TempData["message"] != null)
+        {
+            <script>
+                 alert("@TempData["message"]");
+            </script>
+        }
+    </div>
+
+    @section Scripts{
+        <script>
+            function ConfirmDelete() {
+                if (confirm("Delete a project will delete all the files in the project. Are you sure you want to delete @Model.Name?") == false)
+                    return false;
+            }
+        </script>
+
+    }
 </body>
 </html>
