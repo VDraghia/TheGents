@@ -12,7 +12,6 @@
 <body>
     <div class="container-fluid align-content-start">
         <div class="container navbar">
-
             <table>
                 <tr>
                     <td>
@@ -39,7 +38,7 @@
                                         <input type="submit" value="Search" class="btn btn-primary" asp-controller="Project" asp-action="Search" />
                                     </td>
                                     <td>
-                                        <input type="submit" value="Export" class="btn btn-secondary" asp-controller="Project" asp-action="Export" disabled />
+                                        <input type="submit" value="Export" class="btn btn-secondary" asp-controller="Project" asp-action="Export" />
                                     </td>
                                 </tr>
                             </table>
@@ -102,8 +101,6 @@
 
                 </tr>
             </table>
-
-            
         </div>
         <div class="container-fluid">
             <div class="row border-bot justify-content-lg-start">
@@ -119,10 +116,10 @@
                             <div class="col-sm-3 border-top">
                                 <a asp-action="ViewProject" asp-route-id="@proj.ProjectId">@proj.Name</a>
                             </div>
-                        </div> 
+                        </div>
                     }
-               }
-        }
+                }
+            }
         </div>
     </div>
 </body>
