@@ -41,11 +41,17 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Document/SearchDocuments/{id}")]
         public IActionResult SearchDocuments()
         {
+            if(HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             SearchDocumentModel viewModel = new SearchDocumentModel();
             //Get all factors and categories for description
             IList<Factor> factors = _context.Factors.ToList();
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
+
 
             IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
@@ -57,6 +63,7 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
+
                 ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
@@ -82,6 +89,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Document/SearchDocuments/{id}")]
         public async Task<IActionResult> SearchDocuments(SearchDocumentModel modelFromView)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -98,12 +109,12 @@ namespace ProjectManagementCollection.Controllers
             // Add Must Have Factors if any
             if (modelFromView.MustHaveFactors != null && modelFromView.MustHaveFactors.Count() > 0)
             {
-
                 for (int i = 0; i < modelFromView.MustHaveFactors.Count(); i++)
                 {
                     List<Document> temp = new List<Document>();
                     foreach (var doc in docModel.Documents)
                     {
+
                         if (_context.DocumentFactorRels.Where(dr => dr.DocumentFk == doc.DocumentId).Where(dr => dr.FactorFk == modelFromView.MustHaveFactors.ElementAt(i)).Count() == 1)
                         {
                             temp.Add(doc);
@@ -139,12 +150,18 @@ namespace ProjectManagementCollection.Controllers
             //// Get All Project
             //IList<Project> projects = await _context.Projects.ToListAsync();
 
+
+
+            //// Get All Project
+            //IList<Project> projects = await _context.Projects.ToListAsync();
+
             //// Create Project id:name relation
             //foreach(var proj in projects)
             //{
             //    docModel.ProjectNames.Add(proj.ProjectId, proj.Name);
             //}
             //Get all factors and categories for description
+
             IList<Factor> factors = await _context.Factors.ToListAsync();
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
@@ -159,7 +176,9 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
+
                 ListFactorDescriptor newListModel = new ListFactorDescriptor()
+
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -177,6 +196,48 @@ namespace ProjectManagementCollection.Controllers
             docModel.ListFactorDesc = listFactors.OrderBy(f => f.Position).ToList();
 
             return View(docModel);
+        }
+
+
+        [Route("~/Document/ViewDocument/{id}")]
+        public IActionResult ViewDocument(int id)
+        {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            ViewDocumentModel viewModel = new ViewDocumentModel();
+            //Get the project by id
+            viewModel.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
+
+
+            List<Factor> factors = new List<Factor>();
+
+            //Get the document factor relationships
+            List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == viewModel.Document.DocumentId).ToList();
+            // Get the Factors related to the Projects
+            foreach (DocumentFactorRel docFac in docFactors)
+            {
+                factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
+            }
+
+            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+
+            //Get Main and Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                //donot add if another document already has the same factor
+                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+
+            }
+
+            viewModel.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+
+
+            return View(viewModel);
         }
 
         //[HttpGet]
@@ -239,14 +300,15 @@ namespace ProjectManagementCollection.Controllers
         //    return View(uploadModel);
         //}
 
-
-
         [HttpGet]
         [Route("~/Document/Upload")]
         [Route("~/Document/Upload/{id}")]
         public async Task<IActionResult> Upload([FromRoute] int? id)
         {
-
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             UploadDocumentModel uploadModel = new UploadDocumentModel();
 
             Project proj = new Project();
@@ -308,8 +370,11 @@ namespace ProjectManagementCollection.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 1073741824)]
         public async Task<IActionResult> UploadConfirm(IFormFile uploadFile, UploadDocumentModel modelFromView)
         {
-
-            UploadDocumentModel modelToView = new UploadDocumentModel();
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            UploadDocumentModel modelToView= new UploadDocumentModel();
 
             //
             if (modelFromView.ProjectName == null)
@@ -487,7 +552,6 @@ namespace ProjectManagementCollection.Controllers
 
             return View(model);
         }
-
 
 
         [HttpPost]

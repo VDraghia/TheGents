@@ -31,6 +31,11 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/Search")]
         public IActionResult SearchProjects()
         {
+
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             var viewModel = new SearchProjectModel();
             viewModel.AllProjects = _context.Projects.FromSqlRaw("SELECT * FROM dbo.Projects").ToList();
             viewModel.FavorProjs = _context.FavorProjs.FromSqlRaw("SELECT * FROM dbo.FavorProjs").ToList();
@@ -64,6 +69,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/Search")]
         public IActionResult SearchProjects(SearchProjectModel searchModel)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             if (!ModelState.IsValid)
             {
                 return View();
@@ -108,6 +117,10 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Project/FindCreateProject/{id}")]
         public IActionResult FindCreateProject(FindCreateProjectModel findCreateModel)
         {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             FindCreateProjectModel model = new FindCreateProjectModel();
             model.Projects = new List<Project>();
 
@@ -163,6 +176,52 @@ namespace ProjectManagementCollection.Controllers
             }
 
             return View(model);
+        }
+
+        [Route("~/Project/ViewProject/{id}")]
+        public IActionResult ViewProject(int id)
+        {
+            if (HomeController.current_role == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            //Get the project by id
+            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
+
+            project.Documents = _context.Documents.Where(d => d.ProjectFk == id).ToList();
+
+
+
+            List<Factor> factors = new List<Factor>();
+
+            foreach (Document doc in project.Documents)
+            {
+                //Get the document factor relationships
+                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
+                // Get the Factors related to the Projects
+                foreach (DocumentFactorRel docFac in docFactors)
+                {
+                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
+                }
+            }
+
+            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+
+            //Get Main and Sub Categories for description
+            foreach (Factor factor in factors)
+            {
+                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
+                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
+                //donot add if another document already has the same factor
+                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
+                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+
+            }
+
+            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+
+
+            return View(project);
         }
 
         [HttpPost]

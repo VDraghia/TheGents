@@ -20,6 +20,7 @@ namespace ProjectManagementCollection.Models
         public IList<Document> Documents { get; set; }
 
         [NotMapped]
+
         public IList<Factor> Factors { get; set; } 
 
         [NotMapped]

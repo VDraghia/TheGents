@@ -11,6 +11,7 @@ namespace ProjectManagementCollection.Data
     {
         public static void Initialize(PmcAppDbContext context)
         {
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             /*
@@ -749,6 +750,11 @@ namespace ProjectManagementCollection.Data
 
             if (!context.Documents.Any())
             {
+                documents.Add(new Document { Name = "Doc1", Url = @"/pdf/project1.pdf", ProjectFk = proj1.ProjectId });
+                documents.Add(new Document { Name = "Doc2", Url = @"/pdf/project2.pdf", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "Doc3", Url = @"/pdf/project3.pdf", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "Doc4", Url = @"/pdf/project1.pdf", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "Doc5", Url = @"/pdf/project2.pdf", ProjectFk = proj3.ProjectId });
                 documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Budget Breakdown_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Budget Breakdown_2019.pdf", ProjectFk = proj1.ProjectId });
                 documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Critical Task QUALITY METRICS_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Critical Task QUALITY METRICS_2019.pdf", ProjectFk = proj1.ProjectId });
                 documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Milestones Lists_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Milestones Lists_2019.pdf", ProjectFk = proj1.ProjectId });
