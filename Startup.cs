@@ -26,7 +26,7 @@ namespace ProjectManagementCollection
         {
             var connection = Configuration.GetConnectionString("DevDbConnection");//("DatabaseConnection");
             services.AddDbContext<PmcAppDbContext>(options => options.UseSqlServer(connection));
-
+            services.AddDbContext<PmcAppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //var blobConnection = Configuration.GetConnectionString("AzureBlobStorage");
             //services.AddSingleton(new BlobServiceClient(blobConnection));
 

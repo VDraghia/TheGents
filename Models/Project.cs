@@ -17,10 +17,11 @@ namespace ProjectManagementCollection.Models
         public string Success { get; set; }
 
         [NotMapped]
-        public ICollection<Document> Documents { get; set; }
+        public IList<Document> Documents { get; set; }
 
         [NotMapped]
-        public ICollection<Factor> Factors { get; set; }
+
+        public IList<Factor> Factors { get; set; } 
 
         [NotMapped]
         public Dictionary<string, string> FactorStrings { get; set; }

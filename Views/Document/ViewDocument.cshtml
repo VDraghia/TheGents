@@ -1,5 +1,6 @@
 ﻿@model ProjectManagementCollection.Models.ViewDocumentModel
 @{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+
 <!DOCTYPE html>
 <html class="common" lang="en">
 <head>
@@ -12,68 +13,42 @@
 <body>
 
     <div class="view-container">
-        <div></div>
-
-        <table style="table-layout:fixed;" width="100%">
-            <tr>
-                <td width="33%">
-                    <form asp-controller="Document" asp-action="SearchDocuments" method="get">
-                        <input type="submit" value="Back" />
-                    </form>
-                </td>
-            </tr>
-        </table>
         <div class="container">
             <div style="position: absolute;left:1%;width:20%;height:100%;background:rgba(56, 132, 237, 0.22);">
-            <table>
-                <tr>
-                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
-                        Document Name :
-                    </td>
-                    <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
-                        @Model.Document.Name
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <br/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <i>factors related to document</i>
-                    </td>
-                </tr>
-                <tr />
+                <table>
+                    <tr>
+                        <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
+                            Document Name :
+                        </td>
+                        <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
+                            @Model.Document.Name
+                        </td>
+                    </tr> 
+                        <td colspan="2" align="center">
+                            <i>Associated Factors</i>
+                        </td>
+                    </tr>
+                    <tr />
                     <tr>
                         <td colspan="2" align="center">
-                           
-                        </td>
-                    </tr> 
-                @{string mainCat = "";}
-                @foreach (KeyValuePair<string, string> fac in Model.FactorStrings)
-                {
-                    @if(@fac.Value != mainCat){
-                    <tr>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" align="left" style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
-                           @fac.Value
-                        </td>
-                    </tr> 
-                    }
-                   mainCat = fac.Value;
-                    <tr>
-                        <td colspan="2">
-                            &bull;&nbsp;@fac.Key
                         </td>
                     </tr>
-                }
-            </table>
+                    @{
+                        foreach (var factors in @Model.Factors)
+                        {
+                        <tr>
+                            <td>
+                                @factors.MainCategoryDesc
+                            </td>
+                            <td>
+                                @factors.SubCategoryDesc
+                            </td>
+                        </tr>
+                            }
+                        }
+                </table>
             </div>
-
-            <div id="tab_1" style="position: absolute;left:20.5%;height:100%;margin-left:10px;">
+            <div id="tab_1" style="position: absolute;left:33.5%;height:100%;margin-left:10px;">
                 <iframe src="@Model.Document.Url"
                         style="width:1258px;height:100%;">
                 </iframe>
