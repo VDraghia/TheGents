@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models.ViewModels;
+using ProjectManagementCollection.Models.DescriptorModels;
 using ProjectManagementCollection.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -40,7 +41,6 @@ namespace ProjectManagementCollection.Controllers
                 aList.Add(new SelectListItem { Text = projName, Value = proj.Url });
             }
             ViewData["Projects"] = aList;
-
 
             viewModel.Documents = _context.Documents.FromSqlRaw("SELECT * FROM dbo.Documents").ToList();
             viewModel.FavorDocs = _context.FavorDocs.FromSqlRaw("SELECT * FROM dbo.FavorDocs").ToList();
@@ -226,89 +226,9 @@ namespace ProjectManagementCollection.Controllers
 
             model.SelectedProject = _context.Projects.Where(p => p.ProjectId == id).SingleOrDefault();
             model.SelectedProject.Documents = docs;
-            model.FactorDescriptiors = listFactors;
+            model.FactorDescriptors = listFactors;
 
             return View(model);
-        }
-
-        [Route("~/Project/ViewProject/{id}")]
-        public IActionResult ViewProject(int id)
-        {
-            //Get the project by id
-            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
-
-            project.Documents = _context.Documents.Where(d => d.ProjectFk == id).ToList();
-
-
-
-            List<Factor> factors = new List<Factor>();
-
-            foreach (Document doc in project.Documents)
-            {
-                //Get the document factor relationships
-                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
-                // Get the Factors related to the Projects
-                foreach (DocumentFactorRel docFac in docFactors)
-                {
-                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
-                }
-            }
-
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
-
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
-            {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
-
-            }
-
-            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
-
-
-            return View(project);
-        }
-        [Route("~/Project/ViewProjInfo/{id}")]
-        public IActionResult ViewProjInfo(int id)
-        {
-            //Get the project by id
-            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
-
-            project.Documents = _context.Documents.Where(c => c.ProjectFk == id).ToArray();
-
-            List<Factor> factors = new List<Factor>();
-
-            foreach (Document doc in project.Documents)
-            {
-                //Get the document factor relationships
-                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
-                // Get the Factors related to the Projects
-                foreach (DocumentFactorRel docFac in docFactors)
-                {
-                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
-                }
-            }
-
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
-
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
-            {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
-
-            }
-
-            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
-
-            return View(project);
         }
 
         [HttpPost]

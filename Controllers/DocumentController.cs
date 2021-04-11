@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using ProjectManagementCollection.Models.ViewModels;
+using ProjectManagementCollection.Models.DescriptorModels;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ namespace ProjectManagementCollection.Controllers
         private readonly ILogger<DocumentController> _logger;
         private readonly PmcAppDbContext _context;
         /*
-             * AWS Credentials
-             */
+        * AWS Credentials
+        */
         string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
         string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
         string AWS_bucketName = "gentsproject2";
@@ -46,7 +47,7 @@ namespace ProjectManagementCollection.Controllers
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
             //Build Factor descriptor list to display
             foreach (var fac in factors)
@@ -56,7 +57,7 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
-                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -148,7 +149,7 @@ namespace ProjectManagementCollection.Controllers
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
             //Build Factor descriptor list to display
             foreach (var fac in factors)
@@ -158,7 +159,7 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
-                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -344,7 +345,7 @@ namespace ProjectManagementCollection.Controllers
                     BucketName = AWS_bucketName,
                     Key = newKeyName,
                     InputStream = fs,
-                    ContentType = modelFromView.ContentType,
+                    ContentType = modelFromView.File.ContentType,
                     CannedACL = S3CannedACL.PublicRead
                 };
 
@@ -356,7 +357,7 @@ namespace ProjectManagementCollection.Controllers
                 //Create new document
                 Document doc = new Document()
                 {
-                    Name = modelFromView.FileName,
+                    Name = modelFromView.File.FileName,
                     Url = newKeyName,
                     ProjectFk = existingProject.ProjectId
                 };
@@ -434,11 +435,11 @@ namespace ProjectManagementCollection.Controllers
 
             // Get Document and Project
             try { 
-            model.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
-            model.Project = _context.Projects.Where(p => p.ProjectId == model.Document.ProjectFk).Single();
+                model.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
+                model.Project = _context.Projects.Where(p => p.ProjectId == model.Document.ProjectFk).Single();
             } catch (Exception ex)
             {
-                _logger.LogError("Could not find Document or Project");
+                _logger.LogError("Could not find Document or Project", ex);
                 return View();
             }
             //Get the project factor relationships
@@ -448,7 +449,7 @@ namespace ProjectManagementCollection.Controllers
             List<Factor> factors = new List<Factor>();
 
             //Get the document factor relationships
-            List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == viewModel.Document.DocumentId).ToList();
+            List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
             // Get the Factors related to the Projects
             foreach (DocumentFactorRel docFacRel in docFactorsRels)
             {
@@ -485,19 +486,6 @@ namespace ProjectManagementCollection.Controllers
             model.Factors = listFactors;
 
             return View(model);
-        }
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
-
-            }
-
-            viewModel.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
-
-
-            return View(viewModel);
         }
 
 

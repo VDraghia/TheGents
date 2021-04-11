@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using ProjectManagementCollection.Models.DescriptorModels;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {

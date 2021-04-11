@@ -1,4 +1,4 @@
-namespace ProjectManagementCollection.Models
+namespace ProjectManagementCollection.Models.DescriptorModels
 {
     public class ListFactorDescriptor
     {
