@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models;
 using ProjectManagementCollection.Models.ViewModels;
+using ProjectManagementCollection.Models.DescriptorModels;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ namespace ProjectManagementCollection.Controllers
         private readonly ILogger<DocumentController> _logger;
         private readonly PmcAppDbContext _context;
         /*
-             * AWS Credentials
-             */
+        * AWS Credentials
+        */
         string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
         string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
         string AWS_bucketName = "gentsproject2";
@@ -36,6 +37,8 @@ namespace ProjectManagementCollection.Controllers
         }
 
         [HttpGet]
+        [Route("~/Document/SearchDocuments")]
+        [Route("~/Document/SearchDocuments/{id}")]
         public IActionResult SearchDocuments()
         {
             SearchDocumentModel viewModel = new SearchDocumentModel();
@@ -44,7 +47,7 @@ namespace ProjectManagementCollection.Controllers
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
             //Build Factor descriptor list to display
             foreach (var fac in factors)
@@ -54,7 +57,7 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
-                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -75,6 +78,8 @@ namespace ProjectManagementCollection.Controllers
         }
 
         [HttpPost]
+        [Route("~/Document/SearchDocuments")]
+        [Route("~/Document/SearchDocuments/{id}")]
         public async Task<IActionResult> SearchDocuments(SearchDocumentModel modelFromView)
         {
 
@@ -82,6 +87,8 @@ namespace ProjectManagementCollection.Controllers
             {
                 return View();
             }
+
+            IList<Document> docs = _context.Documents.Where(p => p.Name.Contains(modelFromView.DocumentName)).ToList();
 
             // Model for view
             SearchDocumentModel docModel = new SearchDocumentModel();
@@ -142,7 +149,7 @@ namespace ProjectManagementCollection.Controllers
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
             //Build Factor descriptor list to display
             foreach (var fac in factors)
@@ -152,7 +159,7 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
-                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -265,7 +272,7 @@ namespace ProjectManagementCollection.Controllers
             IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
             IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            IList<ListFactorDescriptorModel> listFactors = new List<ListFactorDescriptorModel>();
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
             //Build Factor descriptor list to display
             foreach (var fac in factors)
@@ -275,7 +282,7 @@ namespace ProjectManagementCollection.Controllers
                 FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
                 //Build new List factor descriptor
-                ListFactorDescriptorModel newListModel = new ListFactorDescriptorModel()
+                ListFactorDescriptor newListModel = new ListFactorDescriptor()
                 {
                     FactorId = fac.FactorId,
                     Position = fac.Position,
@@ -329,15 +336,16 @@ namespace ProjectManagementCollection.Controllers
             {
                 AmazonS3Client s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
 
-                string newKeyName = existingProject.Name + "/" + uploadFile.FileName;
-                var fs = uploadFile.OpenReadStream();
+                string newKeyName = existingProject + "/" + modelFromView.File.FileName;
+                var fs = modelFromView.File.OpenReadStream();
+
 
                 PutObjectRequest request = new PutObjectRequest
                 {
                     BucketName = AWS_bucketName,
                     Key = newKeyName,
                     InputStream = fs,
-                    ContentType = uploadFile.ContentType,
+                    ContentType = modelFromView.File.ContentType,
                     CannedACL = S3CannedACL.PublicRead
                 };
 
@@ -349,7 +357,7 @@ namespace ProjectManagementCollection.Controllers
                 //Create new document
                 Document doc = new Document()
                 {
-                    Name = uploadFile.FileName,
+                    Name = modelFromView.File.FileName,
                     Url = newKeyName,
                     ProjectFk = existingProject.ProjectId
                 };
@@ -420,42 +428,64 @@ namespace ProjectManagementCollection.Controllers
             //return View(modelToView);
         }
 
-
-        [Route("~/Document/ViewDocument/{id}")]
         public IActionResult ViewDocument(int id)
         {
-            ViewDocumentModel viewModel = new ViewDocumentModel();
-            //Get the project by id
-            viewModel.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
+
+            ViewDocumentModel model = new ViewDocumentModel();
+
+            // Get Document and Project
+            try { 
+                model.Document = _context.Documents.Where(c => c.DocumentId == id).Single();
+                model.Project = _context.Projects.Where(p => p.ProjectId == model.Document.ProjectFk).Single();
+            } catch (Exception ex)
+            {
+                _logger.LogError("Could not find Document or Project", ex);
+                return View();
+            }
+            //Get the project factor relationships
+            List<DocumentFactorRel> docFactorsRels = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
 
 
             List<Factor> factors = new List<Factor>();
 
             //Get the document factor relationships
-            List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == viewModel.Document.DocumentId).ToList();
+            List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == id).ToList();
             // Get the Factors related to the Projects
-            foreach (DocumentFactorRel docFac in docFactors)
+            foreach (DocumentFactorRel docFacRel in docFactorsRels)
             {
-                factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
+                factors.Add(_context.Factors.Single(c => c.FactorId == docFacRel.FactorFk));
             }
 
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+            //Get all factors and categories for description
+            IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
+
+            //Build Factor descriptor list to display
+            foreach (var fac in factors)
             {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+                //Get Category description
+                FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+                FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
 
+                //Build new List factor descriptor
+                ListFactorDescriptor factorDescriptor = new ListFactorDescriptor()
+                {
+                    FactorId = fac.FactorId,
+                    Position = fac.Position,
+                    MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+                    SubCategoryDesc = subDesc.FactorSubCategoryDesc
+                };
+
+                listFactors.Add(factorDescriptor);
             }
 
-            viewModel.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+            listFactors.OrderBy(f => f.Position);
 
+            model.Factors = listFactors;
 
-            return View(viewModel);
+            return View(model);
         }
 
 
@@ -592,6 +622,5 @@ namespace ProjectManagementCollection.Controllers
             var url = "~/Project/ViewProjInfo/" + projectId.ToString();
             return Redirect(url);
         }
-
     }
 }

@@ -12,7 +12,7 @@
 <body>
     <div class="search-container">
         <div class="container navbar row">
-            <form asp-controller="Document" asp-action="Search">
+            <form asp-controller="Document" asp-action="SearchDocuments">
                 <table class="nav-table">
                     <tr>
                         <td colspan="8" align="center">
@@ -21,7 +21,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <label asp-for="DocumentName" class="search-label"> Document&nbsp;Name </label>
+                            <label class="search-label"> Document&nbsp;Name </label>
                         </td>
                         <td colspan="2">
                             <input type="text" asp-for="DocumentName" size=39 />
@@ -30,7 +30,7 @@
                     <tr>
                         <td>
                             <input type="submit" value="Search" class="btn btn-primary" asp-controller="Document" asp-action="SearchDocuments" />
-                        </td>
+                      </td>
                     </tr>
                 </table>
                 <div class="search-factors" style="position: absolute;left:70%;">
@@ -44,7 +44,7 @@
                                     <b>Main Category  -  Sub Category  - Must Have  -   Not Have</b><br />
                                     <ul>
                                         @{ for (int i = 0; i < Model.ListFactorDesc.Count(); i++)
-                                            {
+                                           {
                                                 <li>
                                                     @Model.ListFactorDesc[i].MainCategoryDesc
                                                     -
@@ -52,7 +52,7 @@
                                                     -<input name="MustHaveFactors" type="checkbox" value=@Model.ListFactorDesc[i].FactorId />
                                                     -<input name="NotHaveFactors" type="checkbox" value=@Model.ListFactorDesc[i].FactorId />
                                                 </li>
-                                            }
+                                           }
                                         }
                                     </ul>
                                 </div>
@@ -64,11 +64,7 @@
         </div>
         <div class="search-results" overflow: auto;>
             <div class="row border-bot d-flex justify-content-lg-start">
-                <div class="col-sm-1 border-bot ">
-                    select
-                </div>
-                |
-                <div class="col-sm-4 border-bot justify-content-center">
+                <div class="col-sm-6 border-bot justify-content-center">
                     Document Name
                 </div>
                 |
@@ -80,17 +76,13 @@
                 {
                     foreach (Document doc in Model.Documents)
                     {
-                        <div class="row d-flex justify-content-lg-start">
-                            <div class="col-sm-1 border-top">
-                                <input type="checkbox" id="" />
+                        <div class="row border-bot d-flex justify-content-lg-start">
+                            <div class="col-sm-6 border-top ">
+                                <a asp-controller="Document" asp-action="ViewDocuments" asp-route-id="@doc.DocumentId">@doc.Name</a>
                             </div>
                             |
                             <div class="col-sm-4 border-top">
-                                <a asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.DocumentId">@doc.Name</a>
-                            </div>
-                            |
-                            <div class="col-sm-4 border-top">
-                                &nbsp;&nbsp;&nbsp;
+                                <a asp-controller="Project" asp-action="ViewProject" asp-route="@doc.ProjectFk">@Model.ProjectNames.GetValueOrDefault(doc.ProjectFk)</a>
                             </div>
                         </div>
                     }

@@ -1,8 +1,6 @@
-﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ProjectManagementCollection.Models.DescriptorModels;
 
 namespace ProjectManagementCollection.Models.ViewModels
 {
@@ -16,7 +14,7 @@ namespace ProjectManagementCollection.Models.ViewModels
 
         public IList<Document> Documents { get; set; }
 
-        public IList<ListFactorDescriptorModel> ListFactorDesc { get; set; }
+        public IList<ListFactorDescriptor> ListFactorDesc { get; set; }
 
         [BindProperty]
         public IList<int> MustHaveFactors { get; set; }

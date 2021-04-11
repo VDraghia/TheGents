@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
 using ProjectManagementCollection.Models.ViewModels;
+using ProjectManagementCollection.Models.DescriptorModels;
 using ProjectManagementCollection.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Amazon.S3;
@@ -27,7 +29,6 @@ namespace ProjectManagementCollection.Controllers
             _context = context;
         }
 
-
         [Route("~/")]
         [Route("~/Project/")]
         [Route("~/Project/Search")]
@@ -44,7 +45,6 @@ namespace ProjectManagementCollection.Controllers
                 aList.Add(new SelectListItem { Text = projName, Value = proj.Url });
             }
             ViewData["Projects"] = aList;
-
 
             viewModel.Documents = _context.Documents.FromSqlRaw("SELECT * FROM dbo.Documents").ToList();
             viewModel.FavorDocs = _context.FavorDocs.FromSqlRaw("SELECT * FROM dbo.FavorDocs").ToList();
@@ -167,84 +167,96 @@ namespace ProjectManagementCollection.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public IActionResult Export(Export project)
+        {
+
+            var query = _context.DocumentFactorRels.Select(s => s.ProjectFactor).ToArray();
+
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in query)
+                {
+
+                    sb.AppendLine(item.ToString());
+                    sb.AppendLine(",");
+
+                }
+                return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "project.csv");
+            }
+            catch
+            {
+                return View(project);
+            }
+        }
+
+        [HttpGet]
         [Route("~/Project/ViewProject/{id}")]
         public IActionResult ViewProject(int id)
         {
-            //Get the project by id
-            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
+            //Create View Model
+            ViewProjectModel model = new ViewProjectModel();
 
-            project.Documents = _context.Documents.Where(d => d.ProjectFk == id).ToList();
+            //Get Documents related to project
+            IList<Document> docs = _context.Documents.Where(d => d.ProjectFk == id).ToList();
 
-
-
-            List<Factor> factors = new List<Factor>();
-
-            foreach (Document doc in project.Documents)
+            // Get document factor relations
+            IList<DocumentFactorRel> projectFactors = new List<DocumentFactorRel>();
+            foreach (Document doc in docs)
             {
-                //Get the document factor relationships
-                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
-                // Get the Factors related to the Projects
-                foreach (DocumentFactorRel docFac in docFactors)
+                // Find the Document Factor Relation
+                IList<DocumentFactorRel> docRels = _context.DocumentFactorRels.Where(f => f.DocumentFk == doc.DocumentId).ToList();
+
+                //Add document factor relation to project factor relation
+                foreach (DocumentFactorRel rel in docRels)
                 {
-                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
+                    projectFactors.Add(rel);
                 }
             }
 
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
-
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
+            //Get all factors for the project from the list of related documents
+            IList<Factor> factors = new List<Factor>();
+            foreach (DocumentFactorRel projFac in projectFactors)
             {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
-
+                factors.Add(_context.Factors.Where(f => f.FactorId == projFac.FactorFk).Single());
             }
 
-            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
+            //Get all factors and categories for description
+            IList<FactorMainCategory> mainCategories = _context.FactorMainCategories.ToList();
+            IList<FactorSubCategory> subCategories = _context.FactorSubCategories.ToList();
 
+            IList<ListFactorDescriptor> listFactors = new List<ListFactorDescriptor>();
 
-            return View(project);
-        }
-        [Route("~/Project/ViewProjInfo/{id}")]
-        public IActionResult ViewProjInfo(int id)
-        {
-            //Get the project by id
-            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
-
-            project.Documents = _context.Documents.Where(c => c.ProjectFk == id).ToArray();
-
-            List<Factor> factors = new List<Factor>();
-
-            foreach (Document doc in project.Documents)
+            //Build Factor descriptor list to display
+            foreach (var fac in factors)
             {
-                //Get the document factor relationships
-                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
-                // Get the Factors related to the Projects
-                foreach (DocumentFactorRel docFac in docFactors)
+                //Get Category description
+                FactorMainCategory mainDesc = mainCategories.Where(c => c.FactorMainCategoryId == fac.FactorMainCategoryFk).Single();
+                FactorSubCategory subDesc = subCategories.Where(c => c.FactorSubCategoryId == fac.FactorSubCategoryFk).Single();
+
+                //Build new List factor descriptor
+                ListFactorDescriptor factorDescriptor = new ListFactorDescriptor()
                 {
-                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
-                }
+                    FactorId = fac.FactorId,
+                    Position = fac.Position,
+                    MainCategoryDesc = mainDesc.FactorMainCategoryDesc,
+                    SubCategoryDesc = subDesc.FactorSubCategoryDesc
+                };
+
+                listFactors.Add(factorDescriptor);
             }
 
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
+            listFactors.OrderBy(f => f.Position);
 
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
-            {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
+            listFactors = new HashSet<ListFactorDescriptor>(listFactors).ToList();
 
-            }
+            model.SelectedProject = _context.Projects.Where(p => p.ProjectId == id).SingleOrDefault();
+            model.SelectedProject.Documents = docs;
+            model.FactorDescriptors = listFactors;
 
-            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
-
-            return View(project);
+            return View(model);
         }
 
         [HttpPost]
@@ -350,7 +362,5 @@ namespace ProjectManagementCollection.Controllers
             TempData["message"] = "Deleted the project successfully!!";
             return RedirectToAction("SearchProjects", "Project");
         }
-
-
     }
 }
