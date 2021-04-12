@@ -29,7 +29,7 @@ namespace ProjectManagementCollection.Controllers
         */
         string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
         string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
-        string AWS_bucketName = "gentsproject";
+        string AWS_bucketName = "gentsproject2";
 
         public DocumentController(PmcAppDbContext context, ILogger<DocumentController> logger)
         {

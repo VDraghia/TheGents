@@ -59,7 +59,7 @@
                         <a asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.DocumentId">@doc.Name</a>
                     </div>
                        @{
-                           var oLink = "https://gentsproject.s3.ca-central-1.amazonaws.com/" + doc.Url.Replace(" ", "+");
+                           var oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + doc.Url.Replace(" ", "+");
                            var link = oLink;
                            if (doc.Name.Contains(".doc") || doc.Name.Contains(".docx") || doc.Name.Contains(".xlsx") || doc.Name.Contains(".pptx") || doc.Name.Contains(".ppt") || doc.Name.Contains(".xls"))
                            {

@@ -59,7 +59,7 @@ namespace ProjectManagementCollection.Controllers
             foreach (var doc in viewModel.FavorDocs)
             {
                 var docName = viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Name;
-                var url = "https://gentsproject.s3.ca-central-1.amazonaws.com/" + viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
+                var url = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
                 bList.Add(new SelectListItem { Text = docName, Value = url });
             }
             ViewData["Docs"] = bList;
@@ -106,7 +106,7 @@ namespace ProjectManagementCollection.Controllers
             foreach (var doc in searchProject.FavorDocs)
             {
                 var docName = searchProject.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url;
-                var url = "https://gentsproject.s3.ca-central-1.amazonaws.com/" + searchProject.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
+                var url = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + searchProject.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
                 bList.Add(new SelectListItem { Text = docName, Value = url });
             }
             ViewData["Docs"] = bList;
@@ -372,7 +372,7 @@ namespace ProjectManagementCollection.Controllers
          */
         string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
         string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
-        string AWS_bucketName = "gentsproject";
+        string AWS_bucketName = "gentsproject2";
         [HttpPost]
         public async Task<IActionResult> DeleteProj(ViewProjectModel model, int projectId)
         {

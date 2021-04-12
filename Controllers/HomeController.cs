@@ -45,7 +45,7 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Home/Login")]
         public IActionResult Login(LoginModel model)
         {
-            /*
+            
             User user;
             try
             {
@@ -67,7 +67,7 @@ namespace ProjectManagementCollection.Controllers
                 _logger.LogInformation("Did not find the User or Password is wrong!");
                 return View("Login");
             }
-            */
+            
             current_role = 1;
 
             return RedirectToAction("SearchProjects", "Project");
