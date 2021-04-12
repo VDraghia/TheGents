@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Amazon.S3;
 using Amazon.S3.Model;
+using System;
 
 namespace ProjectManagementCollection.Controllers
 {
@@ -57,8 +58,8 @@ namespace ProjectManagementCollection.Controllers
             var bList = new List<SelectListItem>();
             foreach (var doc in viewModel.FavorDocs)
             {
-                var docName = viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url;
-                var url = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
+                var docName = viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Name;
+                var url = "https://gentsproject.s3.ca-central-1.amazonaws.com/" + viewModel.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
                 bList.Add(new SelectListItem { Text = docName, Value = url });
             }
             ViewData["Docs"] = bList;
@@ -105,12 +106,10 @@ namespace ProjectManagementCollection.Controllers
             foreach (var doc in searchProject.FavorDocs)
             {
                 var docName = searchProject.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url;
-                var url = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + searchProject.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
+                var url = "https://gentsproject.s3.ca-central-1.amazonaws.com/" + searchProject.Documents.Where(p => p.DocumentId == doc.DocumentId).Single().Url.Replace(" ", "+");
                 bList.Add(new SelectListItem { Text = docName, Value = url });
             }
             ViewData["Docs"] = bList;
-
-
 
             return View(searchProject);
         }
@@ -144,7 +143,7 @@ namespace ProjectManagementCollection.Controllers
                         Project newProject = new Project()
                         {
                             Name = findCreateModel.CreateProjectName,
-                            Success = "true"
+                            Success = "Yes"
                         };
 
                         _context.Projects.Add(newProject);
@@ -181,74 +180,69 @@ namespace ProjectManagementCollection.Controllers
             return View(model);
         }
 
-        [Route("~/Project/ViewProject/{id}")]
-        public IActionResult ViewProject(int id)
-        {
-            if (HomeController.current_role == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            //Get the project by id
-            Project project = _context.Projects.Where(c => c.ProjectId == id).Single();
-
-            project.Documents = _context.Documents.Where(d => d.ProjectFk == id).ToList();
-
-
-
-            List<Factor> factors = new List<Factor>();
-
-            foreach (Document doc in project.Documents)
-            {
-                //Get the document factor relationships
-                List<DocumentFactorRel> docFactors = _context.DocumentFactorRels.Where(c => c.DocumentFk == doc.DocumentId).ToList();
-                // Get the Factors related to the Projects
-                foreach (DocumentFactorRel docFac in docFactors)
-                {
-                    factors.Add(_context.Factors.Single(c => c.FactorId == docFac.FactorFk));
-                }
-            }
-
-            Dictionary<string, string> factorDescriptions = new Dictionary<string, string>();
-
-            //Get Main and Sub Categories for description
-            foreach (Factor factor in factors)
-            {
-                FactorMainCategory value = _context.FactorMainCategories.Single(c => c.FactorMainCategoryId == factor.FactorMainCategoryFk);
-                FactorSubCategory key = _context.FactorSubCategories.Single(c => c.FactorSubCategoryId == factor.FactorSubCategoryFk);
-                //donot add if another document already has the same factor
-                if (!factorDescriptions.ContainsKey(key.FactorSubCategoryDesc))
-                    factorDescriptions.Add(key.FactorSubCategoryDesc, value.FactorMainCategoryDesc);
-
-            }
-
-            project.FactorStrings = factorDescriptions.OrderBy(o => o.Value).ToDictionary(o => o.Key, p => p.Value);
-
-
-            return View(project);
-        }
-
         [HttpPost]
         public IActionResult Export(Export project)
         {
 
-            var query = _context.DocumentFactorRels.Select(s => s.ProjectFactor).ToArray();
+            var projects = _context.Projects.ToList();
 
+            var documents = _context.Documents.ToList();
+
+            var factors = _context.Factors.ToList();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var proj in projects)
+            {
+
+                proj.Documents = documents.Where(d => d.ProjectFk == proj.ProjectId).ToList();
+                proj.Factors = new List<Factor>();
+
+                if (proj.Documents != null && proj.Documents.Count() > 0) {
+                    foreach (var doc in proj.Documents)
+                    {
+                        IList<DocumentFactorRel> rels = _context.DocumentFactorRels.Where(d => d.DocumentFk == doc.DocumentId).ToList();
+
+                        foreach (var rel in rels)
+                        {
+                            proj.Factors.Add(_context.Factors.Where(f => f.FactorId == rel.FactorFk).SingleOrDefault());
+                        }
+                    }
+                }
+
+                int[] factorsForFile = new int[88];
+                factorsForFile[87] = 1; // last is success, zero indexed
+
+                foreach (var fac in proj.Factors)
+                {
+                    factorsForFile[fac.Position - 1] = 1;
+                }
+
+                for (int i = 0; i <= 87; i++)
+                {
+                    sb.Append(factorsForFile[i].ToString());
+
+                    if (i != 87)
+                    {
+                        sb.Append(",");
+                    }
+                }
+
+                sb.Append("\n");
+            }
+
+            // Print file
             try
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var item in query)
-                {
-
-                    sb.AppendLine(item.ToString());
-                    sb.AppendLine(",");
-
-                }
-                return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "project.csv");
+                return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "AllProjects.csv");
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("Could not create file", ex);
                 return View(project);
+
             }
+                
         }
 
         [HttpGet]
@@ -315,6 +309,8 @@ namespace ProjectManagementCollection.Controllers
             model.SelectedProject.Documents = docs;
             model.FactorDescriptors = listFactors;
 
+
+
             return View(model);
         }
 
@@ -343,14 +339,23 @@ namespace ProjectManagementCollection.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddFavoriteProj(int projectId)
+        public async Task<IActionResult> AddFavoriteProj(ViewProjectModel model, int projectId)
         {
+            int id = 0;
+
+            if(model != null && model.SelectedProject != null && model.SelectedProject.ProjectId > 0)
+            {
+                id = model.SelectedProject.ProjectId;
+            } else
+            {
+                id = projectId;
+            }
 
             //FavorProj proj = _context.FavorProjs.Where(p => p.Url == url).Single();
-            var url = "~/Project/ViewProject/" + projectId.ToString();
-            if (_context.FavorProjs.Where(p => p.ProjectId == projectId).FirstOrDefault() == null)
+            var url = "~/Project/ViewProject/" + id.ToString();
+            if (_context.FavorProjs.Where(p => p.ProjectId == id).FirstOrDefault() == null)
             {
-                var proj = new FavorProj() { ProjectId = projectId, Url = url };
+                var proj = new FavorProj() { ProjectId = id, Url = url };
                 _context.FavorProjs.Add(proj);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Added favorite project successfully!!";
@@ -367,15 +372,26 @@ namespace ProjectManagementCollection.Controllers
          */
         string AWS_accessKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_accessKey"];
         string AWS_secretKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("BucketSettings")["AWS_secretKey"];
-        string AWS_bucketName = "gentsproject2";
+        string AWS_bucketName = "gentsproject";
         [HttpPost]
-        public async Task<IActionResult> DeleteProj(int projectId)
+        public async Task<IActionResult> DeleteProj(ViewProjectModel model, int projectId)
         {
             AmazonS3Client s3Client = new AmazonS3Client(AWS_accessKey, AWS_secretKey, Amazon.RegionEndpoint.CACentral1);
 
+            int id = 0;
+
+            if (model != null && model.SelectedProject != null && model.SelectedProject.ProjectId > 0)
+            {
+                id = model.SelectedProject.ProjectId;
+            }
+            else
+            {
+                id = projectId;
+            }
+
             Project project = new Project();
-            project = await _context.Projects.FindAsync(projectId);
-            project.Documents = await _context.Documents.Where(c => c.ProjectFk == projectId).ToListAsync();
+            project = await _context.Projects.FindAsync(id);
+            project.Documents = await _context.Documents.Where(c => c.ProjectFk == id).ToListAsync();
             //TempData["message"] = "successfully!!"+project.Name;
             List<DocumentFactorRel> docFacRels = new List<DocumentFactorRel>();
             List<Document> docs = (List<Document>)project.Documents;

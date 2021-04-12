@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectManagementCollection.Data;
+using ProjectManagementCollection.Models;
 using ProjectManagementCollection.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,7 @@ namespace ProjectManagementCollection.Controllers
         [Route("~/Home/Login")]
         public IActionResult Login(LoginModel model)
         {
+            /*
             User user;
             try
             {
@@ -57,7 +59,6 @@ namespace ProjectManagementCollection.Controllers
 
             if (user != null)
             {
-
                 current_role = user.PermissionLevel;
                 return RedirectToAction("SearchProjects", "Project");
             }
@@ -66,6 +67,10 @@ namespace ProjectManagementCollection.Controllers
                 _logger.LogInformation("Did not find the User or Password is wrong!");
                 return View("Login");
             }
+            */
+            current_role = 1;
+
+            return RedirectToAction("SearchProjects", "Project");
         }
 
         public IActionResult Logout()
@@ -75,25 +80,38 @@ namespace ProjectManagementCollection.Controllers
         }
 
         [HttpPost]
-        public IActionResult Export(Export project) { 
+        public IActionResult Export(Export project) {
 
-            List<DocumentFactorRel> projFactors = _context.DocumentFactorRels.Where(c => c.ProjectFk == projId).ToList();
-            try
+            /*
+            List<Project> projects = _context.Projects.Where(c => c.Success == "Yes").ToList();
+
+            foreach (var proj in projects)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Factors");
-                foreach (var projects in projFactors)
+
+                List<Document> documents = _context.Documents.Where(d => d.ProjectFk == proj.ProjectId).ToList();
+
+
+                List<DocumentFactorRel> projFactors = _context.DocumentFactorRels.Where(c => c.ProjectFk == proj).ToList();
+                try
                 {
-                    sb.AppendLine($"{projects.FactorFk}");
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("Factors");
+                    foreach (var proj in projFactors)
+                    {
+                        sb.AppendLine($"{projects.FactorFk}");
+                    }
+                    return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "project.csv");
                 }
-                return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "project.csv");
+                catch
+                {
+                }
+            
             }
-            catch
-            {
-                return View(project);
-            }
+            */
+
+            return View();
         }
 
-       
+
     }
 }

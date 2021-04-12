@@ -118,7 +118,6 @@ body {
     display: block;
     border-top-style: solid;
     border-top-width: thin;
-    max-width: 100%;
     align-content: flex-start;
     text-align: center;
     overflow-y: no-display;

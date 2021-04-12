@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Search - Project Management Collection </title>
+    <title>Search Project - Project Management Collection </title>
 </head>
 <body>
     <div class="container-fluid align-content-start">
@@ -44,7 +44,6 @@
                             </table>
                         </form>
                     </td>
-
                     <td>
                         <div>
                             <table>
@@ -102,9 +101,9 @@
                 </tr>
             </table>
         </div>
-        <div class="container-fluid">
+        <div class="container-fluid search-results">
             <div class="row border-bot justify-content-lg-start">
-                <div class="col-sm-3 border-bot justify-content-center">
+                <div class="col-sm-5  border-bot justify-content-center">
                     Project Name
                 </div>
             </div>
@@ -113,7 +112,7 @@
                     foreach (Project proj in Model.Projects)
                     {
                         <div class="row d-flex justify-content-start">
-                            <div class="col-sm-3 border-top">
+                            <div class="col-sm-5  border-top">
                                 <a asp-action="ViewProject" asp-route-id="@proj.ProjectId">@proj.Name</a>
                             </div>
                         </div>

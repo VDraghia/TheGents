@@ -11,38 +11,6 @@
     <title> View - Project Management Collection </title>
 </head>
 <body>
-    <div class="view-container">
-        <div></div>
-
-        <table style="table-layout:fixed;" width="100%">
-            <tr>
-                <td width="7%">
-                    <form asp-controller="Project" asp-action="Search" method="get">
-                        <input type="submit" value="Back" />
-                    </form>
-                </td>
-
-                <td width="7%">
-                    <form asp-controller="Project" asp-action="DeleteProj" method="post">
-                        <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
-                        <button type="submit" onclick="return ConfirmDelete()">Delete</button>
-                    </form>
-                </td>
-
-                <td width="14%">
-                    <form asp-controller="Project" asp-action="AddFavoriteProj" method="post">
-                        <input type="hidden" asp-for="ProjectId" value="@Model.ProjectId" />
-                        <input type="submit" value="Add Favorite" />
-                    </form>
-                </td>
-
-                <td>
-                    <form asp-controller="Project" asp-action="ViewProject" asp-route-id="@Model.ProjectId" method="get">
-                        <input type="submit" value="View All" />
-                    </form>
-                </td>
-            </tr>
-        </table>
     <div class="container-fluid">
         <h4>Project Documents List</h4>
         <div class="container">
@@ -50,10 +18,27 @@
                 <div class="row">
                     <div class="col-3">
                         <b>Project Name:</b>
-	</div>
+                    </div>
                     <div class="col-5">
                         @Model.SelectedProject.Name
                     </div>
+                    <table style="table-layout:fixed;" width="100%">
+                        <tr>
+                            <td width="7%">
+                                <form asp-controller="Project" asp-action="DeleteProj" method="post">
+                                    <input type="hidden" asp-for="SelectedProject.ProjectId" value="@Model.SelectedProject.ProjectId" />
+                                    <button type="submit" onclick="return ConfirmDelete()">Delete</button>
+                                </form>
+                            </td>
+
+                            <td width="14%">
+                                <form asp-controller="Project" asp-action="AddFavoriteProj" method="post">
+                                    <input type="hidden" asp-for="SelectedProject.ProjectId" value="@Model.SelectedProject.ProjectId" />
+                                    <input type="submit" value="Add Favorite" />
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="col-auto">
                         <b>Project Factors</b>
                     </div>
@@ -74,7 +59,7 @@
                         <a asp-controller="Document" asp-action="ViewDocument" asp-route-id="@doc.DocumentId">@doc.Name</a>
                     </div>
                        @{
-                           var oLink = "https://gentsproject2.s3.ca-central-1.amazonaws.com/" + doc.Url.Replace(" ", "+");
+                           var oLink = "https://gentsproject.s3.ca-central-1.amazonaws.com/" + doc.Url.Replace(" ", "+");
                            var link = oLink;
                            if (doc.Name.Contains(".doc") || doc.Name.Contains(".docx") || doc.Name.Contains(".xlsx") || doc.Name.Contains(".pptx") || doc.Name.Contains(".ppt") || doc.Name.Contains(".xls"))
                            {
@@ -118,7 +103,7 @@
     @section Scripts{
         <script>
             function ConfirmDelete() {
-                if (confirm("Delete a project will delete all the files in the project. Are you sure you want to delete @Model.Name?") == false)
+                if (confirm("Delete a project will delete all the files in the project. Are you sure you want to delete @Model.SelectedProject.Name?") == false)
                     return false;
             }
         </script>

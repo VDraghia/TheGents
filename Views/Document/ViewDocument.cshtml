@@ -23,7 +23,24 @@
                         <td style="border-width: 0 0 2px 0; border-style: solid; border-color: #000000">
                             @Model.Document.Name
                         </td>
-                    </tr> 
+                    </tr>
+                    <tr>
+                        <td>
+                            <form asp-controller="Document" asp-action="AddFavoriteDoc" method="post">
+                                <input type="hidden" name="docId" value="@Model.Document.DocumentId" />
+                                <input type="hidden" name="projId" value="@Model.Project.ProjectId" />
+                                <input type="submit" value="Add Favorite" />
+                            </form>
+                        </td>
+                        <td>
+                            <form asp-controller="Document" asp-action="DeleteDoc" method="post">
+                                <input type="hidden" name="docId" value="@Model.Document.DocumentId" />
+                                <input type="hidden" name="projId" value="@Model.Project.ProjectId" />
+                                <input type="submit" value="Delete" />
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
                         <td colspan="2" align="center">
                             <i>Associated Factors</i>
                         </td>
@@ -36,19 +53,19 @@
                     @{
                         foreach (var factors in @Model.Factors)
                         {
-                        <tr>
-                            <td>
-                                @factors.MainCategoryDesc
-                            </td>
-                            <td>
-                                @factors.SubCategoryDesc
-                            </td>
-                        </tr>
-                            }
+                            <tr>
+                                <td>
+                                    @factors.MainCategoryDesc
+                                </td>
+                                <td>
+                                    @factors.SubCategoryDesc
+                                </td>
+                            </tr>
                         }
+                    }
                 </table>
             </div>
-            <div id="tab_1" style="position: absolute;left:33.5%;height:100%;margin-left:10px;">
+            <div id="tab_1" style="position: absolute;left:20.5%;height:100%;margin-left:10px;">
                 <iframe src="@Model.Document.Url"
                         style="width:1258px;height:100%;">
                 </iframe>

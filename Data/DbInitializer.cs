@@ -641,7 +641,6 @@ namespace ProjectManagementCollection.Data
             {
                 var projects = new Project[]
                 {
-                    new Project {Name="CITY FOLK CONCERT", Success="Yes"},
                     new Project {Name="Project2", Success="Yes"},
                     new Project {Name="Project3", Success="Yes"},
                 };
@@ -654,7 +653,6 @@ namespace ProjectManagementCollection.Data
                 context.SaveChanges();
             }
 
-            var proj1 = context.Projects.Where(c => c.Name == "CITY FOLK CONCERT").Single();
             var proj2 = context.Projects.Where(c => c.Name == "Project2").Single();
             var proj3 = context.Projects.Where(c => c.Name == "Project3").Single();
 
@@ -662,31 +660,14 @@ namespace ProjectManagementCollection.Data
 
             if (!context.Documents.Any())
             {
-                documents.Add(new Document { Name = "Doc1", Url = @"/pdf/project1.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Doc2", Url = @"/pdf/project2.pdf", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "Doc3", Url = @"/pdf/project3.pdf", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "Doc4", Url = @"/pdf/project1.pdf", ProjectFk = proj3.ProjectId });
-                documents.Add(new Document { Name = "Doc5", Url = @"/pdf/project2.pdf", ProjectFk = proj3.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Budget Breakdown_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Budget Breakdown_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Critical Task QUALITY METRICS_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Critical Task QUALITY METRICS_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Milestones Lists_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Milestones Lists_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_MS Project Daily Resource Pool list RESOURCE TRACKING_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_MS Project Daily Resource Pool list RESOURCE TRACKING_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_MS Project Daily Schedule GNATT CHART_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_MS Project Daily Schedule GNATT CHART_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_MS Project Daily Schedule GNATT CHART_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_MS Project Daily Schedule GNATT CHART_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_MS Project Planning Resource Pool list RESOURCE BREAKDOWN STRUCTURE_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_MS Project Planning Resource Pool list RESOURCE BREAKDOWN STRUCTURE_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Resource Requirements_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Resource Requirements_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Project Schedule_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Project Schedule_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Resource Cost and Allocation RESOURCE COST ESTIMATES_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Resource Cost and Allocation RESOURCE COST ESTIMATES_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "Group01_ CITY FOLK CONCERT_Schedule Management Plan SCHEDULE DATA_2019", Url = "/pdf/Group01_ CITY FOLK CONCERT_Schedule Management Plan SCHEDULE DATA_2019.pdf", ProjectFk = proj1.ProjectId });
-                documents.Add(new Document { Name = "DocumentExample1", Url = "doc.example.com", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "DocumentExample2", Url = "doc.example.com", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "DocumentExample3", Url = "doc.example.com", ProjectFk = proj3.ProjectId });
-                documents.Add(new Document { Name = "DocumentExample4", Url = "doc.example.com", ProjectFk = proj3.ProjectId });
-                documents.Add(new Document { Name = "Doc1", Url = "proj1/doc1.aws.amazon.com", ProjectFk = proj1.ProjectId });
+                documents.Add(new Document { Name = "DocumentExample1", Url = "proj2/doc1.example.com", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "DocumentExample2", Url = "proj2/doc2.example.com", ProjectFk = proj2.ProjectId });
+                documents.Add(new Document { Name = "DocumentExample3", Url = "proj3/doc3.example.com", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "DocumentExample4", Url = "proj3/doc4.example.com", ProjectFk = proj3.ProjectId });
                 documents.Add(new Document { Name = "Doc2", Url = "proj1/doc2.aws.amazon.com", ProjectFk = proj2.ProjectId });
                 documents.Add(new Document { Name = "Doc3", Url = "proj1/doc3.aws.amazon.com", ProjectFk = proj2.ProjectId });
-                documents.Add(new Document { Name = "Doc4", Url = "proj1/doc3.aws.amazon.com", ProjectFk = proj3.ProjectId });
-                documents.Add(new Document { Name = "Doc5", Url = "proj1/doc3.aws.amazon.com", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "Doc4", Url = "proj1/doc4.aws.amazon.com", ProjectFk = proj3.ProjectId });
+                documents.Add(new Document { Name = "Doc5", Url = "proj1/doc5.aws.amazon.com", ProjectFk = proj3.ProjectId });
                 foreach (Document document in documents)
                 {
                     context.Documents.Add(document);
@@ -713,9 +694,8 @@ namespace ProjectManagementCollection.Data
             {
                 List<FavorProj> favorProjs = new List<FavorProj>();
 
-                favorProjs.Add(new FavorProj { ProjectId = 1, Url = @"~/Project/ViewProject/1" });
-                favorProjs.Add(new FavorProj { ProjectId = 2, Url = @"~/Project/ViewProject/2" });
-                favorProjs.Add(new FavorProj { ProjectId = 3, Url = @"~/Project/ViewProject/3" });
+                favorProjs.Add(new FavorProj { ProjectId = proj2.ProjectId, Url = "~/Project/ViewProject/" + proj2.ProjectId });
+                favorProjs.Add(new FavorProj { ProjectId = proj3.ProjectId, Url = "~/Project/ViewProject/" + proj3.ProjectId });
 
                 foreach (FavorProj favorProj in favorProjs)
                 {
@@ -762,28 +742,6 @@ namespace ProjectManagementCollection.Data
                     context.DocumentFactorRels.Add(rel);
                 }
 
-                context.SaveChanges();
-            }
-
-            if (!context.DocumentFactorRels.Any())
-            {
-                List<DocumentFactorRel> projectFactors = new List<DocumentFactorRel>()
-                {
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0},
-                    new DocumentFactorRel(){ProjectFactor = 0}
-                };
-                foreach (DocumentFactorRel rel in projectFactors)
-                {
-                    context.DocumentFactorRels.Add(rel);
-                }
                 context.SaveChanges();
             }
         }
